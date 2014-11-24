@@ -8,6 +8,8 @@ dependencies {
     compile 'com.google.guava:guava:18.0'
     compile 'org.apache.mahout:mahout-core:0.9'
 
+    compile files('libs/rseslib-3.0.4.jar')
+
     testCompile 'org.testng:testng:6.8.8'
     testCompile 'org.mockito:mockito-all:1.10.8'
     testCompile 'org.assertj:assertj-core:1.7.0'
