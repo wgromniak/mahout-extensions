@@ -5,9 +5,7 @@ import org.mimuw.mahoutattrsel.api.SubtableGenerator;
 
 import java.util.List;
 
-public final class MatrixFixedSizeAttributeSubtableGenerator
-        extends AbstractMatrixFixedSizeSubtableGenerator
-        implements SubtableGenerator<Matrix> {
+public final class MatrixFixedSizeAttributeSubtableGenerator implements SubtableGenerator<Matrix> {
 
     @Override
     public List<Matrix> getSubtables() {
