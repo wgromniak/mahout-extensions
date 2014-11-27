@@ -6,7 +6,6 @@ import org.apache.mahout.math.Matrix;
 import org.mimuw.mahoutattrsel.api.SubtableGenerator;
 
 import java.util.BitSet;
-import java.util.List;
 import java.util.Random;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -21,7 +20,7 @@ public abstract class AbstractMatrixFixedSizeSubtableGenerator implements Subtab
     protected  Matrix dataTable;
 
     public AbstractMatrixFixedSizeSubtableGenerator(Random random,  int numberOfSubtables, int subtableSize,
-                                                      Matrix dataTableRandom ) {
+                                                      Matrix dataTable ) {
 
 
         checkArgument(numberOfSubtables > 0);
@@ -32,18 +31,8 @@ public abstract class AbstractMatrixFixedSizeSubtableGenerator implements Subtab
         this.numberOfSubtables = numberOfSubtables;
         this.random = checkNotNull(random);
     }
-
-    public List<Matrix> getSubtable() {
-
-        ImmutableList.Builder<Matrix> resultBuilder = ImmutableList.builder();
-
-        int numberOfObjects = dataTable.columnSize();
-
-        choose(resultBuilder, numberOfObjects);
-        return resultBuilder.build();
-    }
-
-    public void choose(ImmutableList.Builder<Matrix> resultBuilder, int numberOfObjects) {
+    
+    public void chooseRows(ImmutableList.Builder<Matrix> resultBuilder, int numberOfObjects) {
 
         for (int i = 0; i < numberOfSubtables; i++) {
 

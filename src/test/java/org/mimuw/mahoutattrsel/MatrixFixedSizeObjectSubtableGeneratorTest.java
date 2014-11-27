@@ -1,6 +1,6 @@
 package org.mimuw.mahoutattrsel;
-public class MatrixFixedSizeObjectSubtableGeneratorTest {
 
+public class MatrixFixedSizeObjectSubtableGeneratorTest {
 
 
 }

@@ -7,7 +7,8 @@ import org.apache.mahout.math.Matrix;
 import java.util.List;
 import java.util.Random;
 
-public abstract class MatrixFixedObjectsGenerator extends  AbstractMatrixFixedSizeSubtableGenerator {
+public  class MatrixFixedObjectsGenerator extends  AbstractMatrixFixedSizeSubtableGenerator {
+
 
     public MatrixFixedObjectsGenerator(Random random, int numberOfSubtables, int subtableSize, Matrix dataTableRandom) {
         super(random, numberOfSubtables, subtableSize, dataTableRandom);
@@ -19,7 +20,7 @@ public abstract class MatrixFixedObjectsGenerator extends  AbstractMatrixFixedSi
 
         int numberOfObjects = dataTable.columnSize();
 
-        choose(resultBuilder, numberOfObjects);
+        chooseRows(resultBuilder, numberOfObjects);
 
         return resultBuilder.build();
     }

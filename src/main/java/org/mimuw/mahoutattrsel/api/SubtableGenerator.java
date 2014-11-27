@@ -8,5 +8,6 @@ import org.apache.mahout.math.Matrix;
  */
 public interface SubtableGenerator<T> {
 
-    public void choose(ImmutableList.Builder<Matrix> resultBuilder, int numberOfObjects);
+    public void chooseRows(ImmutableList.Builder<Matrix> resultBuilder, int numberOfObjects);
+
 }
