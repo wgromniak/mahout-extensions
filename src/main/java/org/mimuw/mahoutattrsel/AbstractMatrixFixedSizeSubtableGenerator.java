@@ -31,13 +31,12 @@ public abstract class AbstractMatrixFixedSizeSubtableGenerator implements Subtab
         this.numberOfSubtables = numberOfSubtables;
         this.random = checkNotNull(random);
     }
-    
+
     public void chooseRows(ImmutableList.Builder<Matrix> resultBuilder, int numberOfObjects) {
 
         for (int i = 0; i < numberOfSubtables; i++) {
 
             BitSet selectedObjects = drawObjects(numberOfObjects, subtableSize);
-
 
             Matrix subtable = new DenseMatrix(subtableSize, dataTable.rowSize());
 
