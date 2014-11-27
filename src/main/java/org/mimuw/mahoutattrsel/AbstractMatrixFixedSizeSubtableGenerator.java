@@ -14,11 +14,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public abstract class AbstractMatrixFixedSizeSubtableGenerator implements SubtableGenerator<Matrix> {
 
-    private Random random;
-    private int numberOfSubtables;
-    private int subtableSize;
+    protected Random random;
+    protected  int numberOfSubtables;
+    protected int subtableSize;
 
-    private Matrix dataTable;
+    protected  Matrix dataTable;
 
     public AbstractMatrixFixedSizeSubtableGenerator(Random random,  int numberOfSubtables, int subtableSize,
                                                       Matrix dataTableRandom ) {
@@ -33,11 +33,17 @@ public abstract class AbstractMatrixFixedSizeSubtableGenerator implements Subtab
         this.random = checkNotNull(random);
     }
 
-    public List<Matrix> getSubtables() {
+    public List<Matrix> getSubtable() {
 
         ImmutableList.Builder<Matrix> resultBuilder = ImmutableList.builder();
 
         int numberOfObjects = dataTable.columnSize();
+
+        choose(resultBuilder, numberOfObjects);
+        return resultBuilder.build();
+    }
+
+    public void choose(ImmutableList.Builder<Matrix> resultBuilder, int numberOfObjects) {
 
         for (int i = 0; i < numberOfSubtables; i++) {
 
@@ -59,7 +65,6 @@ public abstract class AbstractMatrixFixedSizeSubtableGenerator implements Subtab
 
             resultBuilder.add(subtable);
         }
-        return resultBuilder.build();
     }
 
     private  BitSet drawObjects(int numberOfObjects, int sizeOfSubtable) {
@@ -80,3 +85,5 @@ public abstract class AbstractMatrixFixedSizeSubtableGenerator implements Subtab
         return selected;
     }
 }
+
+
