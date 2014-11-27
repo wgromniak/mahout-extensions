@@ -1,7 +1,9 @@
 package org.mimuw.mahoutattrsel;
 
 import com.google.common.collect.ImmutableList;
+import org.apache.mahout.math.DenseMatrix;
 import org.apache.mahout.math.Matrix;
+import org.apache.mahout.math.Vector;
 import org.mimuw.mahoutattrsel.api.SubtableGenerator;
 
 import java.util.ArrayList;
@@ -40,27 +42,36 @@ public final class MatrixFixedSizeObjectSubtableGenerator implements SubtableGen
     public List<Matrix> getSubtables(){
 
         ImmutableList.Builder<Matrix> resultBuilder = ImmutableList.builder();
-        List<Matrix> dataObjects = dataTable; //It's problem
 
-        int numberOfObjects = dataTable.rowSize();
+        int numberOfObjects = dataTable.columnSize(); // number of objects
 
         for(int i = 0; i < numberOfSubtables; i++){
 
             BitSet selectedObjects = drawObjects(numberOfObjects, subtableSize);
 
-            ArrayList<Matrix> subtable = new ArrayList<Matrix>(dataTable.) //second problem
+            ArrayList<Vector> subtable = new ArrayList<>();
 
-            for(int j = 0; j < numberOfObjects; j++){
+            for(int rowNum = 0; rowNum < numberOfObjects; rowNum++){
 
-                if(selectedObjects.get(j)){
+                if(selectedObjects.get(rowNum)){
 
-                    subtable.add(dataObjects.get(j));
+                    subtable.add(dataTable.viewRow(rowNum));
                 }
             }
 
-            resultBuilder.add(subtable);
+            resultBuilder.add(convertToMatrix(subtable));
         }
         return resultBuilder.build();
+    }
+
+    Matrix convertToMatrix(ArrayList<Vector> subtable) {
+        Matrix matrix = new DenseMatrix(subtable.size(),dataTable.rowSize());
+        int i = 0;
+        for(Vector v: subtable){
+            matrix.assignRow(i, v);
+            i++;
+        }
+        return  matrix;
     }
 
     private BitSet drawObjects(int numberOfObjects, int sizeOfSubtable){
