@@ -6,34 +6,29 @@ import org.apache.mahout.math.Matrix;
 import org.mimuw.mahoutattrsel.api.SubtableGenerator;
 
 import java.util.BitSet;
+import java.util.List;
 import java.util.Random;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+public class MatrixFixedSizeObjectSubtableGenerator implements SubtableGenerator<Matrix> {
 
-public abstract class AbstractMatrixFixedSizeSubtableGenerator implements SubtableGenerator<Matrix> {
+    private final Random random;
+    private final int numberOfSubtables;
+    private final int subtableSize;
 
-    protected Random random;
-    protected  int numberOfSubtables;
-    protected int subtableSize;
+    private final Matrix dataTable;
 
-    protected  Matrix dataTable;
-
-    public AbstractMatrixFixedSizeSubtableGenerator(Random random,  int numberOfSubtables, int subtableSize,
-                                                      Matrix dataTable ) {
-
-
-        checkArgument(numberOfSubtables > 0);
-        checkArgument(subtableSize > 0);
-
-        this.dataTable = checkNotNull(dataTable);
-        this.subtableSize = subtableSize;
+    public MatrixFixedSizeObjectSubtableGenerator(Random random, int numberOfSubtables, int subtableSize, Matrix dataTable) {
+        this.random = random;
         this.numberOfSubtables = numberOfSubtables;
-        this.random = checkNotNull(random);
+        this.subtableSize = subtableSize;
+        this.dataTable = dataTable;
     }
 
-    public void chooseRows(ImmutableList.Builder<Matrix> resultBuilder, int numberOfObjects) {
+    public List<Matrix> getSubtables() {
 
+        ImmutableList.Builder<Matrix> resultBuilder = ImmutableList.builder();
+
+        int numberOfObjects = dataTable.columnSize();
         for (int i = 0; i < numberOfSubtables; i++) {
 
             BitSet selectedObjects = drawObjects(numberOfObjects, subtableSize);
@@ -53,6 +48,8 @@ public abstract class AbstractMatrixFixedSizeSubtableGenerator implements Subtab
 
             resultBuilder.add(subtable);
         }
+
+        return resultBuilder.build();
     }
 
     private  BitSet drawObjects(int numberOfObjects, int sizeOfSubtable) {
@@ -73,5 +70,3 @@ public abstract class AbstractMatrixFixedSizeSubtableGenerator implements Subtab
         return selected;
     }
 }
-
-
