@@ -37,7 +37,6 @@ public class MatrixFixedSizeObjectSubtableGenerator implements SubtableGenerator
 
         int numberOfObjects = dataTable.rowSize();
 
-
         for (int i = 0; i < numberOfSubtables; i++) {
 
             BitSet selectedObjects = drawObjects(numberOfObjects, subtableSize);
@@ -57,6 +56,7 @@ public class MatrixFixedSizeObjectSubtableGenerator implements SubtableGenerator
 
             resultBuilder.add(subtable);
         }
+
         return resultBuilder.build();
 
     }

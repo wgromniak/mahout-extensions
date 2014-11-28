@@ -12,12 +12,12 @@ public class MatrixFixedSizeAttributeSubtableGeneratorTest {
     @Test
     public void testName() throws Exception {
 
-        MatrixFixedSizeAttributeSubtableGenerator matrix = new MatrixFixedSizeAttributeSubtableGenerator(new Random(), 1, 2,
-                new DenseMatrix(new double[][]{{1,5},{2,6},{3,7},{4,8}} ));
+        MatrixFixedSizeAttributeSubtableGenerator matrix = new MatrixFixedSizeAttributeSubtableGenerator(new Random(), 1, 3,
+                new DenseMatrix(new double[][]{{1,2,3,4}, {5,6,7,8}} ));
 
         List<Matrix> listOfMatrix = matrix.getSubtables();
 
-     //   MatrixAssert.assertThat(listOfMatrix.get(0)).isEqualTo( new DenseMatrix(new double[][]{{1,2},{6 ,5}}) );
+        MatrixAssert.assertThat(listOfMatrix.get(0)).isEqualTo( new DenseMatrix(new double[][]{{1,2,3}, {5,6,7}}) );
 
 
     }
