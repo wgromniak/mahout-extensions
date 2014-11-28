@@ -14,9 +14,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class MatrixFixedSizeAttributeSubtableGenerator implements SubtableGenerator<Matrix> {
 
-    private  final Random random;
-    private  final int numberOfSubtables;
-    private  final int subTableSize;
+    private final Random random;
+    private final int numberOfSubtables;
+    private final int subTableSize;
 
     private Matrix dataTable;       //canot be final, because we have to transpose matrix
 
@@ -31,7 +31,6 @@ public class MatrixFixedSizeAttributeSubtableGenerator implements SubtableGenera
         this.subTableSize = subTableSize;
         this.dataTable = checkNotNull(dataTable);
     }
-
 
 
     public List<Matrix> getSubtables() {
@@ -52,9 +51,9 @@ public class MatrixFixedSizeAttributeSubtableGenerator implements SubtableGenera
 
             int numOfRow = 0;
 
-            for (int rowNum = 0; rowNum < numberOfAttributes; rowNum++ ) {
+            for (int rowNum = 0; rowNum < numberOfAttributes; rowNum++) {
 
-                if(selectedObjects.get(rowNum)) {
+                if (selectedObjects.get(rowNum)) {
 
                     subtable.assignRow(numOfRow, dataTable.viewRow(rowNum).clone());
                     numOfRow++;
@@ -69,13 +68,13 @@ public class MatrixFixedSizeAttributeSubtableGenerator implements SubtableGenera
         return resultBuilder.build();
     }
 
-    private  BitSet drawAttribute(int numberOfAttribute, int sizeOfSubtable) {
+    private BitSet drawAttribute(int numberOfAttribute, int sizeOfSubtable) {
 
         BitSet selected = new BitSet(numberOfAttribute);
 
         while (sizeOfSubtable > 0) {
 
-            int next = random.nextInt(numberOfAttribute );
+            int next = random.nextInt(numberOfAttribute);
 
             if (!selected.get(next)) {
 
