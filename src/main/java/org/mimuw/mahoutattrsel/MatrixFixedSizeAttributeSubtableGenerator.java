@@ -21,7 +21,8 @@ public class MatrixFixedSizeAttributeSubtableGenerator implements SubtableGenera
     private Matrix dataTable;       //canot be final, because we have to transpose matrix
 
 
-    public MatrixFixedSizeAttributeSubtableGenerator(Random random, int numberOfSubtables, int subTableSize, Matrix dataTable) {
+    public MatrixFixedSizeAttributeSubtableGenerator(Random random, int numberOfSubtables, int subTableSize,
+                                                     Matrix dataTable) {
 
         checkArgument(numberOfSubtables > 0);
         checkArgument(subTableSize > 0);
