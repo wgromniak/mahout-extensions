@@ -2,7 +2,6 @@ package org.mimuw.mahoutattrsel;
 
 import org.apache.mahout.math.Matrix;
 import org.assertj.core.api.AbstractAssert;
-import org.testng.annotations.Test;
 
 /**
  * Assertion for the {@link org.apache.mahout.math.Matrix} type.
@@ -28,7 +27,7 @@ public class MatrixAssert<S extends MatrixAssert<S>> extends AbstractAssert<S, M
 
         if (actual.rowSize() != expected.rowSize() || actual.columnSize() != expected.columnSize()) {
             failWithMessage("The actual has different dimensions <%sx%s>, than the expected <%sx%s>",
-                            actual.rowSize(), actual.columnSize(), expected.rowSize(), expected.columnSize());
+                    actual.rowSize(), actual.columnSize(), expected.rowSize(), expected.columnSize());
         }
 
         for (int i = 0; i < expected.rowSize(); i++) {
@@ -69,7 +68,7 @@ public class MatrixAssert<S extends MatrixAssert<S>> extends AbstractAssert<S, M
 
         if (actual.columnSize() != expected) {
             failWithMessage("The actual column size <%s> is different than expected <%s>",
-                            actual.columnSize(), expected);
+                    actual.columnSize(), expected);
         }
 
         return myself;

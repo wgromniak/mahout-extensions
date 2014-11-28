@@ -9,6 +9,9 @@ import java.util.BitSet;
 import java.util.List;
 import java.util.Random;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class MatrixFixedSizeObjectSubtableGenerator implements SubtableGenerator<Matrix> {
 
     private final Random random;
@@ -18,22 +21,28 @@ public class MatrixFixedSizeObjectSubtableGenerator implements SubtableGenerator
     private final Matrix dataTable;
 
     public MatrixFixedSizeObjectSubtableGenerator(Random random, int numberOfSubtables, int subtableSize, Matrix dataTable) {
-        this.random = random;
+
+        checkArgument( numberOfSubtables > 0);
+        checkArgument( subtableSize > 0);
+
+        this.random = checkNotNull(random);
         this.numberOfSubtables = numberOfSubtables;
         this.subtableSize = subtableSize;
-        this.dataTable = dataTable;
+        this.dataTable = checkNotNull(dataTable);
     }
 
     public List<Matrix> getSubtables() {
 
         ImmutableList.Builder<Matrix> resultBuilder = ImmutableList.builder();
 
-        int numberOfObjects = dataTable.columnSize();
+        int numberOfObjects = dataTable.rowSize();
+
+
         for (int i = 0; i < numberOfSubtables; i++) {
 
             BitSet selectedObjects = drawObjects(numberOfObjects, subtableSize);
 
-            Matrix subtable = new DenseMatrix(subtableSize, dataTable.rowSize());
+            Matrix subtable = new DenseMatrix(subtableSize, dataTable.columnSize());
 
             int numOfRow = 0;
 
@@ -42,15 +51,16 @@ public class MatrixFixedSizeObjectSubtableGenerator implements SubtableGenerator
                 if (selectedObjects.get(rowNum)) {
 
                     subtable.assignRow(numOfRow, dataTable.viewRow(rowNum).clone());
+                    numOfRow++;
                 }
-                numOfRow++;
             }
 
             resultBuilder.add(subtable);
         }
-
         return resultBuilder.build();
+
     }
+
 
     private  BitSet drawObjects(int numberOfObjects, int sizeOfSubtable) {
 
