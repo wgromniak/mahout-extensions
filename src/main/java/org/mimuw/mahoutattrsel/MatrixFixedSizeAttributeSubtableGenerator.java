@@ -14,15 +14,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class MatrixFixedSizeAttributeSubtableGenerator implements SubtableGenerator<Matrix> {
 
-    private final Random random;
-    private final int numberOfSubtables;
-    private final int subTableSize;
+    private  final Random random;
+    private  final int numberOfSubtables;
+    private  final int subTableSize;
 
-    private Matrix dataTable;       //canot be final, because we have to transpose matrix
+    private Matrix dataTable;
 
 
-    public MatrixFixedSizeAttributeSubtableGenerator(Random random, int numberOfSubtables, int subTableSize,
-                                                     Matrix dataTable) {
+    public MatrixFixedSizeAttributeSubtableGenerator(Random random, int numberOfSubtables, int subTableSize, Matrix dataTable) {
 
         checkArgument(numberOfSubtables > 0);
         checkArgument(subTableSize > 0);
@@ -32,6 +31,7 @@ public class MatrixFixedSizeAttributeSubtableGenerator implements SubtableGenera
         this.subTableSize = subTableSize;
         this.dataTable = checkNotNull(dataTable);
     }
+
 
 
     public List<Matrix> getSubtables() {
@@ -44,7 +44,7 @@ public class MatrixFixedSizeAttributeSubtableGenerator implements SubtableGenera
         int numberOfAttributes = dataTable.rowSize();
         numberOfAttributes--;
 
-        for (int i = 0; i < numberOfAttributes; i++) {
+        for (int i = 0; i < numberOfSubtables; i++) {
 
             BitSet selectedObjects = drawAttribute(numberOfAttributes, subTableSize);
 
@@ -52,9 +52,9 @@ public class MatrixFixedSizeAttributeSubtableGenerator implements SubtableGenera
 
             int numOfRow = 0;
 
-            for (int rowNum = 0; rowNum < numberOfAttributes; rowNum++) {
+            for (int rowNum = 0; rowNum < numberOfAttributes; rowNum++ ) {
 
-                if (selectedObjects.get(rowNum)) {
+                if(selectedObjects.get(rowNum)) {
 
                     subtable.assignRow(numOfRow, dataTable.viewRow(rowNum).clone());
                     numOfRow++;
@@ -62,20 +62,19 @@ public class MatrixFixedSizeAttributeSubtableGenerator implements SubtableGenera
             }
 
             subtable = subtable.transpose().clone();
-
             resultBuilder.add(subtable);
         }
 
         return resultBuilder.build();
     }
 
-    private BitSet drawAttribute(int numberOfAttribute, int sizeOfSubtable) {
+    private  BitSet drawAttribute(int numberOfAttribute, int sizeOfSubtable) {
 
         BitSet selected = new BitSet(numberOfAttribute);
 
         while (sizeOfSubtable > 0) {
 
-            int next = random.nextInt(numberOfAttribute);
+            int next = random.nextInt(numberOfAttribute );
 
             if (!selected.get(next)) {
 
