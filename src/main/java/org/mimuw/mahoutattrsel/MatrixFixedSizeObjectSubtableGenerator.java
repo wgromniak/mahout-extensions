@@ -20,15 +20,22 @@ public class MatrixFixedSizeObjectSubtableGenerator implements SubtableGenerator
 
     private final Matrix dataTable;
 
-    public MatrixFixedSizeObjectSubtableGenerator(Random random, int numberOfSubtables, int subtableSize, Matrix dataTable) {
+    public MatrixFixedSizeObjectSubtableGenerator(Random random, int numberOfSubtables, int subtableSize,
+                                                  Matrix dataTable) throws IllegalArgumentException {
 
-        checkArgument( numberOfSubtables > 0);
-        checkArgument( subtableSize > 0);
+        checkArgument(numberOfSubtables > 0);
+        checkArgument(subtableSize > 0);
 
         this.random = checkNotNull(random);
         this.numberOfSubtables = numberOfSubtables;
         this.subtableSize = subtableSize;
         this.dataTable = checkNotNull(dataTable);
+
+
+        if (subtableSize > dataTable.rowSize()) {
+
+            throw new IllegalArgumentException();
+        }
     }
 
     public List<Matrix> getSubtables() {
@@ -62,7 +69,7 @@ public class MatrixFixedSizeObjectSubtableGenerator implements SubtableGenerator
     }
 
 
-    private  BitSet drawObjects(int numberOfObjects, int sizeOfSubtable) {
+    private BitSet drawObjects(int numberOfObjects, int sizeOfSubtable) {
 
         BitSet selected = new BitSet(numberOfObjects);
 

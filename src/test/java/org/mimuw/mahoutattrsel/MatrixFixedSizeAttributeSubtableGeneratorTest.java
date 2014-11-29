@@ -38,7 +38,8 @@ public class MatrixFixedSizeAttributeSubtableGeneratorTest {
 
         List<Matrix> listOfSubtables = matrixUnderTest.getSubtables();
 
-        MatrixAssert.assertThat(listOfSubtables.get(0)).isEqualTo(new DenseMatrix(new double[][]{{1, 2, 3}, {5, 6, 7}}));
+        MatrixAssert.assertThat(listOfSubtables.get(0)).isEqualTo(
+                new DenseMatrix(new double[][]{{1, 2, 3}, {5, 6, 7}}));
 
     }
 
@@ -47,11 +48,10 @@ public class MatrixFixedSizeAttributeSubtableGeneratorTest {
 
         Random random = mock(Random.class);
 
-        when(random.nextInt(anyInt())).thenReturn(0, 2, 1, 2,0,1);
+        when(random.nextInt(anyInt())).thenReturn(0, 2, 1, 2, 0, 1);
 
-        MatrixFixedSizeAttributeSubtableGenerator matrixUnderTest = new MatrixFixedSizeAttributeSubtableGenerator(random,
-                3, 2, new DenseMatrix(new double[][]{{1, 2, 2, 6}, {3, 4, 6, 4}, {5, 6, 8, 9}, {7, 6, 3, 6}}));
-
+        MatrixFixedSizeAttributeSubtableGenerator matrixUnderTest = new MatrixFixedSizeAttributeSubtableGenerator(
+                random, 3, 2, new DenseMatrix(new double[][]{{1, 2, 2, 6}, {3, 4, 6, 4}, {5, 6, 8, 9}, {7, 6, 3, 6}}));
 
         List<Matrix> lisOfSubtables = matrixUnderTest.getSubtables();
 
@@ -61,8 +61,6 @@ public class MatrixFixedSizeAttributeSubtableGeneratorTest {
                 new DenseMatrix(new double[][]{{2, 2}, {4, 6}, {6, 8}, {6, 3}}));
         MatrixAssert.assertThat(lisOfSubtables.get(2)).isEqualTo(
                 new DenseMatrix(new double[][]{{1, 2}, {3, 4}, {5, 6}, {7, 6}}));
-
-
     }
 }
 
