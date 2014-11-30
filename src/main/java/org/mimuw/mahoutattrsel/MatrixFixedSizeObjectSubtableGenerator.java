@@ -12,7 +12,7 @@ import java.util.Random;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class MatrixFixedSizeObjectSubtableGenerator implements SubtableGenerator<Matrix> {
+public final class MatrixFixedSizeObjectSubtableGenerator implements SubtableGenerator<Matrix> {
 
     private final Random random;
     private final int numberOfSubtables;
@@ -21,21 +21,17 @@ public class MatrixFixedSizeObjectSubtableGenerator implements SubtableGenerator
     private final Matrix dataTable;
 
     public MatrixFixedSizeObjectSubtableGenerator(Random random, int numberOfSubtables, int subtableSize,
-                                                  Matrix dataTable) throws IllegalArgumentException {
+                                                  Matrix dataTable) {
 
         checkArgument(numberOfSubtables > 0);
         checkArgument(subtableSize > 0);
+        checkArgument(subtableSize <= dataTable.rowSize());
 
         this.random = checkNotNull(random);
         this.numberOfSubtables = numberOfSubtables;
         this.subtableSize = subtableSize;
         this.dataTable = checkNotNull(dataTable);
 
-
-        if (subtableSize > dataTable.rowSize()) {
-
-            throw new IllegalArgumentException();
-        }
     }
 
     public List<Matrix> getSubtables() {
@@ -67,7 +63,6 @@ public class MatrixFixedSizeObjectSubtableGenerator implements SubtableGenerator
         return resultBuilder.build();
 
     }
-
 
     private BitSet drawObjects(int numberOfObjects, int sizeOfSubtable) {
 

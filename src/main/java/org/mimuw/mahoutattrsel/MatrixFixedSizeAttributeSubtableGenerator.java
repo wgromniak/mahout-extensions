@@ -12,7 +12,7 @@ import java.util.Random;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class MatrixFixedSizeAttributeSubtableGenerator implements SubtableGenerator<Matrix> {
+public final class MatrixFixedSizeAttributeSubtableGenerator implements SubtableGenerator<Matrix> {
 
     private final Random random;
     private final int numberOfSubtables;
@@ -21,27 +21,23 @@ public class MatrixFixedSizeAttributeSubtableGenerator implements SubtableGenera
     private final Matrix dataTable;
 
 
-    public MatrixFixedSizeAttributeSubtableGenerator(Random random, int numberOfSubtables, int subTableSize,
-                                                     Matrix dataTable) throws IllegalArgumentException {
+    public MatrixFixedSizeAttributeSubtableGenerator(Random random, int numberOfSubtables, int subtableSize,
+                                                     Matrix dataTable) {
 
         checkArgument(numberOfSubtables > 0);
-        checkArgument(subTableSize > 0);
+        checkArgument(subtableSize > 0);
+        checkArgument(subtableSize < dataTable.columnSize());
 
         this.random = checkNotNull(random);
         this.numberOfSubtables = numberOfSubtables;
-        this.subTableSize = subTableSize;
+        this.subTableSize = subtableSize;
         this.dataTable = checkNotNull(dataTable);
-
-        if (subTableSize > dataTable.columnSize()) {
-            throw new IllegalArgumentException();
-        }
 
     }
 
-
     public List<Matrix> getSubtables() {
 
-        Matrix withOutDecision = dataTable.transpose().clone();
+        Matrix withOutDecision = dataTable.transpose();
 
         ImmutableList.Builder<Matrix> resultBuilder = ImmutableList.builder();
 
@@ -51,7 +47,7 @@ public class MatrixFixedSizeAttributeSubtableGenerator implements SubtableGenera
 
             BitSet selectedObjects = drawAttribute(numberOfAttributes, subTableSize);
 
-            Matrix subtable = new DenseMatrix(subTableSize, withOutDecision.columnSize());
+            Matrix subtable = new DenseMatrix(subTableSize + 1 , withOutDecision.columnSize());
 
             int numOfRow = 0;
 
@@ -64,8 +60,12 @@ public class MatrixFixedSizeAttributeSubtableGenerator implements SubtableGenera
                 }
             }
 
-            subtable = subtable.transpose().clone();
+            subtable.assignRow(numOfRow, withOutDecision.viewRow(withOutDecision.rowSize() - 1).clone()  );
+
+            subtable = subtable.transpose();
+
             resultBuilder.add(subtable);
+
         }
 
         return resultBuilder.build();
