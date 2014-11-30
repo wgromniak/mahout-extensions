@@ -8,5 +8,5 @@ import rseslib.structure.table.DoubleDataTable;
  */
 public interface RsesConverter<T> {
 
-    DoubleDataTable convert(T decisionTable);
+    DoubleDataTable convert(T dataTable);
 }
