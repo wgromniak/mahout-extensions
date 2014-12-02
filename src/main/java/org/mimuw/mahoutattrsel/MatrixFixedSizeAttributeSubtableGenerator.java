@@ -16,7 +16,7 @@ public final class MatrixFixedSizeAttributeSubtableGenerator implements Subtable
 
     private final Random random;
     private final int numberOfSubtables;
-    private final int subTableSize;
+    private final int subtableSize;
 
     private final Matrix dataTable;
 
@@ -30,24 +30,24 @@ public final class MatrixFixedSizeAttributeSubtableGenerator implements Subtable
 
         this.random = checkNotNull(random);
         this.numberOfSubtables = numberOfSubtables;
-        this.subTableSize = subtableSize;
+        this.subtableSize = subtableSize;
         this.dataTable = checkNotNull(dataTable);
 
     }
 
     public List<Matrix> getSubtables() {
 
-        Matrix withOutDecision = dataTable.transpose();
+        Matrix dataTableTranspose = dataTable.transpose();
 
         ImmutableList.Builder<Matrix> resultBuilder = ImmutableList.builder();
 
-        int numberOfAttributes = withOutDecision.rowSize() - 1;
+        int numberOfAttributes = dataTableTranspose.rowSize() - 1;
 
         for (int i = 0; i < numberOfSubtables; i++) {
 
-            BitSet selectedObjects = drawAttribute(numberOfAttributes, subTableSize);
+            BitSet selectedObjects = drawAttribute(numberOfAttributes, subtableSize);
 
-            Matrix subtable = new DenseMatrix(subTableSize + 1 , withOutDecision.columnSize());
+            Matrix subtable = new DenseMatrix(subtableSize + 1, dataTableTranspose.columnSize());
 
             int numOfRow = 0;
 
@@ -55,12 +55,12 @@ public final class MatrixFixedSizeAttributeSubtableGenerator implements Subtable
 
                 if (selectedObjects.get(rowNum)) {
 
-                    subtable.assignRow(numOfRow, withOutDecision.viewRow(rowNum).clone());
+                    subtable.assignRow(numOfRow, dataTableTranspose.viewRow(rowNum).clone());
                     numOfRow++;
                 }
             }
 
-            subtable.assignRow(numOfRow, withOutDecision.viewRow(withOutDecision.rowSize() - 1).clone()  );
+            subtable.assignRow(numOfRow, dataTableTranspose.viewRow(dataTableTranspose.rowSize() - 1).clone());
 
             subtable = subtable.transpose();
 

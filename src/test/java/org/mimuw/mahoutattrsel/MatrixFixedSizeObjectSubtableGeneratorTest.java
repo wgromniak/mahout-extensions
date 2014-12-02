@@ -15,7 +15,7 @@ public class MatrixFixedSizeObjectSubtableGeneratorTest {
 
 
     @Test
-    public void dumyTestgetSubtables() throws Exception {
+    public void dumyTestGetSubtables() throws Exception {
         MatrixFixedSizeObjectSubtableGenerator matrix = new MatrixFixedSizeObjectSubtableGenerator(new Random(), 1, 2,
                 new DenseMatrix(new double[][]{{1, 2, 3}, {7, 6, 5}}));
 
@@ -44,7 +44,7 @@ public class MatrixFixedSizeObjectSubtableGeneratorTest {
     }
 
     @Test
-    public void testMockitogetSubtables() throws Exception {
+    public void testGetSubtablesWithStubbedRandom() throws Exception {
 
         Random random = mock(Random.class);
 
@@ -61,7 +61,7 @@ public class MatrixFixedSizeObjectSubtableGeneratorTest {
     }
 
     @Test
-    public void testTwoMockitogetSubtables() throws Exception {
+    public void testOneSubtableWithThreeObjectsPredictableRandom() throws Exception {
 
         Random random = mock(Random.class);
 
@@ -76,7 +76,7 @@ public class MatrixFixedSizeObjectSubtableGeneratorTest {
     }
 
     @Test
-    public void testThreeMockitogetSubtables() throws Exception {
+    public void testThreeSubtableWithFourObjectsPredictableRandom() throws Exception {
 
         Random random = mock(Random.class);
 
@@ -97,7 +97,7 @@ public class MatrixFixedSizeObjectSubtableGeneratorTest {
     }
 
     @Test
-    public void testOneDimensionalgetSubtable() throws Exception {
+    public void testOneDimensionalGetSubtable() throws Exception {
 
         Random random = mock(Random.class);
 

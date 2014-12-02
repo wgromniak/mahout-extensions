@@ -43,7 +43,7 @@ public class MatrixFixedSizeAttributeSubtableGeneratorTest {
     }
 
     @Test
-    public void testTwogetSubtables() throws Exception {
+    public void testTwoGetSubtables() throws Exception {
 
         Random random = mock(Random.class);
 
