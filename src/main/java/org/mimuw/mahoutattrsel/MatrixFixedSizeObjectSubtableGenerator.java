@@ -11,7 +11,8 @@ import java.util.Random;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-public final class MatrixFixedSizeObjectSubtableGenerator extends AbstractSubtableGenerator implements SubtableGenerator<Matrix> {
+public final class MatrixFixedSizeObjectSubtableGenerator extends AbstractMatrixFixedSizeSubtableGenerator
+        implements SubtableGenerator<Matrix> {
 
 
     public MatrixFixedSizeObjectSubtableGenerator(Random random, int numberOfSubtables, int subtableSize,

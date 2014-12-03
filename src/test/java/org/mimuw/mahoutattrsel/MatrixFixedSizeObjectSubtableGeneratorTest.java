@@ -13,21 +13,6 @@ import static org.mockito.Mockito.when;
 
 public class MatrixFixedSizeObjectSubtableGeneratorTest {
 
-
-    @Test
-    public void dumyTestGetSubtables() throws Exception {
-        MatrixFixedSizeObjectSubtableGenerator matrix = new MatrixFixedSizeObjectSubtableGenerator(new Random(), 1, 2,
-                new DenseMatrix(new double[][]{{1, 2, 3}, {7, 6, 5}}));
-
-        List<Matrix> listOfSubtables = matrix.getSubtables();
-
-        MatrixAssert.assertThat(listOfSubtables.get(0)).isEqualTo(new DenseMatrix(
-                new double[][]{{1, 2, 3}, {7, 6, 5}}));
-
-
-    }
-
-
     @Test
     public void testSimple() throws Exception {
 
