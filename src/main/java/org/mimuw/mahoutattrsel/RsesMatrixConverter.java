@@ -60,7 +60,7 @@ public final class RsesMatrixConverter implements RsesConverter<Matrix> {
         if (colBindings == null) {
             colBindingsBiMap = Optional.absent();
         } else {
-            colBindingsBiMap = Optional.of(ImmutableBiMap.copyOf(colBindings));
+            colBindingsBiMap = Optional.of(ImmutableBiMap.copyOf(colBindings)); // TODO: will throw if inverse map is ambiguous
         }
 
         Attribute[] attributes = new Attribute[numberOfAttributes];

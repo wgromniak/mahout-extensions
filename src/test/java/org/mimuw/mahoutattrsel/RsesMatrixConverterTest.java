@@ -82,6 +82,26 @@ public class RsesMatrixConverterTest {
     }
 
     @Test
+    public void testConversionDecisionOnly
+            () throws Exception {
+
+        Matrix mat = new DenseMatrix(new double[][]{{1}, {0}, {3}});
+
+        RsesConverter<Matrix> converter = new RsesMatrixConverter();
+
+        DoubleDataTable doubleDataTable = converter.convert(mat);
+
+        DoubleDataTableAssert.assertThat(doubleDataTable)
+                .hasAttributeNames("decision")
+                .hasAttributeTypes(Attribute.Type.decision)
+                .hasAttributeValueSets(Attribute.ValueSet.nominal)
+                .hasRow(0).whichContainsExactly(1)
+                .hasRow(1).whichContainsExactly(0)
+                .hasRow(2).whichContainsExactly(3)
+                .hasNoRow(3);
+    }
+
+    @Test
     public void shouldThrowOnNegativeDecision() throws Exception {
 
         Matrix mat = new DenseMatrix(new double[][]{{1, -1}});
@@ -92,7 +112,7 @@ public class RsesMatrixConverterTest {
 
         assertThat(caughtException())
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Negative decision value: -1");
+                .hasMessage("Negative decision value: -1.0");
     }
 
     @Test
