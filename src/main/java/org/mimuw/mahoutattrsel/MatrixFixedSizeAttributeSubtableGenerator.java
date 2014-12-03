@@ -16,7 +16,7 @@ public final class MatrixFixedSizeAttributeSubtableGenerator extends AbstractSub
     public MatrixFixedSizeAttributeSubtableGenerator(Random random, int numberOfSubtables, int subtableSize,
                                                      Matrix dataTable) {
 
-        super(random,numberOfSubtables,subtableSize,dataTable);
+        super(random, numberOfSubtables, subtableSize, dataTable);
         checkArgument(subtableSize < dataTable.columnSize());
     }
 
