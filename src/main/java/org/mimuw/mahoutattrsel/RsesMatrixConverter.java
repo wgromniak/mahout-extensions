@@ -16,12 +16,19 @@ import rseslib.structure.data.DoubleDataObject;
 import rseslib.structure.table.ArrayListDoubleDataTable;
 import rseslib.structure.table.DoubleDataTable;
 
-import java.util.*;
+import java.util.Map;
 
 /**
- * TODO: comment
+ * @inheritDoc
  *
- * This implementation does not allow missing values. // TODO: is it what we want?
+ * This implementation takes a data table in {@link Matrix} format and converts it to {@link ArrayListDoubleDataTable}.
+ * The output data table contains an {@link ArrayHeader} with {@link Attribute}s inferred from the original table.
+ * If the original table has column bindings the attributes are named after theses binding; if not, the attributes are
+ * named "attribute_i" where i is the attribute's number and the decision is named "decision". The last column is
+ * assumed to be a decision attribute. Rows are assumed to represent consecutive objects and are stored into
+ * {@link DoubleDataObject}s.
+ *
+ * <p>This implementation does not allow missing values.
  */
 public final class RsesMatrixConverter implements RsesConverter<Matrix> {
 
