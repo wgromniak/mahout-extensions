@@ -10,27 +10,15 @@ import java.util.List;
 import java.util.Random;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
-public final class MatrixFixedSizeObjectSubtableGenerator implements SubtableGenerator<Matrix> {
+public final class MatrixFixedSizeObjectSubtableGenerator extends AbstractSubtableGenerator implements SubtableGenerator<Matrix> {
 
-    private final Random random;
-    private final int numberOfSubtables;
-    private final int subtableSize;
-
-    private final Matrix dataTable;
 
     public MatrixFixedSizeObjectSubtableGenerator(Random random, int numberOfSubtables, int subtableSize,
                                                   Matrix dataTable) {
 
-        checkArgument(numberOfSubtables > 0);
-        checkArgument(subtableSize > 0);
+        super(random, numberOfSubtables, subtableSize, dataTable);
         checkArgument(subtableSize <= dataTable.rowSize());
-
-        this.random = checkNotNull(random);
-        this.numberOfSubtables = numberOfSubtables;
-        this.subtableSize = subtableSize;
-        this.dataTable = checkNotNull(dataTable);
 
     }
 
@@ -42,7 +30,7 @@ public final class MatrixFixedSizeObjectSubtableGenerator implements SubtableGen
 
         for (int i = 0; i < numberOfSubtables; i++) {
 
-            BitSet selectedObjects = drawObjects(numberOfObjects, subtableSize);
+            BitSet selectedObjects = draw(numberOfObjects, subtableSize);
 
             Matrix subtable = new DenseMatrix(subtableSize, dataTable.columnSize());
 
@@ -61,24 +49,5 @@ public final class MatrixFixedSizeObjectSubtableGenerator implements SubtableGen
         }
 
         return resultBuilder.build();
-
-    }
-
-    private BitSet drawObjects(int numberOfObjects, int sizeOfSubtable) {
-
-        BitSet selected = new BitSet(numberOfObjects);
-
-        while (sizeOfSubtable > 0) {
-
-            int next = random.nextInt(numberOfObjects);
-
-            if (!selected.get(next)) {
-
-                selected.set(next);
-                sizeOfSubtable--;
-            }
-        }
-
-        return selected;
     }
 }

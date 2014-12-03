@@ -11,4 +11,6 @@ public interface SubtableGenerator<T> {
 
     public List<Matrix> getSubtables();
 
+    //BitSet draw(int numberOfAttribute, int subtableSize);
+
 }
