@@ -2,6 +2,7 @@ package org.mimuw.mahoutattrsel;
 
 
 import org.apache.mahout.math.Matrix;
+import org.mimuw.mahoutattrsel.api.AbstractMatrix;
 
 import java.util.BitSet;
 import java.util.Random;
