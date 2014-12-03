@@ -61,6 +61,47 @@ public class MatrixFixedSizeAttributeSubtableGeneratorTest {
         MatrixAssert.assertThat(lisOfSubtables.get(2)).isEqualTo(
                 new DenseMatrix(new double[][]{{1, 2, 6}, {3, 4, 4}, {5, 6, 9}, {7, 6, 6}}));
     }
+
+    @Test
+    public void testThreeSubtablesTwoAttributesSeed() throws Exception {
+
+        Random random = new Random(100);
+
+        MatrixFixedSizeAttributeSubtableGenerator matrixUnderTest = new MatrixFixedSizeAttributeSubtableGenerator(
+                random, 3, 2, new DenseMatrix(new double[][]{{1, 2, 3, 4, 5}, {4, 4, 5, 1, 3}, {5, 4, 2, 1, 3},
+                {4, 2, 1, 3, 4}, {5, 6, 7, 4, 1}, {4, 44, 21, 2, 3}}));
+
+        List<Matrix> listOfSubtables = matrixUnderTest.getSubtables();
+
+        MatrixAssert.assertThat(listOfSubtables.get(0)).isEqualTo(new DenseMatrix(
+                new double[][]{{1, 3, 5}, {4, 5, 3}, {5, 2, 3}, {4, 1, 4}, {5, 7, 1}, {4, 21, 3}}));
+
+        MatrixAssert.assertThat(listOfSubtables.get(1)).isEqualTo(new DenseMatrix(
+                new double[][]{{1, 3, 5}, {4, 5, 3}, {5, 2, 3}, {4, 1, 4}, {5, 7, 1}, {4, 21, 3}}));
+
+        MatrixAssert.assertThat(listOfSubtables.get(2)).isEqualTo(new DenseMatrix(
+                new double[][]{{2, 4, 5}, {4, 1, 3}, {4, 1, 3}, {2, 3, 4}, {6, 4, 1}, {44, 2, 3}}));
+    }
+
+    @Test
+    public void testTwoSubtablesThreeAttributesSeed() throws Exception {
+
+        Random random = new Random(44);
+
+        MatrixFixedSizeAttributeSubtableGenerator matrixUnderTest = new MatrixFixedSizeAttributeSubtableGenerator(
+                random, 2, 3, new DenseMatrix(new double[][]{{1, 2, 3, 4, 5}, {4, 4, 5, 1, 3}, {5, 4, 2, 1, 3},
+                {4, 2, 1, 3, 4}, {5, 6, 7, 4, 1}, {4, 44, 21, 2, 3}}));
+
+        List<Matrix> listOfSubtables = matrixUnderTest.getSubtables();
+
+        MatrixAssert.assertThat(listOfSubtables.get(0)).isEqualTo(new DenseMatrix(new double[][]
+                {{2, 3, 4, 5}, {4, 5, 1, 3}, {4, 2, 1, 3},
+                        {2, 1, 3, 4}, {6, 7, 4, 1}, {44, 21, 2, 3}}));
+
+        MatrixAssert.assertThat(listOfSubtables.get(1)).isEqualTo(new DenseMatrix(new double[][]
+                {{1, 3, 4, 5}, {4, 5, 1, 3}, {5, 2, 1, 3}, {4, 1, 3, 4}, {5, 7, 4, 1}, {4, 21, 2, 3} }));
+
+    }
 }
 
 
