@@ -6,6 +6,7 @@ import org.testng.annotations.Test;
 import java.util.BitSet;
 import java.util.Random;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.testng.Assert.assertEquals;
 
 public class AbstractMatrixFixedSizeSubtableGeneratorTest {
@@ -15,7 +16,7 @@ public class AbstractMatrixFixedSizeSubtableGeneratorTest {
 
         Random random = new Random(100);
 
-        BitSet bitSetUnderTests = new BitSet();
+        BitSet bitSetUnderTests;
 
         MatrixFixedSizeAttributeSubtableGenerator matrixUnderTest = new MatrixFixedSizeAttributeSubtableGenerator(
                 random, 1, 1, new DenseMatrix(new double[][]{{0, 0}}));
@@ -36,7 +37,7 @@ public class AbstractMatrixFixedSizeSubtableGeneratorTest {
 
         Random random = new Random(150);
 
-        BitSet bitSetUnderTests = new BitSet();
+        BitSet bitSetUnderTests;
 
         MatrixFixedSizeAttributeSubtableGenerator matrixUnderTest = new MatrixFixedSizeAttributeSubtableGenerator(
                 random, 1, 1, new DenseMatrix(new double[][]{{0, 0}}));
@@ -58,7 +59,7 @@ public class AbstractMatrixFixedSizeSubtableGeneratorTest {
 
         Random random = new Random(150);
 
-        BitSet bitSetUnderTests = new BitSet();
+        BitSet bitSetUnderTests;
 
         MatrixFixedSizeAttributeSubtableGenerator matrixUnderTest = new MatrixFixedSizeAttributeSubtableGenerator(
                 random, 1, 1, new DenseMatrix(new double[][]{{0, 0}}));
@@ -71,6 +72,7 @@ public class AbstractMatrixFixedSizeSubtableGeneratorTest {
         expected.set(159);
 
         assertEquals(bitSetUnderTests, expected);
+        assertThat(bitSetUnderTests).isEqualTo(expected);
 
     }
 
@@ -79,7 +81,7 @@ public class AbstractMatrixFixedSizeSubtableGeneratorTest {
 
         Random random = new Random(150);
 
-        BitSet bitSetUnderTests = new BitSet();
+        BitSet bitSetUnderTests;
 
         MatrixFixedSizeAttributeSubtableGenerator matrixUnderTest = new MatrixFixedSizeAttributeSubtableGenerator(
                 random, 1, 1, new DenseMatrix(new double[][]{{0, 0}}));

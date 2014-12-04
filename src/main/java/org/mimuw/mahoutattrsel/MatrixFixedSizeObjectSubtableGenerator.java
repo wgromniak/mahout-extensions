@@ -23,6 +23,7 @@ public final class MatrixFixedSizeObjectSubtableGenerator extends AbstractMatrix
 
     }
 
+    @Override
     public List<Matrix> getSubtables() {
 
         ImmutableList.Builder<Matrix> resultBuilder = ImmutableList.builder();

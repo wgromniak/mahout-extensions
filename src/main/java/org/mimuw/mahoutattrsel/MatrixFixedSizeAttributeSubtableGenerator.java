@@ -21,6 +21,7 @@ public final class MatrixFixedSizeAttributeSubtableGenerator extends AbstractMat
         checkArgument(subtableSize < dataTable.columnSize());
     }
 
+    @Override
     public List<Matrix> getSubtables() {
 
         Matrix dataTableTranspose = dataTable.transpose();
