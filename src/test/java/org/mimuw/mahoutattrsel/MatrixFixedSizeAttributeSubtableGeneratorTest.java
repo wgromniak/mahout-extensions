@@ -111,6 +111,35 @@ public class MatrixFixedSizeAttributeSubtableGeneratorTest {
                 {{1, 3, 4, 5}, {4, 5, 1, 3}, {5, 2, 1, 3}, {4, 1, 3, 4}, {5, 7, 4, 1}, {4, 21, 2, 3}}));
 
     }
+
+    @Test
+    public void testName() throws Exception {
+
+        Random random = new Random(175);
+
+        MatrixFixedSizeAttributeSubtableGenerator matrixUnderTests = new MatrixFixedSizeAttributeSubtableGenerator(
+                random, 5, 1, new DenseMatrix(new double[][]{{4, 3, 3, 2}, {1, 2, 3, 4}, {5, 4, 3, 2},
+                {4, 3, 2, 1}, {4, 2, 2, 1}, {5, 5, 5, 5}}));
+
+        List<Matrix> listOfSubtables = matrixUnderTests.getSubtables();
+
+        MatrixAssert.assertThat(listOfSubtables.get(0)).isEqualTo(new DenseMatrix(new double[][]
+                {{3, 2}, {2, 4}, {4, 2}, {3, 1}, {2, 1}, {5, 5}}));
+
+        MatrixAssert.assertThat(listOfSubtables.get(1)).isEqualTo(new DenseMatrix(new double[][]
+                {{3, 2}, {3, 4}, {3, 2}, {2, 1}, {2, 1}, {5, 5}}));
+
+        MatrixAssert.assertThat(listOfSubtables.get(2)).isEqualTo(new DenseMatrix(new double[][]
+                {{4, 2}, {1, 4}, {5, 2}, {4, 1}, {4, 1}, {5, 5}}));
+
+        MatrixAssert.assertThat(listOfSubtables.get(3)).isEqualTo(new DenseMatrix(new double[][]
+                {{3, 2}, {2, 4}, {4, 2}, {3, 1}, {2, 1}, {5, 5}}));
+
+        MatrixAssert.assertThat(listOfSubtables.get(4)).isEqualTo(new DenseMatrix(new double[][]
+                {{3, 2}, {2, 4}, {4, 2}, {3, 1}, {2, 1}, {5, 5}}));
+
+
+    }
 }
 
 

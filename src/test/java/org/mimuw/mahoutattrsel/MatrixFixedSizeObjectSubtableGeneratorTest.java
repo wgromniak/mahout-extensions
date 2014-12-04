@@ -96,4 +96,54 @@ public class MatrixFixedSizeObjectSubtableGeneratorTest {
         MatrixAssert.assertThat(listOfSubtables.get(0)).isEqualTo(new DenseMatrix(new double[][]{{1, 2, 3}}));
         MatrixAssert.assertThat(listOfSubtables.get(1)).isEqualTo(new DenseMatrix(new double[][]{{4, 5, 6}}));
     }
+
+    @Test
+    public void testThreeSubtablesTwoObjectSeed() throws Exception {
+
+        Random random = new Random(177);
+
+        MatrixFixedSizeObjectSubtableGenerator matrix = new MatrixFixedSizeObjectSubtableGenerator(
+                random, 3, 2, new DenseMatrix(new double[][]{{4, 3, 3, 2}, {1, 2, 3, 4}, {5, 4, 3, 2},
+                {4, 3, 2, 1}, {4, 2, 2, 1}, {5, 5, 5, 5}}));
+
+        List<Matrix> listOfSubtables = matrix.getSubtables();
+
+        MatrixAssert.assertThat(listOfSubtables.get(0)).isEqualTo(
+                new DenseMatrix(new double[][]{{4, 3, 3, 2}, {1, 2, 3, 4}}));
+
+        MatrixAssert.assertThat(listOfSubtables.get(1)).isEqualTo(
+                new DenseMatrix(new double[][]{{1, 2, 3, 4}, {5, 5, 5, 5}}));
+
+        MatrixAssert.assertThat(listOfSubtables.get(2)).isEqualTo(
+                new DenseMatrix(new double[][]{{4, 3, 3, 2}, {1, 2, 3, 4}}));
+
+    }
+
+    @Test
+    public void testOneObjectFiveSubtablesSeed() throws Exception {
+
+        Random random = new Random(199);
+
+        MatrixFixedSizeObjectSubtableGenerator matrix = new MatrixFixedSizeObjectSubtableGenerator(
+                random, 5, 1, new DenseMatrix(new double[][]{{4, 3, 3, 2}, {1, 2, 3, 4}, {5, 4, 3, 2},
+                {4, 3, 2, 1}, {4, 2, 2, 1}, {5, 5, 5, 5}}));
+
+        List<Matrix> listOfSubtables = matrix.getSubtables();
+
+        MatrixAssert.assertThat(listOfSubtables.get(0)).isEqualTo(
+                new DenseMatrix(new double[][]{{5, 5, 5, 5}}));
+
+        MatrixAssert.assertThat(listOfSubtables.get(1)).isEqualTo(
+                new DenseMatrix(new double[][]{{5, 5, 5, 5}}));
+
+        MatrixAssert.assertThat(listOfSubtables.get(3)).isEqualTo(
+                new DenseMatrix(new double[][]{{4, 3, 3, 2}}));
+
+        MatrixAssert.assertThat(listOfSubtables.get(4)).isEqualTo(
+                new DenseMatrix(new double[][]{{5, 4, 3, 2}}));
+
+        MatrixAssert.assertThat(listOfSubtables.get(2)).isEqualTo(
+                new DenseMatrix(new double[][]{{4, 3, 2, 1}}));
+
+    }
 }
