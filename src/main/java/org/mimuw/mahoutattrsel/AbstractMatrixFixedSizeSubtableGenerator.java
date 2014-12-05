@@ -35,7 +35,6 @@ abstract class AbstractMatrixFixedSizeSubtableGenerator implements SubtableGener
 
         BitSet selected = new BitSet(subtableSize);
 
-        int constSubtableSize = subtableSize;
         int numberOfIteration = numberOfSamples - subtableSize;
 
         if (numberOfSamples < 2 * subtableSize) {
@@ -54,6 +53,7 @@ abstract class AbstractMatrixFixedSizeSubtableGenerator implements SubtableGener
             selected.flip(0, numberOfSamples);
 
             return selected;
+
         } else {
 
             while (subtableSize > 0) {

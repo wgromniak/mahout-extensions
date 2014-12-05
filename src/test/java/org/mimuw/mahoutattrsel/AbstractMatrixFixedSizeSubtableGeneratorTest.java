@@ -7,7 +7,6 @@ import java.util.BitSet;
 import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.testng.Assert.assertEquals;
 
 public class AbstractMatrixFixedSizeSubtableGeneratorTest {
 
@@ -28,7 +27,8 @@ public class AbstractMatrixFixedSizeSubtableGeneratorTest {
         for (int i = 0; i < 10; i++) {
             expected.set(i);
         }
-        assertEquals(bitSetUnderTests, expected);
+
+        assertThat(bitSetUnderTests).isEqualTo(expected);
 
     }
 
@@ -50,7 +50,7 @@ public class AbstractMatrixFixedSizeSubtableGeneratorTest {
         expected.set(9);
         expected.set(7);
 
-        assertEquals(bitSetUnderTests, expected);
+        assertThat(bitSetUnderTests).isEqualTo(expected);
 
     }
 
@@ -71,13 +71,12 @@ public class AbstractMatrixFixedSizeSubtableGeneratorTest {
         expected.set(323);
         expected.set(159);
 
-        assertEquals(bitSetUnderTests, expected);
         assertThat(bitSetUnderTests).isEqualTo(expected);
 
     }
 
     @Test
-    public void testName() throws Exception {
+    public void testSevenFromBigSet() throws Exception {
 
         Random random = new Random(150);
 
@@ -98,7 +97,7 @@ public class AbstractMatrixFixedSizeSubtableGeneratorTest {
         expected.set(74);
         expected.set(362);
 
-        assertEquals(bitSetUnderTests, expected);
+        assertThat(bitSetUnderTests).isEqualTo(expected);
 
     }
 
@@ -114,7 +113,6 @@ public class AbstractMatrixFixedSizeSubtableGeneratorTest {
 
         bitSetUnderTests = matrixUnderTest.draw(10, 1);
 
-        System.out.println(bitSetUnderTests);
         BitSet expected = new BitSet();
 
         expected.set(5);
