@@ -26,9 +26,9 @@ public class RsesMatrixConverterTest {
         DoubleDataTableAssert.assertThat(doubleDataTable)
                 .hasAttributeNames("attribute_0", "attribute_1", "attribute_2", "decision")
                 .hasAttributeTypes(Attribute.Type.conditional, Attribute.Type.conditional, Attribute.Type.conditional,
-                                   Attribute.Type.decision)
+                        Attribute.Type.decision)
                 .hasAttributeValueSets(Attribute.ValueSet.numeric, Attribute.ValueSet.numeric,
-                                       Attribute.ValueSet.numeric, Attribute.ValueSet.nominal)
+                        Attribute.ValueSet.numeric, Attribute.ValueSet.nominal)
                 .hasRow(0).whichContainsExactly(1.2, 2, 3.14159265, 1)
                 .hasRow(1).whichContainsExactly(4, 5.31, 6, 0)
                 .hasRow(2).whichContainsExactly(7, 8, 9, 3)
@@ -49,9 +49,9 @@ public class RsesMatrixConverterTest {
         DoubleDataTableAssert.assertThat(doubleDataTable)
                 .hasAttributeNames("a0", "a1", "a2", "d")
                 .hasAttributeTypes(Attribute.Type.conditional, Attribute.Type.conditional, Attribute.Type.conditional,
-                                   Attribute.Type.decision)
+                        Attribute.Type.decision)
                 .hasAttributeValueSets(Attribute.ValueSet.numeric, Attribute.ValueSet.numeric,
-                                       Attribute.ValueSet.numeric, Attribute.ValueSet.nominal)
+                        Attribute.ValueSet.numeric, Attribute.ValueSet.nominal)
                 .hasRow(0).whichContainsExactly(1.2, 2, 3.14159265, 1)
                 .hasRow(1).whichContainsExactly(4, 5.31, 6, 0)
                 .hasRow(2).whichContainsExactly(7, 8, 9, 3)
@@ -72,9 +72,9 @@ public class RsesMatrixConverterTest {
         DoubleDataTableAssert.assertThat(doubleDataTable)
                 .hasAttributeNames("a0", "attribute_1", "attribute_2", "d")
                 .hasAttributeTypes(Attribute.Type.conditional, Attribute.Type.conditional, Attribute.Type.conditional,
-                                   Attribute.Type.decision)
+                        Attribute.Type.decision)
                 .hasAttributeValueSets(Attribute.ValueSet.numeric, Attribute.ValueSet.numeric,
-                                       Attribute.ValueSet.numeric, Attribute.ValueSet.nominal)
+                        Attribute.ValueSet.numeric, Attribute.ValueSet.nominal)
                 .hasRow(0).whichContainsExactly(1.2, 2, 3.14159265, 1)
                 .hasRow(1).whichContainsExactly(4, 5.31, 6, 0)
                 .hasRow(2).whichContainsExactly(7, 8, 9, 3)

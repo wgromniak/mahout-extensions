@@ -50,7 +50,7 @@ public class MatrixFixedSizeObjectSubtableGeneratorTest {
 
         Random random = mock(Random.class);
 
-        when(random.nextInt(anyInt())).thenReturn(0, 1, 2);
+        when(random.nextInt(anyInt())).thenReturn(3, 4);
         MatrixFixedSizeObjectSubtableGenerator matrixUnderTest = new MatrixFixedSizeObjectSubtableGenerator(
                 random, 1, 3, new DenseMatrix(new double[][]{{1, 2}, {3, 4}, {5, 6}, {7, 6}, {8, 9}}));
 
@@ -65,7 +65,7 @@ public class MatrixFixedSizeObjectSubtableGeneratorTest {
 
         Random random = mock(Random.class);
 
-        when(random.nextInt(anyInt())).thenReturn(0, 1, 2, 3, 0, 1, 2, 4, 4, 2, 1, 0);
+        when(random.nextInt(anyInt())).thenReturn(4, 3, 3, 3, 0, 1, 2, 4, 4, 2, 1, 0);
         MatrixFixedSizeObjectSubtableGenerator matrixUnderTest = new MatrixFixedSizeObjectSubtableGenerator(
                 random, 3, 4, new DenseMatrix(new double[][]{{1, 2}, {3, 4}, {5, 6}, {7, 6}, {8, 9}}));
 

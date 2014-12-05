@@ -64,7 +64,7 @@ public class AbstractMatrixFixedSizeSubtableGeneratorTest {
         MatrixFixedSizeAttributeSubtableGenerator matrixUnderTest = new MatrixFixedSizeAttributeSubtableGenerator(
                 random, 1, 1, new DenseMatrix(new double[][]{{0, 0}}));
 
-        bitSetUnderTests = matrixUnderTest.draw(432,2);
+        bitSetUnderTests = matrixUnderTest.draw(432, 2);
 
         BitSet expected = new BitSet();
 
@@ -86,7 +86,7 @@ public class AbstractMatrixFixedSizeSubtableGeneratorTest {
         MatrixFixedSizeAttributeSubtableGenerator matrixUnderTest = new MatrixFixedSizeAttributeSubtableGenerator(
                 random, 1, 1, new DenseMatrix(new double[][]{{0, 0}}));
 
-        bitSetUnderTests = matrixUnderTest.draw(432,7);
+        bitSetUnderTests = matrixUnderTest.draw(432, 7);
 
         BitSet expected = new BitSet();
 
@@ -99,6 +99,27 @@ public class AbstractMatrixFixedSizeSubtableGeneratorTest {
         expected.set(362);
 
         assertEquals(bitSetUnderTests, expected);
+
+    }
+
+    @Test
+    public void testThreeSamples() throws Exception {
+
+        Random random = new Random(100);
+
+        BitSet bitSetUnderTests;
+
+        MatrixFixedSizeAttributeSubtableGenerator matrixUnderTest = new MatrixFixedSizeAttributeSubtableGenerator(
+                random, 1, 1, new DenseMatrix(new double[][]{{0, 0}}));
+
+        bitSetUnderTests = matrixUnderTest.draw(10, 1);
+
+        System.out.println(bitSetUnderTests);
+        BitSet expected = new BitSet();
+
+        expected.set(5);
+
+        assertThat(bitSetUnderTests).isEqualTo(expected);
 
     }
 }

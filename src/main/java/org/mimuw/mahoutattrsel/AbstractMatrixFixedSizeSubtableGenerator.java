@@ -10,6 +10,7 @@ import java.util.Random;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+
 abstract class AbstractMatrixFixedSizeSubtableGenerator implements SubtableGenerator<Matrix> {
 
     final Random random;
@@ -30,21 +31,44 @@ abstract class AbstractMatrixFixedSizeSubtableGenerator implements SubtableGener
 
     }
 
-    public BitSet draw(int numberOfSamples, int sizeOfSubtable) {
+    public BitSet draw(int numberOfSamples, int subtableSize) {
 
-        BitSet selected = new BitSet(numberOfSamples);
+        BitSet selected = new BitSet(subtableSize);
 
-        while (sizeOfSubtable > 0) {
+        int constSubtableSize = subtableSize;
+        int numberOfIteration = numberOfSamples - subtableSize;
 
-            int next = random.nextInt(numberOfSamples);
+        if (numberOfSamples < 2 * subtableSize) {
 
-            if (!selected.get(next)) {
+            while (numberOfIteration > 0) {
 
-                selected.set(next);
-                sizeOfSubtable--;
+                int next = random.nextInt(numberOfSamples);
+
+                if (!selected.get(next)) {
+
+                    selected.set(next);
+                    numberOfIteration--;
+                }
             }
-        }
 
-        return selected;
+            selected.flip(0, numberOfSamples);
+
+            return selected;
+        } else {
+
+            while (subtableSize > 0) {
+
+                int next = random.nextInt(numberOfSamples);
+
+                if (!selected.get(next)) {
+
+                    selected.set(next);
+                    subtableSize--;
+                }
+            }
+
+            return selected;
+        }
     }
+
 }
