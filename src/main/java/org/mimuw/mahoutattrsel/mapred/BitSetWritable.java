@@ -1,4 +1,4 @@
-package org.mimuw.mahoutattrsel;
+package org.mimuw.mahoutattrsel.mapred;
 
 import com.google.common.base.Objects;
 import org.apache.hadoop.io.Writable;
@@ -17,8 +17,7 @@ public class BitSetWritable implements Writable {
 
     private BitSet set;
 
-    public BitSetWritable() {
-    }
+    public BitSetWritable() {}
 
     public BitSetWritable(BitSet set) {
         this.set = checkNotNull(set);
@@ -53,7 +52,7 @@ public class BitSetWritable implements Writable {
         return w;
     }
 
-    public BitSet getSet() {
+    public BitSet get() {
         return set;
     }
 

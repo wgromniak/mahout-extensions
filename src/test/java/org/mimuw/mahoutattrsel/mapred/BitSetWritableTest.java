@@ -1,4 +1,4 @@
-package org.mimuw.mahoutattrsel;
+package org.mimuw.mahoutattrsel.mapred;
 
 import org.testng.annotations.Test;
 
@@ -28,7 +28,7 @@ public class BitSetWritableTest {
         ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
         DataInput dataIn = new DataInputStream(in);
 
-        BitSet actualSet = BitSetWritable.read(dataIn).getSet();
+        BitSet actualSet = BitSetWritable.read(dataIn).get();
 
         assertThat(actualSet).isEqualTo(expectedSet);
     }
