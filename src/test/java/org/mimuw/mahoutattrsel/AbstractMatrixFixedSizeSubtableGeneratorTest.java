@@ -1,12 +1,14 @@
 package org.mimuw.mahoutattrsel;
 
-import org.apache.mahout.math.DenseMatrix;
+import org.apache.mahout.math.Matrix;
 import org.testng.annotations.Test;
 
 import java.util.BitSet;
+import java.util.List;
 import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 public class AbstractMatrixFixedSizeSubtableGeneratorTest {
 
@@ -17,10 +19,9 @@ public class AbstractMatrixFixedSizeSubtableGeneratorTest {
 
         BitSet bitSetUnderTests;
 
-        MatrixFixedSizeAttributeSubtableGenerator matrixUnderTest = new MatrixFixedSizeAttributeSubtableGenerator(
-                random, 1, 1, new DenseMatrix(new double[][]{{0, 0}}));
+        AbstractMatrixFixedSizeSubtableGenerator generatorUnderTest = new DummyGenerator(random);
 
-        bitSetUnderTests = matrixUnderTest.draw(10, 10);
+        bitSetUnderTests = generatorUnderTest.draw(10, 10);
 
         BitSet expected = new BitSet();
 
@@ -39,10 +40,9 @@ public class AbstractMatrixFixedSizeSubtableGeneratorTest {
 
         BitSet bitSetUnderTests;
 
-        MatrixFixedSizeAttributeSubtableGenerator matrixUnderTest = new MatrixFixedSizeAttributeSubtableGenerator(
-                random, 1, 1, new DenseMatrix(new double[][]{{0, 0}}));
+        AbstractMatrixFixedSizeSubtableGenerator generatorUnderTest = new DummyGenerator(random);
 
-        bitSetUnderTests = matrixUnderTest.draw(10, 3);
+        bitSetUnderTests = generatorUnderTest.draw(10, 3);
 
         BitSet expected = new BitSet();
 
@@ -55,16 +55,15 @@ public class AbstractMatrixFixedSizeSubtableGeneratorTest {
     }
 
     @Test
-    public void tesTwoSampleFromBigSet() throws Exception {
+    public void testTwoSampleFromBigSet() throws Exception {
 
         Random random = new Random(150);
 
         BitSet bitSetUnderTests;
 
-        MatrixFixedSizeAttributeSubtableGenerator matrixUnderTest = new MatrixFixedSizeAttributeSubtableGenerator(
-                random, 1, 1, new DenseMatrix(new double[][]{{0, 0}}));
+        AbstractMatrixFixedSizeSubtableGenerator generatorUnderTest = new DummyGenerator(random);
 
-        bitSetUnderTests = matrixUnderTest.draw(432, 2);
+        bitSetUnderTests = generatorUnderTest.draw(432, 2);
 
         BitSet expected = new BitSet();
 
@@ -82,10 +81,9 @@ public class AbstractMatrixFixedSizeSubtableGeneratorTest {
 
         BitSet bitSetUnderTests;
 
-        MatrixFixedSizeAttributeSubtableGenerator matrixUnderTest = new MatrixFixedSizeAttributeSubtableGenerator(
-                random, 1, 1, new DenseMatrix(new double[][]{{0, 0}}));
+        AbstractMatrixFixedSizeSubtableGenerator generatorUnderTest = new DummyGenerator(random);
 
-        bitSetUnderTests = matrixUnderTest.draw(432, 7);
+        bitSetUnderTests = generatorUnderTest.draw(432, 7);
 
         BitSet expected = new BitSet();
 
@@ -108,10 +106,9 @@ public class AbstractMatrixFixedSizeSubtableGeneratorTest {
 
         BitSet bitSetUnderTests;
 
-        MatrixFixedSizeAttributeSubtableGenerator matrixUnderTest = new MatrixFixedSizeAttributeSubtableGenerator(
-                random, 1, 1, new DenseMatrix(new double[][]{{0, 0}}));
+        AbstractMatrixFixedSizeSubtableGenerator generatorUnderTest = new DummyGenerator(random);
 
-        bitSetUnderTests = matrixUnderTest.draw(10, 1);
+        bitSetUnderTests = generatorUnderTest.draw(10, 1);
 
         BitSet expected = new BitSet();
 
@@ -119,5 +116,17 @@ public class AbstractMatrixFixedSizeSubtableGeneratorTest {
 
         assertThat(bitSetUnderTests).isEqualTo(expected);
 
+    }
+
+    private static final class DummyGenerator extends AbstractMatrixFixedSizeSubtableGenerator {
+
+        private DummyGenerator(Random random) {
+            super(random, 1, 1, mock(Matrix.class));
+        }
+
+        @Override
+        public List<Matrix> getSubtables() {
+            throw new UnsupportedOperationException();
+        }
     }
 }

@@ -31,7 +31,7 @@ abstract class AbstractMatrixFixedSizeSubtableGenerator implements SubtableGener
 
     }
 
-    public BitSet draw(int numberOfSamples, int subtableSize) {
+    public final BitSet draw(int numberOfSamples, int subtableSize) {
 
         BitSet selected = new BitSet(subtableSize);
 

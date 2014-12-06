@@ -12,7 +12,9 @@ import java.util.Random;
 import static com.google.common.base.Preconditions.checkArgument;
 
 /**
- * @inheritDoc This implementation takes four parameters, random, number of subtables(integer) , size of
+ * {@inheritDoc}
+ *
+ * This implementation takes four parameters, random, number of subtables(integer) , size of
  * subtables (integer),data table (Matrix) and generate subtables of Matrix.This implementation returns List of Matrix.
  * This implementation generate (numberOfsubtables) subtables and each of them  have got (subtableSize + 1 ) columns
  * where the last column is "decision" column and rows as many as input matrix from data table matrix.

@@ -19,7 +19,7 @@ import rseslib.structure.table.DoubleDataTable;
 import java.util.Map;
 
 /**
- * @inheritDoc
+ * {@inheritDoc}
  *
  * This implementation takes a data table in {@link Matrix} format and converts it to {@link ArrayListDoubleDataTable}.
  * The output data table contains an {@link ArrayHeader} with {@link Attribute}s inferred from the original table.
