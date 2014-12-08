@@ -22,7 +22,7 @@ import static com.google.common.base.Preconditions.checkState;
  * {@link InputFormat} that splits given {@link Matrix} data table into subtables. All the processing is in-memory, so
  * the input table has to fit into single-workstation's memory.
  */
-public final class MatrixSubtableInputFormat extends InputFormat<IntWritable, MatrixWritable> {
+final class MatrixSubtableInputFormat extends InputFormat<IntWritable, MatrixWritable> {
 
     public static final String SUBTABLE_GENERATOR_TYPE = "mahout-extensions.attrsel.subtable.generator";
     public static final String NO_OF_SUBTABLES = "mahout-extensions.attrsel.number.of.subtables";
