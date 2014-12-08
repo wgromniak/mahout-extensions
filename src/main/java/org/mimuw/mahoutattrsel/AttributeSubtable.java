@@ -37,7 +37,7 @@ public final class AttributeSubtable implements Subtable {
 
     @Override
     public boolean hasAllAttributes() {
-        return false;
+        return table.columnSize() - 1 == attributes.size();
     }
 
     @Override
