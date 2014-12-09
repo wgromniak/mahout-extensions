@@ -32,6 +32,14 @@ import java.util.Map;
  */
 public final class RsesMatrixConverter implements RsesConverter<Matrix> {
 
+    private static final RsesMatrixConverter INSTANCE = new RsesMatrixConverter();
+
+    private RsesMatrixConverter() {}
+
+    public static RsesMatrixConverter getInstance() {
+        return INSTANCE;
+    }
+
     @Override
     public DoubleDataTable convert(Matrix dataTable) {
 
