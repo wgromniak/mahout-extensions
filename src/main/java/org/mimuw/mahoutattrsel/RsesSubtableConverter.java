@@ -13,6 +13,10 @@ public final class RsesSubtableConverter implements RsesConverter<Subtable> {
 
     private RsesSubtableConverter() {}
 
+    public static RsesSubtableConverter getInstance() {
+        return INSTANCE;
+    }
+
     @Override
     public DoubleDataTable convert(Subtable dataTable) {
         return RsesMatrixConverter.getInstance().convert(dataTable.getTable());
