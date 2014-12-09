@@ -30,6 +30,16 @@ public interface Subtable {
     boolean hasAllAttributes();
 
     /**
+     * @return number of attributes in this subtable
+     */
+    int getNumberOfAttributes();
+
+    /**
+     * @return an {@link Iterable} over the attributes in this subtable
+     */
+    Iterable<Integer> iterateAttributes();
+
+    /**
      * @return the number of attributes the original table had (decision excluded)
      */
     int getOriginalNumberOfAttributes();
