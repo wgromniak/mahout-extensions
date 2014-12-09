@@ -1,15 +1,15 @@
 package org.mimuw.mahoutattrsel.mapred;
 
 import org.apache.hadoop.io.DoubleWritable;
-import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapreduce.Reducer;
 
 import java.io.IOException;
 
 /**
- * Input - ( attribute name, [it's reducts] ), output - ( attribute name, it's score ).
+ * Input - ( attribute, [it's reducts] ), output - ( attribute, it's score ).
  */
-public final class AttrSelReducer extends Reducer<Text, BitSetWritable, Text, DoubleWritable> {
+public final class AttrSelReducer extends Reducer<IntWritable, IntListWritable, IntWritable, DoubleWritable> {
 
     @Override
     protected void setup(Context context) throws IOException, InterruptedException {
@@ -17,7 +17,7 @@ public final class AttrSelReducer extends Reducer<Text, BitSetWritable, Text, Do
     }
 
     @Override
-    protected void reduce(Text key, Iterable<BitSetWritable> values, Context context)
+    protected void reduce(IntWritable key, Iterable<IntListWritable> values, Context context)
             throws IOException, InterruptedException {
         // TODO
     }
