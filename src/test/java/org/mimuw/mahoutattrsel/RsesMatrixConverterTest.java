@@ -19,7 +19,7 @@ public class RsesMatrixConverterTest {
 
         Matrix mat = new DenseMatrix(new double[][]{{1.2, 2, 3.14159265, 1}, {4, 5.31, 6, 0}, {7, 8, 9, 3}});
 
-        RsesConverter<Matrix> converter = new RsesMatrixConverter();
+        RsesConverter<Matrix> converter =  RsesMatrixConverter.getInstance();
 
         DoubleDataTable doubleDataTable = converter.convert(mat);
 
@@ -42,7 +42,7 @@ public class RsesMatrixConverterTest {
 
         mat.setColumnLabelBindings(ImmutableMap.of("a0", 0, "a1", 1, "a2", 2, "d", 3));
 
-        RsesConverter<Matrix> converter = new RsesMatrixConverter();
+        RsesConverter<Matrix> converter = RsesMatrixConverter.getInstance();
 
         DoubleDataTable doubleDataTable = converter.convert(mat);
 
@@ -65,7 +65,7 @@ public class RsesMatrixConverterTest {
 
         mat.setColumnLabelBindings(ImmutableMap.of("a0", 0, "d", 3));
 
-        RsesConverter<Matrix> converter = new RsesMatrixConverter();
+        RsesConverter<Matrix> converter =  RsesMatrixConverter.getInstance();
 
         DoubleDataTable doubleDataTable = converter.convert(mat);
 
@@ -87,7 +87,7 @@ public class RsesMatrixConverterTest {
 
         Matrix mat = new DenseMatrix(new double[][]{{1}, {0}, {3}});
 
-        RsesConverter<Matrix> converter = new RsesMatrixConverter();
+        RsesConverter<Matrix> converter =  RsesMatrixConverter.getInstance();
 
         DoubleDataTable doubleDataTable = converter.convert(mat);
 
@@ -106,7 +106,7 @@ public class RsesMatrixConverterTest {
 
         Matrix mat = new DenseMatrix(new double[][]{{1, -1}});
 
-        RsesConverter<Matrix> converter = new RsesMatrixConverter();
+        RsesConverter<Matrix> converter =  RsesMatrixConverter.getInstance();
 
         catchException(converter).convert(mat);
 
@@ -120,7 +120,7 @@ public class RsesMatrixConverterTest {
 
         Matrix mat = new DenseMatrix(new double[][]{{1, 3.14159265}});
 
-        RsesConverter<Matrix> converter = new RsesMatrixConverter();
+        RsesConverter<Matrix> converter = RsesMatrixConverter.getInstance();
 
         catchException(converter).convert(mat);
 
