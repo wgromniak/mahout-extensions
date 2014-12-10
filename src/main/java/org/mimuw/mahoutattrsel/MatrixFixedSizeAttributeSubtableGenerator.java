@@ -3,8 +3,10 @@ package org.mimuw.mahoutattrsel;
 import com.google.common.collect.ImmutableList;
 import org.apache.mahout.math.DenseMatrix;
 import org.apache.mahout.math.Matrix;
+import org.mimuw.mahoutattrsel.api.Subtable;
 import org.mimuw.mahoutattrsel.api.SubtableGenerator;
 
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 import java.util.Random;
@@ -13,7 +15,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * {@inheritDoc}
- *
+ * <p/>
  * This implementation takes four parameters, random, number of subtables(integer) , size of
  * subtables (integer),data table (Matrix) and generate subtables of Matrix.This implementation returns List of Matrix.
  * This implementation generate (numberOfsubtables) subtables and each of them  have got (subtableSize + 1 ) columns
@@ -32,11 +34,11 @@ public final class MatrixFixedSizeAttributeSubtableGenerator extends AbstractMat
     }
 
     @Override
-    public List<Matrix> getSubtables() {
+    public List<Subtable> getSubtables() {
 
         Matrix dataTableTranspose = dataTable.transpose();
 
-        ImmutableList.Builder<Matrix> resultBuilder = ImmutableList.builder();
+        ImmutableList.Builder<Subtable> resultBuilder = ImmutableList.builder();
 
         int numberOfAttributes = dataTableTranspose.rowSize() - 1;
 
@@ -46,6 +48,8 @@ public final class MatrixFixedSizeAttributeSubtableGenerator extends AbstractMat
 
             Matrix subtable = new DenseMatrix(subtableSize + 1, dataTableTranspose.columnSize());
 
+            List<Integer> attributes = new ArrayList<>();
+
             int numOfRow = 0;
 
             for (int rowNum = 0; rowNum < numberOfAttributes; rowNum++) {
@@ -53,6 +57,7 @@ public final class MatrixFixedSizeAttributeSubtableGenerator extends AbstractMat
                 if (selectedObjects.get(rowNum)) {
 
                     subtable.assignRow(numOfRow, dataTableTranspose.viewRow(rowNum).clone());
+                    attributes.add(rowNum);
                     numOfRow++;
                 }
             }
@@ -61,7 +66,9 @@ public final class MatrixFixedSizeAttributeSubtableGenerator extends AbstractMat
 
             subtable = subtable.transpose();
 
-            resultBuilder.add(subtable);
+            Subtable toReturn = new AttributeSubtable(subtable, attributes, dataTable.columnSize() - 1);
+
+            resultBuilder.add(toReturn);
 
         }
 

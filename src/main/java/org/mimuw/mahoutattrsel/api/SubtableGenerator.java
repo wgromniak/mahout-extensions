@@ -1,7 +1,5 @@
 package org.mimuw.mahoutattrsel.api;
 
-import org.apache.mahout.math.Matrix;
-
 import java.util.List;
 
 /**
@@ -9,6 +7,6 @@ import java.util.List;
  */
 public interface SubtableGenerator<T> {
 
-    public List<Matrix> getSubtables();
+    public List<Subtable> getSubtables();
 
 }

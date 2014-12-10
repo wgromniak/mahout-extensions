@@ -1,6 +1,7 @@
 package org.mimuw.mahoutattrsel;
 
 import org.apache.mahout.math.Matrix;
+import org.mimuw.mahoutattrsel.api.Subtable;
 import org.testng.annotations.Test;
 
 import java.util.BitSet;
@@ -125,7 +126,7 @@ public class AbstractMatrixFixedSizeSubtableGeneratorTest {
         }
 
         @Override
-        public List<Matrix> getSubtables() {
+        public List<Subtable> getSubtables() {
             throw new UnsupportedOperationException();
         }
     }

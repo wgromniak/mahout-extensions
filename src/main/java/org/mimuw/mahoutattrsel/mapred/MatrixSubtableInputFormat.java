@@ -9,6 +9,7 @@ import org.apache.mahout.math.Matrix;
 import org.apache.mahout.math.MatrixWritable;
 import org.mimuw.mahoutattrsel.MatrixFixedSizeAttributeSubtableGenerator;
 import org.mimuw.mahoutattrsel.MatrixFixedSizeObjectSubtableGenerator;
+import org.mimuw.mahoutattrsel.api.Subtable;
 import org.mimuw.mahoutattrsel.api.SubtableGenerator;
 
 import java.io.IOException;
@@ -68,12 +69,12 @@ final class MatrixSubtableInputFormat extends InputFormat<IntWritable, MatrixWri
                 throw new IllegalStateException(String.format("Unsupported generator type: %s", generatorType));
         }
 
-        List<Matrix> subtables = subtableGenerator.getSubtables();
+        List<Subtable> subtables = subtableGenerator.getSubtables();
 
         List<InputSplit> splits = new ArrayList<>(subtables.size());
 
         for (int i = 0; i < subtables.size(); i++) {
-            splits.add(new SingleMatrixInputSplit(i, subtables.get(i)));
+//            splits.add(new SingleMatrixInputSplit(i, subtables.get(i)));
         }
 
         return splits;

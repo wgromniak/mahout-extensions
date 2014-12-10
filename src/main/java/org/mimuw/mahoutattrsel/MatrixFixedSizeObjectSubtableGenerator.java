@@ -3,6 +3,7 @@ package org.mimuw.mahoutattrsel;
 import com.google.common.collect.ImmutableList;
 import org.apache.mahout.math.DenseMatrix;
 import org.apache.mahout.math.Matrix;
+import org.mimuw.mahoutattrsel.api.Subtable;
 import org.mimuw.mahoutattrsel.api.SubtableGenerator;
 
 import java.util.BitSet;
@@ -13,7 +14,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * {@inheritDoc}
- *
+ * <p/>
  * This implementation takes four parameters, random, number of subtables(integer) , size of
  * subtables (integer),data table (Matrix) and generate subtables of Matrix.This implementation returns List of Matrix.
  * This implementation generate (numberOfsubtables) subtables and each of them  have got exactly (subtableSize) rows
@@ -33,9 +34,9 @@ public final class MatrixFixedSizeObjectSubtableGenerator extends AbstractMatrix
     }
 
     @Override
-    public List<Matrix> getSubtables() {
+    public List<Subtable> getSubtables() {
 
-        ImmutableList.Builder<Matrix> resultBuilder = ImmutableList.builder();
+        ImmutableList.Builder<Subtable> resultBuilder = ImmutableList.builder();
 
         int numberOfObjects = dataTable.rowSize();
 
@@ -56,7 +57,10 @@ public final class MatrixFixedSizeObjectSubtableGenerator extends AbstractMatrix
                 }
             }
 
-            resultBuilder.add(subtable);
+            Subtable toReturn = new ObjectSubtable(subtable);
+
+            resultBuilder.add(toReturn);
+
         }
 
         return resultBuilder.build();
