@@ -19,6 +19,8 @@ public interface Subtable {
     /**
      * Returns the number of the attribute (from the original table this subtable was created from) at given position,
      * i.e. corresponding to the column of the table retured by {@link Subtable#getTable()} at this position.
+     *
+     * @throws IndexOutOfBoundsException if this subtable doesn't have that many attributes
      */
     int getAttributeAtPosition(int position);
 

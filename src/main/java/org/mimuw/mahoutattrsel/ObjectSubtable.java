@@ -5,6 +5,7 @@ import org.apache.mahout.math.Matrix;
 import org.mimuw.mahoutattrsel.api.Subtable;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -27,7 +28,11 @@ public final class ObjectSubtable implements Subtable {
 
     @Override
     public int getAttributeAtPosition(int position) {
-        return position;
+        if (position < table.columnSize() - 1) {
+            return position;
+        } else {
+            throw new IndexOutOfBoundsException();
+        }
     }
 
     @Override
@@ -56,7 +61,11 @@ public final class ObjectSubtable implements Subtable {
 
                     @Override
                     public Integer next() {
-                        return current++;
+                        if (current < table.columnSize()) {
+                            return current++;
+                        } else {
+                            throw new NoSuchElementException();
+                        }
                     }
                 };
             }

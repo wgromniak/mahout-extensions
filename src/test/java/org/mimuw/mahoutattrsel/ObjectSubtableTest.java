@@ -5,6 +5,8 @@ import org.apache.mahout.math.Matrix;
 import org.mimuw.mahoutattrsel.api.Subtable;
 import org.testng.annotations.Test;
 
+import static com.googlecode.catchexception.CatchException.catchException;
+import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ObjectSubtableTest {
@@ -22,5 +24,8 @@ public class ObjectSubtableTest {
         assertThat(subtable.getAttributeAtPosition(1)).isEqualTo(1);
         assertThat(subtable.iterateAttributes()).containsExactly(0, 1);
         MatrixAssert.assertThat(subtable.getTable()).isEqualTo(matrix);
+
+        catchException(subtable).getAttributeAtPosition(2);
+        assertThat(caughtException()).isInstanceOf(IndexOutOfBoundsException.class);
     }
 }
