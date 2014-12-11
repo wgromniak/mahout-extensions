@@ -6,7 +6,6 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapreduce.*;
 import org.apache.mahout.common.RandomUtils;
 import org.apache.mahout.math.Matrix;
-import org.apache.mahout.math.MatrixWritable;
 import org.mimuw.mahoutattrsel.MatrixFixedSizeAttributeSubtableGenerator;
 import org.mimuw.mahoutattrsel.MatrixFixedSizeObjectSubtableGenerator;
 import org.mimuw.mahoutattrsel.api.Subtable;
@@ -23,7 +22,7 @@ import static com.google.common.base.Preconditions.checkState;
  * {@link InputFormat} that splits given {@link Matrix} data table into subtables. All the processing is in-memory, so
  * the input table has to fit into single-workstation's memory.
  */
-final class MatrixSubtableInputFormat extends InputFormat<IntWritable, MatrixWritable> {
+final class SubtableInputFormat extends InputFormat<IntWritable, SubtableWritable> {
 
     public static final String SUBTABLE_GENERATOR_TYPE = "mahout-extensions.attrsel.subtable.generator";
     public static final String NO_OF_SUBTABLES = "mahout-extensions.attrsel.number.of.subtables";
@@ -74,36 +73,36 @@ final class MatrixSubtableInputFormat extends InputFormat<IntWritable, MatrixWri
         List<InputSplit> splits = new ArrayList<>(subtables.size());
 
         for (int i = 0; i < subtables.size(); i++) {
-//            splits.add(new SingleMatrixInputSplit(i, subtables.get(i)));
+            splits.add(new SingleSubtableInputSplit(i, subtables.get(i)));
         }
 
         return splits;
     }
 
     @Override
-    public RecordReader<IntWritable, MatrixWritable> createRecordReader(InputSplit inputSplit,
+    public RecordReader<IntWritable, SubtableWritable> createRecordReader(InputSplit inputSplit,
                                        TaskAttemptContext taskAttemptContext) throws IOException, InterruptedException {
-        return new SingleMatrixRecordReader();
+        return new SingleSubtableRecordReader();
     }
 
     /**
-     * A single InputSplit corresponds to single {@link Matrix} subtable.
+     * A single InputSplit corresponds to single {@link Subtable}.
      */
-    static final class SingleMatrixInputSplit extends InputSplit {
+    static final class SingleSubtableInputSplit extends InputSplit {
 
-        private MatrixWritable matrix;
+        private SubtableWritable matrix;
         private int key;
 
-        private SingleMatrixInputSplit() {}
+        private SingleSubtableInputSplit() {}
 
-        private SingleMatrixInputSplit(int key, Matrix matrix) {
+        private SingleSubtableInputSplit(int key, Subtable matrix) {
             this.key = key;
-            this.matrix = new MatrixWritable(checkNotNull(matrix));
+            this.matrix = new SubtableWritable(checkNotNull(matrix));
         }
 
         @Override
         public long getLength() {
-            return matrix.get().rowSize();
+            return matrix.get().getTable().rowSize();
         }
 
         @Override
@@ -113,21 +112,21 @@ final class MatrixSubtableInputFormat extends InputFormat<IntWritable, MatrixWri
     }
 
     /**
-     * A single record corresponds to single {@link Matrix} subtable from {@link SingleMatrixInputSplit}.
+     * A single record corresponds to single {@link Subtable} from {@link SingleSubtableInputSplit}.
      */
-    static final class SingleMatrixRecordReader extends RecordReader<IntWritable, MatrixWritable> {
+    static final class SingleSubtableRecordReader extends RecordReader<IntWritable, SubtableWritable> {
 
         private int key;
-        private MatrixWritable matrix;
+        private SubtableWritable matrix;
 
         private boolean processed = false; // whether this record has been processed
 
-        SingleMatrixRecordReader() {}
+        SingleSubtableRecordReader() {}
 
         @Override
         public void initialize(InputSplit split, TaskAttemptContext context) {
 
-            SingleMatrixInputSplit matrixSplit = ((SingleMatrixInputSplit) split);
+            SingleSubtableInputSplit matrixSplit = ((SingleSubtableInputSplit) split);
 
             key = matrixSplit.key;
             matrix = matrixSplit.matrix;
@@ -155,7 +154,7 @@ final class MatrixSubtableInputFormat extends InputFormat<IntWritable, MatrixWri
         }
 
         @Override
-        public MatrixWritable getCurrentValue() {
+        public SubtableWritable getCurrentValue() {
             return matrix;
         }
 

@@ -16,7 +16,7 @@ import java.util.Random;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-public class MatrixSubtableInputFormatTest {
+public class SubtableInputFormatTest {
 
     @Test
     public void testJobInputCreation() throws Exception {
@@ -30,23 +30,23 @@ public class MatrixSubtableInputFormatTest {
             }
         }
 
-        MatrixSubtableInputFormat.setFullMatrix(fullMat);
+        SubtableInputFormat.setFullMatrix(fullMat);
 
-        MatrixSubtableInputFormat inputFormat = new MatrixSubtableInputFormat();
+        SubtableInputFormat inputFormat = new SubtableInputFormat();
 
         Configuration conf = new Configuration();
-        conf.setEnum(MatrixSubtableInputFormat.SUBTABLE_GENERATOR_TYPE,
-                MatrixSubtableInputFormat.SubtableGeneratorType.OBJECT);
-        conf.setInt(MatrixSubtableInputFormat.NO_OF_SUBTABLES, 3);
-        conf.setInt(MatrixSubtableInputFormat.SUBTABLE_SIZE, 10);
+        conf.setEnum(SubtableInputFormat.SUBTABLE_GENERATOR_TYPE,
+                SubtableInputFormat.SubtableGeneratorType.OBJECT);
+        conf.setInt(SubtableInputFormat.NO_OF_SUBTABLES, 3);
+        conf.setInt(SubtableInputFormat.SUBTABLE_SIZE, 10);
 
         List<InputSplit> splits = inputFormat.getSplits(new JobContext(conf, JobID.forName("job_1_2")));
 
         assertThat(splits).hasSize(3);
         assertThat(splits.get(0).getLength()).isEqualTo(10);
 
-        MatrixSubtableInputFormat.SingleMatrixRecordReader reader =
-                new MatrixSubtableInputFormat.SingleMatrixRecordReader();
+        SubtableInputFormat.SingleSubtableRecordReader reader =
+                new SubtableInputFormat.SingleSubtableRecordReader();
 
         reader.initialize(splits.get(1), mock(TaskAttemptContext.class));
 
@@ -55,8 +55,8 @@ public class MatrixSubtableInputFormatTest {
         assertThat(reader.nextKeyValue()).isTrue();
         assertThat(reader.getProgress()).isEqualTo(1f);
         assertThat(reader.getCurrentKey()).isEqualTo(new IntWritable(1));
-        assertThat(reader.getCurrentValue().get().rowSize()).isEqualTo(10);
-        assertThat(reader.getCurrentValue().get().columnSize()).isEqualTo(9);
+        assertThat(reader.getCurrentValue().get().getTable().rowSize()).isEqualTo(10);
+        assertThat(reader.getCurrentValue().get().getTable().columnSize()).isEqualTo(9);
         assertThat(reader.nextKeyValue()).isFalse();
     }
 }
