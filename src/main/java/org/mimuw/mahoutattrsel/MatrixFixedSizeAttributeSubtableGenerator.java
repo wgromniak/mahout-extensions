@@ -24,7 +24,7 @@ import static com.google.common.base.Preconditions.checkArgument;
  * draw lots 3,5,1 then  subtable will have first column - 1, second column - 2,and third - 5).
  */
 public final class MatrixFixedSizeAttributeSubtableGenerator extends AbstractMatrixFixedSizeSubtableGenerator
-        implements SubtableGenerator<Matrix> {
+        implements SubtableGenerator<Subtable> {
 
     public MatrixFixedSizeAttributeSubtableGenerator(Random random, int numberOfSubtables, int subtableSize,
                                                      Matrix dataTable) {

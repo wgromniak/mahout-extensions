@@ -22,7 +22,7 @@ import static com.google.common.base.Preconditions.checkArgument;
  * (Tu put it simply when we draw lots 3,5,1 then  subtable will have first row - 1, second row - 2, and third - 5)
  */
 public final class MatrixFixedSizeObjectSubtableGenerator extends AbstractMatrixFixedSizeSubtableGenerator
-        implements SubtableGenerator<Matrix> {
+        implements SubtableGenerator<Subtable> {
 
 
     public MatrixFixedSizeObjectSubtableGenerator(Random random, int numberOfSubtables, int subtableSize,

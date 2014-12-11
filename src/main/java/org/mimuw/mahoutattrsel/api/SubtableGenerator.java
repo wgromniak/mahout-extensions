@@ -7,6 +7,6 @@ import java.util.List;
  */
 public interface SubtableGenerator<T> {
 
-    public List<Subtable> getSubtables();
+    public List<T> getSubtables();
 
 }

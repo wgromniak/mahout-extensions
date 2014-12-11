@@ -2,6 +2,7 @@ package org.mimuw.mahoutattrsel;
 
 
 import org.apache.mahout.math.Matrix;
+import org.mimuw.mahoutattrsel.api.Subtable;
 import org.mimuw.mahoutattrsel.api.SubtableGenerator;
 
 import java.util.BitSet;
@@ -11,7 +12,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 
-abstract class AbstractMatrixFixedSizeSubtableGenerator implements SubtableGenerator<Matrix> {
+abstract class AbstractMatrixFixedSizeSubtableGenerator implements SubtableGenerator<Subtable> {
 
     final Random random;
     final int numberOfSubtables;

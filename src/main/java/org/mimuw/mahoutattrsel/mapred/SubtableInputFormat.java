@@ -50,7 +50,7 @@ final class SubtableInputFormat extends InputFormat<IntWritable, SubtableWritabl
 
         SubtableGeneratorType generatorType = conf.getEnum(SUBTABLE_GENERATOR_TYPE, SubtableGeneratorType.OBJECT);
 
-        SubtableGenerator<Matrix> subtableGenerator;
+        SubtableGenerator<Subtable> subtableGenerator;
 
         int numberOfSubtables = conf.getInt(NO_OF_SUBTABLES, DEFAULT_NO_OF_SUBTABLES);
         int subtableSize = conf.getInt(SUBTABLE_SIZE, DEFAULT_SUBTABLE_SIZE);
