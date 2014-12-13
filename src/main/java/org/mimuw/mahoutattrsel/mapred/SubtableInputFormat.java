@@ -6,14 +6,15 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapreduce.*;
 import org.apache.mahout.common.RandomUtils;
 import org.apache.mahout.math.Matrix;
-import org.mimuw.mahoutattrsel.MatrixFixedSizeAttributeSubtableGenerator;
 import org.mimuw.mahoutattrsel.MatrixFixedSizeObjectSubtableGenerator;
 import org.mimuw.mahoutattrsel.api.Subtable;
 import org.mimuw.mahoutattrsel.api.SubtableGenerator;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
@@ -29,8 +30,6 @@ final class SubtableInputFormat extends InputFormat<IntWritable, SubtableWritabl
     public static final String SUBTABLE_SIZE = "mahout-extensions.attrsel.subtable.size";
     public static final int DEFAULT_NO_OF_SUBTABLES = 1;
     public static final int DEFAULT_SUBTABLE_SIZE = 1;
-
-    public static enum SubtableGeneratorType { ATTRIBUTE, OBJECT }
 
     private static Optional<Matrix> fullMatrix = Optional.absent();
 
@@ -48,24 +47,23 @@ final class SubtableInputFormat extends InputFormat<IntWritable, SubtableWritabl
 
         Configuration conf = jobContext.getConfiguration();
 
-        SubtableGeneratorType generatorType = conf.getEnum(SUBTABLE_GENERATOR_TYPE, SubtableGeneratorType.OBJECT);
-
-        SubtableGenerator<Subtable> subtableGenerator;
+        @SuppressWarnings("unchecked")
+        Class<SubtableGenerator<Subtable>> generatorClass =
+                (Class<SubtableGenerator<Subtable>>) conf.getClass(SUBTABLE_GENERATOR_TYPE,
+                        MatrixFixedSizeObjectSubtableGenerator.class);
 
         int numberOfSubtables = conf.getInt(NO_OF_SUBTABLES, DEFAULT_NO_OF_SUBTABLES);
         int subtableSize = conf.getInt(SUBTABLE_SIZE, DEFAULT_SUBTABLE_SIZE);
 
-        switch (generatorType) {
-            case ATTRIBUTE:
-                subtableGenerator = new MatrixFixedSizeAttributeSubtableGenerator(RandomUtils.getRandom(),
-                        numberOfSubtables, subtableSize, fullMatrix.get());
-                break;
-            case OBJECT:
-                subtableGenerator = new MatrixFixedSizeObjectSubtableGenerator(RandomUtils.getRandom(),
-                        numberOfSubtables, subtableSize, fullMatrix.get());
-                break;
-            default:
-                throw new IllegalStateException(String.format("Unsupported generator type: %s", generatorType));
+        SubtableGenerator<Subtable> subtableGenerator;
+
+        try {
+            subtableGenerator = generatorClass
+                    .getConstructor(Random.class, int.class, int.class, Matrix.class)
+                    .newInstance(RandomUtils.getRandom(), numberOfSubtables, subtableSize, fullMatrix.get());
+
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new IllegalStateException("Error instantiating SubtableGenerator", e);
         }
 
         List<Subtable> subtables = subtableGenerator.getSubtables();

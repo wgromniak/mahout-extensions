@@ -8,6 +8,8 @@ import org.apache.hadoop.mapreduce.JobContext;
 import org.apache.hadoop.mapreduce.JobID;
 import org.apache.mahout.math.DenseMatrix;
 import org.apache.mahout.math.Matrix;
+import org.mimuw.mahoutattrsel.MatrixFixedSizeObjectSubtableGenerator;
+import org.mimuw.mahoutattrsel.api.SubtableGenerator;
 import org.testng.annotations.Test;
 
 import java.util.List;
@@ -35,8 +37,8 @@ public class SubtableInputFormatTest {
         SubtableInputFormat inputFormat = new SubtableInputFormat();
 
         Configuration conf = new Configuration();
-        conf.setEnum(SubtableInputFormat.SUBTABLE_GENERATOR_TYPE,
-                SubtableInputFormat.SubtableGeneratorType.OBJECT);
+        conf.setClass(SubtableInputFormat.SUBTABLE_GENERATOR_TYPE,
+                MatrixFixedSizeObjectSubtableGenerator.class, SubtableGenerator.class);
         conf.setInt(SubtableInputFormat.NO_OF_SUBTABLES, 3);
         conf.setInt(SubtableInputFormat.SUBTABLE_SIZE, 10);
 
