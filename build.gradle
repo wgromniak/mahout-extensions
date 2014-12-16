@@ -9,6 +9,7 @@ repositories {
 dependencies {
     compile 'com.google.guava:guava:18.0'
     compile 'org.apache.mahout:mahout-core:0.9'
+    compile 'org.apache.mahout:mahout-integration:0.9'
 
     compile files('libs/rseslib-3.0.4.jar')
 
