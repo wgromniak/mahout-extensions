@@ -10,7 +10,7 @@ import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class IntListWritable implements Writable {
+public final class IntListWritable implements Writable {
 
     private List<Integer> list;
 

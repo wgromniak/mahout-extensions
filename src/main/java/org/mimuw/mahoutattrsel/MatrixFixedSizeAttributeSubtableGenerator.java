@@ -1,6 +1,7 @@
 package org.mimuw.mahoutattrsel;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.primitives.Ints;
 import org.apache.mahout.math.DenseMatrix;
 import org.apache.mahout.math.Matrix;
 import org.mimuw.mahoutattrsel.api.Subtable;
@@ -22,6 +23,9 @@ import static com.google.common.base.Preconditions.checkArgument;
  * where the last column is "decision" column and rows as many as input matrix from data table matrix.
  * Number of columns which are chose are randomly generated but rows are sorted in subtables (Tu put it simply when we
  * draw lots 3,5,1 then  subtable will have first column - 1, second column - 2,and third - 5).
+ *
+ * <p>The results returned via getSubtables() and getNumberOfSubtablesPerAttribute() are initialized lazily, i.e.
+ * when either of this methods is called.
  */
 public final class MatrixFixedSizeAttributeSubtableGenerator extends AbstractMatrixFixedSizeSubtableGenerator
         implements SubtableGenerator<Subtable> {
@@ -34,13 +38,15 @@ public final class MatrixFixedSizeAttributeSubtableGenerator extends AbstractMat
     }
 
     @Override
-    public List<Subtable> getSubtables() {
+    void calculateSubtables() {
 
         Matrix dataTableTranspose = dataTable.transpose();
 
         ImmutableList.Builder<Subtable> resultBuilder = ImmutableList.builder();
 
         int numberOfAttributes = dataTableTranspose.rowSize() - 1;
+
+        int[] numberOfSubtablesPerAttribute = new int[numberOfAttributes]; // array since it's already inited to 0s
 
         for (int i = 0; i < numberOfSubtables; i++) {
 
@@ -59,6 +65,8 @@ public final class MatrixFixedSizeAttributeSubtableGenerator extends AbstractMat
                     subtable.assignRow(numOfRow, dataTableTranspose.viewRow(rowNum).clone());
                     attributes.add(rowNum);
                     numOfRow++;
+
+                    numberOfSubtablesPerAttribute[rowNum]++;
                 }
             }
 
@@ -72,7 +80,8 @@ public final class MatrixFixedSizeAttributeSubtableGenerator extends AbstractMat
 
         }
 
-        return resultBuilder.build();
+        this.subtables = resultBuilder.build();
+        this.numberOfSubtablesPerAttribute = Ints.asList(numberOfSubtablesPerAttribute);
     }
 
 }
