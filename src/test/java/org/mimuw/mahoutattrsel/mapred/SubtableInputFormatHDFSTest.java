@@ -17,7 +17,6 @@ import org.testng.annotations.*;
 import java.io.DataInput;
 import java.io.IOException;
 import java.util.List;
-import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -57,12 +56,11 @@ public class SubtableInputFormatHDFSTest {
     @Test
     public void testJobInputCreation() throws Exception {
 
-        Random random = new Random();
         Matrix fullMat = new DenseMatrix(20, 9);
 
         for (int i = 0; i < 20; i++) {
             for (int j = 0; j < 9; j++) {
-                fullMat.setQuick(i, j, random.nextDouble());
+                fullMat.setQuick(i, j, 53);
             }
         }
 
