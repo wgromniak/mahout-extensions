@@ -1,24 +1,58 @@
 package org.mimuw.mahoutattrsel.mapred;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.hdfs.MiniDFSCluster;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapred.TaskAttemptContext;
 import org.apache.hadoop.mapreduce.InputSplit;
-import org.apache.hadoop.mapreduce.JobContext;
-import org.apache.hadoop.mapreduce.JobID;
+import org.apache.hadoop.mapreduce.Job;
 import org.apache.mahout.math.DenseMatrix;
 import org.apache.mahout.math.Matrix;
 import org.mimuw.mahoutattrsel.MatrixFixedSizeObjectSubtableGenerator;
 import org.mimuw.mahoutattrsel.api.SubtableGenerator;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 
+import java.io.DataInput;
+import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-public class SubtableInputFormatTest {
+public class SubtableInputFormatHDFSTest {
+
+    private Path tempPath;
+    private MiniDFSCluster dfsCluster;
+
+    @BeforeClass
+    public void startDFSCluster() throws Exception {
+        dfsCluster = new MiniDFSCluster.Builder(new Configuration())
+                .numDataNodes(3)
+                .build();
+
+        dfsCluster.waitActive();
+    }
+
+    @AfterClass
+    public void stopDFSCluster() {
+        dfsCluster.shutdown();
+    }
+
+    @BeforeMethod
+    public void setUp() throws IOException {
+        tempPath = new Path("hdfs:///mahout-extensions/attrsel");
+        dfsCluster.getFileSystem().mkdirs(tempPath);
+
+        SubtableInputFormat.setFileSystem(dfsCluster.getFileSystem());
+    }
+
+    @AfterMethod
+    public void deleteTempDirectory() throws IOException {
+        dfsCluster.getFileSystem().delete(tempPath, true);
+    }
 
     @Test
     public void testJobInputCreation() throws Exception {
@@ -42,7 +76,7 @@ public class SubtableInputFormatTest {
         conf.setInt(SubtableInputFormat.NO_OF_SUBTABLES, 3);
         conf.setInt(SubtableInputFormat.SUBTABLE_SIZE, 10);
 
-        List<InputSplit> splits = inputFormat.getSplits(new JobContext(conf, JobID.forName("job_1_2")));
+        List<InputSplit> splits = inputFormat.getSplits(Job.getInstance(conf, "jooob"));
 
         assertThat(splits).hasSize(3);
         assertThat(splits.get(0).getLength()).isEqualTo(10);
@@ -60,5 +94,13 @@ public class SubtableInputFormatTest {
         assertThat(reader.getCurrentValue().get().getTable().rowSize()).isEqualTo(10);
         assertThat(reader.getCurrentValue().get().getTable().columnSize()).isEqualTo(9);
         assertThat(reader.nextKeyValue()).isFalse();
+
+        FileSystem fs = dfsCluster.getFileSystem();
+        Path attrsPath = new Path(SubtableInputFormat.NUM_SUBTABLE_ATTRIBUTE_PATH);
+        DataInput in = fs.open(attrsPath);
+
+        assertThat(fs.exists(attrsPath)).isTrue();
+        List<Integer> attrCounts = IntListWritable.read(in).get();
+        assertThat(attrCounts).hasSize(8);
     }
 }
