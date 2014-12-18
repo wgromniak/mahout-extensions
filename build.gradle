@@ -17,6 +17,7 @@ dependencies {
     testCompile 'org.mockito:mockito-all:1.9.5'
     testCompile 'org.assertj:assertj-core:1.7.0'
     testCompile 'com.googlecode.catch-exception:catch-exception:1.2.0'
+    testCompile 'org.apache.mrunit:mrunit:1.1.0:hadoop1'
 }
 
 test {
