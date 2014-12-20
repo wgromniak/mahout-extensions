@@ -12,21 +12,21 @@ import java.util.List;
  * This class counts FrequencyScore for fixed attribute. Class gets description of reducts and number of subsets
  * in which attribute occurs.
  */
-public class FrequencyScoreCalculator implements ScoreCalculator {
+public final class FrequencyScoreCalculator implements ScoreCalculator {
 
-    private Iterable<List<Integer>> AttrReducts;
-    private Integer AttrSubsetsCount;
+    private Iterable<List<Integer>> attrReducts;
+    private Integer attrSubsetsCount;
 
-    public FrequencyScoreCalculator(Iterable<List<Integer>> Reducts, Integer SubsetsCount)
-    {
-        checkNotNull(Reducts);
-        checkArgument(SubsetsCount > 0);
-        AttrReducts = Reducts;
-        AttrSubsetsCount = SubsetsCount;
+    public FrequencyScoreCalculator(Iterable<List<Integer>> reducts, Integer subsetsCount) {
+        checkNotNull(reducts);
+        checkArgument(subsetsCount > 0);
+
+        attrReducts = reducts;
+        attrSubsetsCount = subsetsCount;
     }
 
-    public double getScore()
-    {
-        return (double) Iterables.size(AttrReducts)/AttrSubsetsCount;
+    @Override
+    public double getScore() {
+        return (double) Iterables.size(attrReducts)/attrSubsetsCount;
     }
 }
