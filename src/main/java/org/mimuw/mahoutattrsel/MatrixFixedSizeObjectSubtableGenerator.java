@@ -6,21 +6,22 @@ import org.apache.mahout.math.Matrix;
 import org.mimuw.mahoutattrsel.api.Subtable;
 import org.mimuw.mahoutattrsel.api.SubtableGenerator;
 
+import java.util.AbstractList;
 import java.util.BitSet;
-import java.util.List;
 import java.util.Random;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkElementIndex;
 
 /**
- * {@inheritDoc}
- * <p/>
- * This implementation takes four parameters, random, number of subtables(integer) , size of
- * subtables (integer),data table (Matrix) and generate subtables of Matrix.This implementation returns List of Matrix.
- * This implementation generate (numberOfsubtables) subtables and each of them  have got exactly (subtableSize) rows
- * from data table matrix. Number of rows which are chose are randomly generated but rows are sorted in subtables
- * (Tu put it simply when we draw lots 3,5,1 then  subtable will have first row - 1, second row - 2, and third - 5)
- */
+* {@inheritDoc}
+* <p/>
+* This implementation takes four parameters, random, number of subtables(integer) , size of
+* subtables (integer),data table (Matrix) and generate subtables of Matrix.This implementation returns List of Matrix.
+* This implementation generate (numberOfsubtables) subtables and each of them  have got exactly (subtableSize) rows
+* from data table matrix. Number of rows which are chose are randomly generated but rows are sorted in subtables
+* (Tu put it simply when we draw lots 3,5,1 then  subtable will have first row - 1, second row - 2, and third - 5)
+*/
 public final class MatrixFixedSizeObjectSubtableGenerator extends AbstractMatrixFixedSizeSubtableGenerator
         implements SubtableGenerator<Subtable> {
 
@@ -34,7 +35,7 @@ public final class MatrixFixedSizeObjectSubtableGenerator extends AbstractMatrix
     }
 
     @Override
-    public List<Subtable> getSubtables() {
+    void calculateSubtables() {
 
         ImmutableList.Builder<Subtable> resultBuilder = ImmutableList.builder();
 
@@ -63,6 +64,18 @@ public final class MatrixFixedSizeObjectSubtableGenerator extends AbstractMatrix
 
         }
 
-        return resultBuilder.build();
+        this.subtables = resultBuilder.build();
+        this.numberOfSubtablesPerAttribute = new AbstractList<Integer>() {
+            @Override
+            public Integer get(int index) {
+                checkElementIndex(index, dataTable.columnSize() - 1);
+                return numberOfSubtables;
+            }
+
+            @Override
+            public int size() {
+                return dataTable.columnSize() - 1; // - decision
+            }
+        };
     }
 }

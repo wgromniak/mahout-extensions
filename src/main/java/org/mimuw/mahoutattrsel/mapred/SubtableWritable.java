@@ -1,5 +1,7 @@
 package org.mimuw.mahoutattrsel.mapred;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
 import org.apache.hadoop.io.Writable;
 import org.apache.mahout.math.Matrix;
 import org.apache.mahout.math.MatrixWritable;
@@ -81,5 +83,27 @@ public final class SubtableWritable implements Writable {
         SubtableWritable w = new SubtableWritable();
         w.readFields(dataInput);
         return w;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SubtableWritable that = (SubtableWritable) o;
+
+        return Objects.equal(this.subtable, that.subtable);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(subtable);
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("subtable", subtable)
+                .toString();
     }
 }

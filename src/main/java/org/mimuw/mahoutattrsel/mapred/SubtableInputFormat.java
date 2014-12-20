@@ -2,8 +2,12 @@ package org.mimuw.mahoutattrsel.mapred;
 
 import com.google.common.base.Optional;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FSDataOutputStream;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapreduce.*;
+import org.apache.hadoop.mapreduce.filecache.DistributedCache;
 import org.apache.mahout.common.RandomUtils;
 import org.apache.mahout.math.Matrix;
 import org.mimuw.mahoutattrsel.MatrixFixedSizeObjectSubtableGenerator;
@@ -31,7 +35,10 @@ final class SubtableInputFormat extends InputFormat<IntWritable, SubtableWritabl
     public static final int DEFAULT_NO_OF_SUBTABLES = 1;
     public static final int DEFAULT_SUBTABLE_SIZE = 1;
 
+    static final String NUM_SUBTABLE_ATTRIBUTE_PATH = "hdfs:///mahout-extensions/attrsel/numSubAttrs";
+
     private static Optional<Matrix> fullMatrix = Optional.absent();
+    private static Optional<FileSystem> fs = Optional.absent();
 
     /**
      * Loads the input {@link Matrix} data table.
@@ -41,9 +48,15 @@ final class SubtableInputFormat extends InputFormat<IntWritable, SubtableWritabl
         fullMatrix = Optional.of(checkNotNull(matrix));
     }
 
+    public static void setFileSystem(FileSystem fileSystem) {
+        checkState(!fs.isPresent());
+        fs = Optional.of(fileSystem);
+    }
+
     @Override
     public List<InputSplit> getSplits(JobContext jobContext) throws IOException, InterruptedException {
         checkState(fullMatrix.isPresent());
+        checkState(fs.isPresent());
 
         Configuration conf = jobContext.getConfiguration();
 
@@ -74,7 +87,25 @@ final class SubtableInputFormat extends InputFormat<IntWritable, SubtableWritabl
             splits.add(new SingleSubtableInputSplit(i, subtables.get(i)));
         }
 
+        List<Integer> numberOfSubtablesPerAttribute = subtableGenerator.getNumberOfSubtablesPerAttribute();
+
+        writeAttributeCountsToHDFSAndSetCache(numberOfSubtablesPerAttribute, jobContext);
+
         return splits;
+    }
+
+    // TODO: this will be moved to job config
+    private void writeAttributeCountsToHDFSAndSetCache(List<Integer> numberOfSubtablesPerAttribute,
+                                                       JobContext jobContext) throws IOException {
+        Path path = new Path(NUM_SUBTABLE_ATTRIBUTE_PATH);
+
+        try (FSDataOutputStream os = fs.get().create(path, true)) {
+
+            new IntListWritable(numberOfSubtablesPerAttribute).write(os);
+        }
+
+        // TODO: this will be eventually done elsewhere, using non-deprecated means
+        DistributedCache.addCacheFile(path.toUri(), jobContext.getConfiguration());
     }
 
     @Override

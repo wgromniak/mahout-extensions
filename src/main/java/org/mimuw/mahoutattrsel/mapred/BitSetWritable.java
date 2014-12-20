@@ -13,7 +13,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * {@link Writable} of a {@link BitSet}.
  */
-public class BitSetWritable implements Writable {
+public final class BitSetWritable implements Writable {
 
     private BitSet set;
 

@@ -1,5 +1,7 @@
 package org.mimuw.mahoutattrsel.mapred;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
 import org.apache.hadoop.io.Writable;
 
 import java.io.DataInput;
@@ -10,7 +12,7 @@ import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class IntListWritable implements Writable {
+public final class IntListWritable implements Writable {
 
     private List<Integer> list;
 
@@ -50,5 +52,27 @@ public class IntListWritable implements Writable {
         IntListWritable w = new IntListWritable();
         w.readFields(dataInput);
         return w;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        IntListWritable that = (IntListWritable) o;
+
+        return Objects.equal(this.list, that.list);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(list);
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("list", list)
+                .toString();
     }
 }

@@ -1,11 +1,9 @@
 package org.mimuw.mahoutattrsel;
 
 import org.apache.mahout.math.Matrix;
-import org.mimuw.mahoutattrsel.api.Subtable;
 import org.testng.annotations.Test;
 
 import java.util.BitSet;
-import java.util.List;
 import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -126,7 +124,7 @@ public class AbstractMatrixFixedSizeSubtableGeneratorTest {
         }
 
         @Override
-        public List<Subtable> getSubtables() {
+        void calculateSubtables() {
             throw new UnsupportedOperationException();
         }
     }

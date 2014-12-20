@@ -7,6 +7,7 @@ import org.mimuw.mahoutattrsel.api.Subtable;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import static com.google.common.base.Preconditions.checkElementIndex;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class ObjectSubtable implements Subtable {
@@ -28,11 +29,8 @@ public final class ObjectSubtable implements Subtable {
 
     @Override
     public int getAttributeAtPosition(int position) {
-        if (position < table.columnSize() - 1) {
-            return position;
-        } else {
-            throw new IndexOutOfBoundsException();
-        }
+        checkElementIndex(position, table.columnSize() - 1);
+        return position;
     }
 
     @Override
