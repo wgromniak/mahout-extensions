@@ -16,6 +16,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 /**
@@ -25,6 +26,7 @@ public final class CSVMatrixReader implements MatrixReader {
 
     @Override
     public Matrix read(InputStream is) {
+        checkNotNull(is, "Expected InputStream not to be null");
 
         CSVVectorIterator iterator = new CSVVectorIterator(new InputStreamReader(is, Charsets.UTF_8));
 

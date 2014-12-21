@@ -17,7 +17,7 @@ public final class IntListWritable implements Writable {
     private List<Integer> list;
 
     public IntListWritable(List<Integer> list) {
-        this.list = checkNotNull(list);
+        this.list = checkNotNull(list, "Expected list not to be null");
     }
 
     public IntListWritable() {}

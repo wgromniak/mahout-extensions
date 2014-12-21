@@ -19,7 +19,7 @@ public final class ObjectSubtable implements Subtable {
      * changes made to it are visible in this subtable.
      */
     public ObjectSubtable(Matrix table) {
-        this.table = checkNotNull(table);
+        this.table = checkNotNull(table, "Expected data table Matrix not to be null");
     }
 
     @Override
@@ -29,7 +29,7 @@ public final class ObjectSubtable implements Subtable {
 
     @Override
     public int getAttributeAtPosition(int position) {
-        checkElementIndex(position, table.columnSize() - 1);
+        checkElementIndex(position, table.columnSize() - 1, "position");
         return position;
     }
 

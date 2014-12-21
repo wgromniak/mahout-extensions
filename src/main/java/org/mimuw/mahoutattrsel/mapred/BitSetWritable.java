@@ -20,7 +20,7 @@ public final class BitSetWritable implements Writable {
     public BitSetWritable() {}
 
     public BitSetWritable(BitSet set) {
-        this.set = checkNotNull(set);
+        this.set = checkNotNull(set, "Expected the set not to be null");
     }
 
     @Override

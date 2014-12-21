@@ -20,13 +20,13 @@ public final class  AttributeSubtable implements Subtable {
      * list of attributes are not copied internally! Any changes made to them will be visible in this subtable.
      */
     public AttributeSubtable(Matrix table, List<Integer> attributes, int originalNumberOfAttributes) {
-        checkNotNull(table);
-        checkNotNull(attributes);
-        checkArgument(table.columnSize() - 1 == attributes.size());
-        checkArgument(attributes.size() <= originalNumberOfAttributes);
+        checkNotNull(table, "Expected matrix not to be null");
+        checkNotNull(attributes, "Expected attribute list not to be null");
+        checkArgument(table.columnSize() - 1 == attributes.size(), "Attributes do not correspond to the table");
+        checkArgument(attributes.size() <= originalNumberOfAttributes, "More attributes than their original number");
 
-        this.table = table; // reuse, since it may be large
-        this.attributes = attributes; // -,,-
+        this.table = table;             // reuse, since it may be large
+        this.attributes = attributes;   // -,,-
         this.originalNumberOfAttributes = originalNumberOfAttributes;
     }
 

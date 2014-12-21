@@ -44,19 +44,19 @@ final class SubtableInputFormat extends InputFormat<IntWritable, SubtableWritabl
      * Loads the input {@link Matrix} data table.
      */
     public static void setFullMatrix(Matrix matrix) {
-        checkState(!fullMatrix.isPresent()); // should be set only once
+        checkState(!fullMatrix.isPresent(), "Full matrix already set"); // should be set only once
         fullMatrix = Optional.of(checkNotNull(matrix));
     }
 
     public static void setFileSystem(FileSystem fileSystem) {
-        checkState(!fs.isPresent());
+        checkState(!fs.isPresent(), "File system already set");
         fs = Optional.of(fileSystem);
     }
 
     @Override
     public List<InputSplit> getSplits(JobContext jobContext) throws IOException, InterruptedException {
-        checkState(fullMatrix.isPresent());
-        checkState(fs.isPresent());
+        checkState(fullMatrix.isPresent(), "Full matrix not set");
+        checkState(fs.isPresent(), "Filesystem not set");
 
         Configuration conf = jobContext.getConfiguration();
 
@@ -126,7 +126,7 @@ final class SubtableInputFormat extends InputFormat<IntWritable, SubtableWritabl
 
         private SingleSubtableInputSplit(int key, Subtable matrix) {
             this.key = key;
-            this.matrix = new SubtableWritable(checkNotNull(matrix));
+            this.matrix = new SubtableWritable(checkNotNull(matrix, "Expected matrix not to be null"));
         }
 
         @Override

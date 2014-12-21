@@ -22,7 +22,7 @@ public final class SubtableWritable implements Writable {
     private Subtable subtable;
 
     public SubtableWritable(Subtable subtable) {
-        this.subtable = checkNotNull(subtable);
+        this.subtable = checkNotNull(subtable, "Expected subtable not to be null");
     }
 
     public SubtableWritable() {}

@@ -18,6 +18,9 @@ import rseslib.structure.table.DoubleDataTable;
 
 import java.util.Map;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * {@inheritDoc}
  *
@@ -42,6 +45,7 @@ public final class RsesMatrixConverter implements RsesConverter<Matrix> {
 
     @Override
     public DoubleDataTable convert(Matrix dataTable) {
+        checkNotNull(dataTable, "Expected data table Matrix not to be  null");
 
         int numberOfAttributes = dataTable.columnSize();
         Attribute[] attributes = getAttributeArray(dataTable, numberOfAttributes);
@@ -56,7 +60,7 @@ public final class RsesMatrixConverter implements RsesConverter<Matrix> {
 
             for (int j = 0; j < numberOfAttributes - 1; j++) {
 
-                    dataObject.set(j, row.getQuick(j));
+                dataObject.set(j, row.getQuick(j));
             }
 
             dataObject.setDecision(row.getQuick(numberOfAttributes - 1));
@@ -155,13 +159,9 @@ public final class RsesMatrixConverter implements RsesConverter<Matrix> {
 
             double currentDecision = lastColumn.getQuick(i);
 
-            if (currentDecision < 0) {
-                throw new IllegalArgumentException("Negative decision value: " + currentDecision);
-            }
-
-            if (!DoubleMath.isMathematicalInteger(currentDecision)) {
-                throw new IllegalArgumentException("Decision value is not an integer: " + currentDecision);
-            }
+            checkArgument(currentDecision >= 0, "Negative decision value: %s", currentDecision);
+            checkArgument(DoubleMath.isMathematicalInteger(currentDecision),
+                    "Decision value is not an integer: %s", currentDecision);
 
             if (currentDecision > maxDecision) {
 
