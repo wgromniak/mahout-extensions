@@ -64,15 +64,15 @@ public class SubtableInputFormatHDFSTest {
             }
         }
 
-        SubtableInputFormat.setFullMatrix(fullMat);
+        SubtableInputFormat.setDataTable(fullMat);
 
         SubtableInputFormat inputFormat = new SubtableInputFormat();
 
         Configuration conf = new Configuration();
-        conf.setClass(SubtableInputFormat.SUBTABLE_GENERATOR_TYPE,
+        conf.setClass(SubtableInputFormat.SUBTABLE_GEN,
                 MatrixFixedSizeObjectSubtableGenerator.class, SubtableGenerator.class);
-        conf.setInt(SubtableInputFormat.NO_OF_SUBTABLES, 3);
-        conf.setInt(SubtableInputFormat.SUBTABLE_SIZE, 10);
+        conf.setInt(SubtableInputFormat.NUM_SUBTABLES, 3);
+        conf.setInt(SubtableInputFormat.SUBTABLE_CARD, 10);
 
         List<InputSplit> splits = inputFormat.getSplits(Job.getInstance(conf, "jooob"));
 
@@ -94,7 +94,7 @@ public class SubtableInputFormatHDFSTest {
         assertThat(reader.nextKeyValue()).isFalse();
 
         FileSystem fs = dfsCluster.getFileSystem();
-        Path attrsPath = new Path(SubtableInputFormat.NUM_SUBTABLE_ATTRIBUTE_PATH);
+        Path attrsPath = new Path(SubtableInputFormat.NUM_SUBTABLES_ATTRIBUTE_PATH);
         DataInput in = fs.open(attrsPath);
 
         assertThat(fs.exists(attrsPath)).isTrue();

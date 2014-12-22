@@ -7,7 +7,7 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapreduce.*;
-import org.apache.hadoop.mapreduce.filecache.DistributedCache;
+import org.apache.mahout.common.HadoopUtil;
 import org.apache.mahout.common.RandomUtils;
 import org.apache.mahout.math.Matrix;
 import org.mimuw.mahoutattrsel.MatrixFixedSizeObjectSubtableGenerator;
@@ -29,13 +29,13 @@ import static com.google.common.base.Preconditions.checkState;
  */
 final class SubtableInputFormat extends InputFormat<IntWritable, SubtableWritable> {
 
-    public static final String SUBTABLE_GENERATOR_TYPE = "mahout-extensions.attrsel.subtable.generator";
-    public static final String NO_OF_SUBTABLES = "mahout-extensions.attrsel.number.of.subtables";
-    public static final String SUBTABLE_SIZE = "mahout-extensions.attrsel.subtable.size";
+    public static final String SUBTABLE_GEN = "mahout-extensions.attrsel.subtable.generator";
+    public static final String NUM_SUBTABLES = "mahout-extensions.attrsel.number.of.subtables";
+    public static final String SUBTABLE_CARD = "mahout-extensions.attrsel.subtable.size";
     public static final int DEFAULT_NO_OF_SUBTABLES = 1;
     public static final int DEFAULT_SUBTABLE_SIZE = 1;
 
-    static final String NUM_SUBTABLE_ATTRIBUTE_PATH = "hdfs:///mahout-extensions/attrsel/numSubAttrs";
+    static final String NUM_SUBTABLES_ATTRIBUTE_PATH = "hdfs:///mahout-extensions/attrsel/numSubAttrs";
 
     private static Optional<Matrix> fullMatrix = Optional.absent();
     private static Optional<FileSystem> fs = Optional.absent();
@@ -43,7 +43,7 @@ final class SubtableInputFormat extends InputFormat<IntWritable, SubtableWritabl
     /**
      * Loads the input {@link Matrix} data table.
      */
-    public static void setFullMatrix(Matrix matrix) {
+    public static void setDataTable(Matrix matrix) {
         checkState(!fullMatrix.isPresent(), "Full matrix already set"); // should be set only once
         fullMatrix = Optional.of(checkNotNull(matrix));
     }
@@ -62,11 +62,11 @@ final class SubtableInputFormat extends InputFormat<IntWritable, SubtableWritabl
 
         @SuppressWarnings("unchecked")
         Class<SubtableGenerator<Subtable>> generatorClass =
-                (Class<SubtableGenerator<Subtable>>) conf.getClass(SUBTABLE_GENERATOR_TYPE,
+                (Class<SubtableGenerator<Subtable>>) conf.getClass(SUBTABLE_GEN,
                         MatrixFixedSizeObjectSubtableGenerator.class);
 
-        int numberOfSubtables = conf.getInt(NO_OF_SUBTABLES, DEFAULT_NO_OF_SUBTABLES);
-        int subtableSize = conf.getInt(SUBTABLE_SIZE, DEFAULT_SUBTABLE_SIZE);
+        int numberOfSubtables = conf.getInt(NUM_SUBTABLES, DEFAULT_NO_OF_SUBTABLES);
+        int subtableSize = conf.getInt(SUBTABLE_CARD, DEFAULT_SUBTABLE_SIZE);
 
         SubtableGenerator<Subtable> subtableGenerator;
 
@@ -94,18 +94,16 @@ final class SubtableInputFormat extends InputFormat<IntWritable, SubtableWritabl
         return splits;
     }
 
-    // TODO: this will be moved to job config
     private void writeAttributeCountsToHDFSAndSetCache(List<Integer> numberOfSubtablesPerAttribute,
                                                        JobContext jobContext) throws IOException {
-        Path path = new Path(NUM_SUBTABLE_ATTRIBUTE_PATH);
+        Path path = new Path(NUM_SUBTABLES_ATTRIBUTE_PATH);
 
         try (FSDataOutputStream os = fs.get().create(path, true)) {
 
             new IntListWritable(numberOfSubtablesPerAttribute).write(os);
         }
 
-        // TODO: this will be eventually done elsewhere, using non-deprecated means
-        DistributedCache.addCacheFile(path.toUri(), jobContext.getConfiguration());
+        HadoopUtil.cacheFiles(path, jobContext.getConfiguration());
     }
 
     @Override
