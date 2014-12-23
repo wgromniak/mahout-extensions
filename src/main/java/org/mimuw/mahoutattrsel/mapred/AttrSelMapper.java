@@ -17,10 +17,10 @@ import java.util.*;
  */
 public final class AttrSelMapper extends Mapper<IntWritable, SubtableWritable, IntWritable, IntListWritable> {
 
-    public  static final String REDUCT_PROVIDER = "ReductProvider";
-    public  static final String INDISCERNIBILITY_FOR_MISSING = "DiscernFromValue";
-    public  static final String DISCERNIBILITY_METHOD = "OrdinaryDecisionAndInconsistenciesOmitted";
-    public  static final String GeneralizedDecisionTransitiveClosure="TRUE";
+    public static final String REDUCT_PROVIDER = "ReductProvider";
+    public static final String INDISCERNIBILITY_FOR_MISSING = "DiscernFromValue";
+    public static final String DISCERNIBILITY_METHOD = "OrdinaryDecisionAndInconsistenciesOmitted";
+    public static final String GeneralizedDecisionTransitiveClosure = "TRUE";
 
     public static final String FIRST_PROPERTY = "IndiscernibilityForMissing";
     public static final String SECOMD_PROPERTY = "DiscernibilityMethod";
@@ -39,7 +39,7 @@ public final class AttrSelMapper extends Mapper<IntWritable, SubtableWritable, I
             ReductsProvider reductsProvider;
 
             Class<ReductsProvider> generatorClass = (Class<ReductsProvider>)
-                    conf.getClass(REDUCT_PROVIDER, GlobalReductsProvider.class,ReductsProvider.class);
+                    conf.getClass(REDUCT_PROVIDER, GlobalReductsProvider.class, ReductsProvider.class);
 
             Properties properties = new Properties();
 
@@ -58,33 +58,53 @@ public final class AttrSelMapper extends Mapper<IntWritable, SubtableWritable, I
 
             for (BitSet actualReduct : reducts) {
 
-                for (int numberOfActuallAttribute = 0; numberOfActuallAttribute < numberOfAllAttributes;
-                     numberOfActuallAttribute++) {
+                int number = 0;
 
-                    addNewPair(value, context, actualReduct, numberOfActuallAttribute);
+                for (int numberOfActualAttribute = 0; numberOfActualAttribute < numberOfAllAttributes;
+                     numberOfActualAttribute++) {
+
+                    addNewPair(value, context, actualReduct, numberOfActualAttribute, number);
                 }
             }
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+        } catch (InstantiationException | IllegalAccessException |
+                InvocationTargetException | NoSuchMethodException e) {
             throw new IllegalStateException("Error instantiating SubtableGenerator", e);
         }
     }
 
-    private void addNewPair(SubtableWritable value, Context context, BitSet actualReduct, int numberOfActuallAttribute)
-            throws IOException, InterruptedException {
+    private void addNewPair(SubtableWritable value, Context context, BitSet actualReduct,
+                            int numberOfActualReduct, int number) throws IOException, InterruptedException {
 
-        if (actualReduct.get(value.get().getAttributeAtPosition(numberOfActuallAttribute))) {
+        if (actualReduct.get(numberOfActualReduct)) {
 
-            System.out.println(value.get().getAttributeAtPosition(numberOfActuallAttribute) + " " + actualReduct);
+            actualReduct = toOrginalNumberAttributes(value, actualReduct);
 
             List<Integer> toIntWritableList = rewriteToList(actualReduct);
 
             IntListWritable toReturnListOfAttribute = new IntListWritable(toIntWritableList);
 
             IntWritable numberOfOriginalAttribute = new IntWritable(value.get().
-                    getAttributeAtPosition(numberOfActuallAttribute));
+                    getAttributeAtPosition(numberOfActualReduct));
+
+            number++;
 
             context.write(numberOfOriginalAttribute, toReturnListOfAttribute);
         }
+    }
+
+    private BitSet toOrginalNumberAttributes(SubtableWritable value, BitSet actualReduct) {
+        BitSet toRewriteToOriginal = new BitSet();
+
+        for (int i = 0; i < actualReduct.size(); i++) {
+
+            if (actualReduct.get(i)) {
+
+                toRewriteToOriginal.set(value.get().getAttributeAtPosition(i));
+            }
+        }
+
+        actualReduct = toRewriteToOriginal;
+        return actualReduct;
     }
 
     private List<Integer> rewriteToList(BitSet actualReduct) {

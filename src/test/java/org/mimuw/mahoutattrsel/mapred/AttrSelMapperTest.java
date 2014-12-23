@@ -76,7 +76,7 @@ public class AttrSelMapperTest {
 
         SubtableWritable toMap = new SubtableWritable(new AttributeSubtable(
                 new DenseMatrix(new double[][]
-                        {{1, 1, 1, 1}, {0, 0, 0, 0}, {1, 1, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}}), listOfAttributs, 3));
+                        {{1, 1, 1, 1}, {0, 0, 0, 0}, {1, 1, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}}), listOfAttributs, 5));
 
         mapDriver.setConfiguration(conf);
         mapDriver.withInput(new IntWritable(0), toMap);
@@ -110,8 +110,7 @@ public class AttrSelMapperTest {
         SubtableWritable toMap = new SubtableWritable(new AttributeSubtable(
                 new DenseMatrix(new double[][]
                         {{1, 0, 2, 0, 1}, {0, 1, 0, 2, 0}, {1, 0, 0, 0, 1}, {0, 1, 1, 0, 1},
-                                {0, 0, 1, 0, 1}, {1, 0, 0, 0, 1}}), listOfAttributs, 4));
-
+                                {0, 0, 1, 0, 1}, {1, 0, 0, 0, 1}}), listOfAttributs, 10));
         mapDriver.setConfiguration(conf);
         mapDriver.withInput(new IntWritable(0), toMap);
         mapDriver.withOutput(new IntWritable(3), toOutFirst);
@@ -145,7 +144,7 @@ public class AttrSelMapperTest {
         SubtableWritable toMap = new SubtableWritable(new AttributeSubtable(
                 new DenseMatrix(new double[][]
                         {{1, 2, 0, 1}, {0, 2, 2, 0}, {1, 1, 0, 1}, {0, 1, 0, 1},
-                                {0, 2, 2, 0}, {1, 1, 0, 1}, {1, 1, 1, 1}}), listOfAttributs, 3));
+                                {0, 2, 2, 0}, {1, 1, 0, 1}, {1, 1, 1, 1}}), listOfAttributs, 3333));
         mapDriver.setConfiguration(conf);
         mapDriver.withInput(new IntWritable(0), toMap);
         mapDriver.withOutput(new IntWritable(2), toOutFirst);
@@ -153,4 +152,52 @@ public class AttrSelMapperTest {
         mapDriver.withOutput(new IntWritable(1), toOutThird);
         mapDriver.runTest();
     }
+
+    @Test
+    public void testAnotherAttribute() throws Exception {
+
+        ArrayList<Integer> out = new ArrayList<>();
+
+        listOfAttributs.add(2);
+        listOfAttributs.add(5433);
+        listOfAttributs.add(4);
+
+        out.add(4);
+
+        IntListWritable toOut = new IntListWritable(out);
+
+        SubtableWritable toMap = new SubtableWritable(new AttributeSubtable(
+                new DenseMatrix(new double[][]
+                        {{1, 1, 1, 1}, {0, 0, 0, 0}, {1, 1, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}}), listOfAttributs, 10));
+
+        mapDriver.setConfiguration(conf);
+        mapDriver.withInput(new IntWritable(0), toMap);
+        mapDriver.withOutput(new IntWritable(4), toOut);
+        mapDriver.runTest();
+
+    }
+
+    @Test
+    public void testOneReduct() throws Exception {
+
+        ArrayList<Integer> out = new ArrayList<>();
+
+        listOfAttributs.add(2);
+        listOfAttributs.add(3);
+
+        out.add(2);
+
+        IntListWritable toOut = new IntListWritable(out);
+
+        SubtableWritable toMap = new SubtableWritable(new AttributeSubtable(
+                new DenseMatrix(new double[][]
+                        {{ 1, 1, 1}, { 1, 1, 1}, { 0, 0, 0}, { 0, 1, 0}, {1 , 0, 1}}), listOfAttributs, 4));
+
+        mapDriver.setConfiguration(conf)
+        ;
+        mapDriver.withInput(new IntWritable(0), toMap);
+        mapDriver.withOutput(new IntWritable(2), toOut);
+        mapDriver.runTest();
+    }
+
 }
