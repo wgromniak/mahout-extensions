@@ -58,10 +58,10 @@ public final class AttrSelMapper extends Mapper<IntWritable, SubtableWritable, I
 
             for (BitSet actualReduct : reducts) {
 
-                for (int numberOfActualReduct = 0; numberOfActualReduct < numberOfAllAttributes;
-                     numberOfActualReduct++) {
+                for (int numberOfActuallAttribute = 0; numberOfActuallAttribute < numberOfAllAttributes;
+                     numberOfActuallAttribute++) {
 
-                    addNewPair(value, context, actualReduct, numberOfActualReduct);
+                    addNewPair(value, context, actualReduct, numberOfActuallAttribute);
                 }
             }
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
@@ -69,17 +69,19 @@ public final class AttrSelMapper extends Mapper<IntWritable, SubtableWritable, I
         }
     }
 
-    private void addNewPair(SubtableWritable value, Context context, BitSet actualReduct, int numberOfActualReduct)
+    private void addNewPair(SubtableWritable value, Context context, BitSet actualReduct, int numberOfActuallAttribute)
             throws IOException, InterruptedException {
 
-        if (actualReduct.get(numberOfActualReduct)) {
+        if (actualReduct.get(value.get().getAttributeAtPosition(numberOfActuallAttribute))) {
+
+            System.out.println(value.get().getAttributeAtPosition(numberOfActuallAttribute) + " " + actualReduct);
 
             List<Integer> toIntWritableList = rewriteToList(actualReduct);
 
             IntListWritable toReturnListOfAttribute = new IntListWritable(toIntWritableList);
 
             IntWritable numberOfOriginalAttribute = new IntWritable(value.get().
-                    getAttributeAtPosition(numberOfActualReduct));
+                    getAttributeAtPosition(numberOfActuallAttribute));
 
             context.write(numberOfOriginalAttribute, toReturnListOfAttribute);
         }
