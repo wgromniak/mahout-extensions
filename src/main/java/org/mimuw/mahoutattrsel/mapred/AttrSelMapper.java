@@ -1,13 +1,15 @@
 package org.mimuw.mahoutattrsel.mapred;
 
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.mimuw.mahoutattrsel.RsesSubtableConverter;
 import rseslib.processing.reducts.GlobalReductsProvider;
 import rseslib.processing.reducts.ReductsProvider;
-import rseslib.system.PropertyConfigurationException;
+import rseslib.structure.table.DoubleDataTable;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
@@ -15,22 +17,40 @@ import java.util.*;
  */
 public final class AttrSelMapper extends Mapper<IntWritable, SubtableWritable, IntWritable, IntListWritable> {
 
+    public  static final String REDUCT_PROVIDER = "ReductProvider";
+    public  static final String INDISCERNIBILITY_FOR_MISSING = "DiscernFromValue";
+    public  static final String DISCERNIBILITY_METHOD = "OrdinaryDecisionAndInconsistenciesOmitted";
+    public  static final String GeneralizedDecisionTransitiveClosure="TRUE";
+
+    public static final String FIRST_PROPERTY = "IndiscernibilityForMissing";
+    public static final String SECOMD_PROPERTY = "DiscernibilityMethod";
+    public static final String THIRD_PROPERTY = "GeneralizedDecisionTransitiveClosure";
+
     @Override
     protected void map(IntWritable key, SubtableWritable value, Context context)
             throws IOException, InterruptedException {
 
         try {
 
-            Properties props = new Properties();
-            props.setProperty("IndiscernibilityForMissing", "DiscernFromValue");
-            props.setProperty("DiscernibilityMethod", "OrdinaryDecisionAndInconsistenciesOmitted");
-            props.setProperty("GeneralizedDecisionTransitiveClosure", "TRUE");
-
             RsesSubtableConverter convertValue = new RsesSubtableConverter();
 
-            int numberOfAllAttributes = value.get().getOriginalNumberOfAttributes();
+            Configuration conf = context.getConfiguration();
 
-            ReductsProvider reductsProvider = new GlobalReductsProvider(props, convertValue.convert(value.get()));
+            ReductsProvider reductsProvider;
+
+            Class<ReductsProvider> generatorClass = (Class<ReductsProvider>)
+                    conf.getClass(REDUCT_PROVIDER, GlobalReductsProvider.class,ReductsProvider.class);
+
+            Properties properties = new Properties();
+
+            properties.setProperty(FIRST_PROPERTY, conf.get(FIRST_PROPERTY));
+            properties.setProperty(SECOMD_PROPERTY, conf.get(SECOMD_PROPERTY));
+            properties.setProperty(THIRD_PROPERTY, conf.get(THIRD_PROPERTY));
+
+            reductsProvider = generatorClass.getConstructor(Properties.class, DoubleDataTable.class).
+                    newInstance(properties, convertValue.convert(value.get()));
+
+            int numberOfAllAttributes = value.get().getOriginalNumberOfAttributes();
 
             Collection<BitSet> reducts;
 
@@ -44,9 +64,8 @@ public final class AttrSelMapper extends Mapper<IntWritable, SubtableWritable, I
                     addNewPair(value, context, actualReduct, numberOfActualReduct);
                 }
             }
-
-        } catch (PropertyConfigurationException e) {
-            throw new IllegalStateException();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new IllegalStateException("Error instantiating SubtableGenerator", e);
         }
     }
 
