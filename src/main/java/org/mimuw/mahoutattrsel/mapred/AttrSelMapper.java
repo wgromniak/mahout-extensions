@@ -56,14 +56,15 @@ public final class AttrSelMapper extends Mapper<IntWritable, SubtableWritable, I
 
             reducts = reductsProvider.getReducts();
 
+
             for (BitSet actualReduct : reducts) {
 
-                int number = 0;
+                actualReduct = toOrginalNumberAttributes(value, actualReduct);
 
                 for (int numberOfActualAttribute = 0; numberOfActualAttribute < numberOfAllAttributes;
                      numberOfActualAttribute++) {
 
-                    addNewPair(value, context, actualReduct, numberOfActualAttribute, number);
+                    addNewPair(value, context, actualReduct, numberOfActualAttribute);
                 }
             }
         } catch (InstantiationException | IllegalAccessException |
@@ -73,20 +74,15 @@ public final class AttrSelMapper extends Mapper<IntWritable, SubtableWritable, I
     }
 
     private void addNewPair(SubtableWritable value, Context context, BitSet actualReduct,
-                            int numberOfActualReduct, int number) throws IOException, InterruptedException {
+                            int numberOfActualAttribute) throws IOException, InterruptedException {
 
-        if (actualReduct.get(numberOfActualReduct)) {
-
-            actualReduct = toOrginalNumberAttributes(value, actualReduct);
+        if (actualReduct.get(numberOfActualAttribute)) {
 
             List<Integer> toIntWritableList = rewriteToList(actualReduct);
 
             IntListWritable toReturnListOfAttribute = new IntListWritable(toIntWritableList);
 
-            IntWritable numberOfOriginalAttribute = new IntWritable(value.get().
-                    getAttributeAtPosition(numberOfActualReduct));
-
-            number++;
+            IntWritable numberOfOriginalAttribute = new IntWritable(numberOfActualAttribute);
 
             context.write(numberOfOriginalAttribute, toReturnListOfAttribute);
         }
@@ -104,6 +100,7 @@ public final class AttrSelMapper extends Mapper<IntWritable, SubtableWritable, I
         }
 
         actualReduct = toRewriteToOriginal;
+
         return actualReduct;
     }
 
