@@ -4,6 +4,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.mimuw.mahoutattrsel.RsesSubtableConverter;
+import org.mimuw.mahoutattrsel.api.Subtable;
 import rseslib.processing.reducts.GlobalReductsProvider;
 import rseslib.processing.reducts.ReductsProvider;
 import rseslib.structure.table.DoubleDataTable;
@@ -17,14 +18,21 @@ import java.util.*;
  */
 public final class AttrSelMapper extends Mapper<IntWritable, SubtableWritable, IntWritable, IntListWritable> {
 
-    public static final String REDUCT_PROVIDER = "ReductProvider";
-    public static final String INDISCERNIBILITY_FOR_MISSING = "DiscernFromValue";
-    public static final String DISCERNIBILITY_METHOD = "OrdinaryDecisionAndInconsistenciesOmitted";
-    public static final String GeneralizedDecisionTransitiveClosure = "TRUE";
 
-    public static final String FIRST_PROPERTY = "IndiscernibilityForMissing";
-    public static final String SECOMD_PROPERTY = "DiscernibilityMethod";
-    public static final String THIRD_PROPERTY = "GeneralizedDecisionTransitiveClosure";
+    public static final String INDISCERNIBILITY_FOR_MISSING = "mahout-extensions.attrsel.IndiscernibilityForMissing";
+    public static final String INDISCERNIBILITY_FOR_MISSING_DEFAULT = "DiscernFromValue";
+
+    public static final String DISCERNIBILITY_METHOD = "mahout-extensions.attrsel.DiscernibilityMethod";
+    public static final String DISCERNIBILITY_METHOD_DEFAULT = "OrdinaryDecisionAndInconsistenciesOmitted";
+
+    public static final String GRNRTSLIXEDECIISIONTRANSITIVECLOSURE =
+            "mahout-extensions.attrsel.mahout-extensions.attrsel.DiscernibilityMethod";
+    public static final String GRNRTSLIXEDECIISIONTRANSITIVECLOSURE_DEFAULT = "TRUE";
+
+    public static final String JOHNSON_REDUCT = "mahout-extensions.attrsel.JohnsonReduct";
+    public static final String JOHNSON_REDUCT_DEFAULT = "One";
+
+    public static final String REDUCT_PROVIDER = "ReductProvider";
 
     @Override
     protected void map(IntWritable key, SubtableWritable value, Context context)
@@ -38,83 +46,50 @@ public final class AttrSelMapper extends Mapper<IntWritable, SubtableWritable, I
 
             ReductsProvider reductsProvider;
 
+            @SuppressWarnings("unchecked")
             Class<ReductsProvider> generatorClass = (Class<ReductsProvider>)
                     conf.getClass(REDUCT_PROVIDER, GlobalReductsProvider.class, ReductsProvider.class);
 
             Properties properties = new Properties();
 
-            properties.setProperty(FIRST_PROPERTY, conf.get(FIRST_PROPERTY));
-            properties.setProperty(SECOMD_PROPERTY, conf.get(SECOMD_PROPERTY));
-            properties.setProperty(THIRD_PROPERTY, conf.get(THIRD_PROPERTY));
+            properties.setProperty("IndiscernibilityForMissing",
+                    conf.getTrimmed(INDISCERNIBILITY_FOR_MISSING, INDISCERNIBILITY_FOR_MISSING_DEFAULT));
+            properties.setProperty("DiscernibilityMethod",
+                    conf.getTrimmed(DISCERNIBILITY_METHOD, DISCERNIBILITY_METHOD_DEFAULT));
+            properties.setProperty("GeneralizedDecisionTransitiveClosure",
+                    conf.getTrimmed(
+                            GRNRTSLIXEDECIISIONTRANSITIVECLOSURE, GRNRTSLIXEDECIISIONTRANSITIVECLOSURE_DEFAULT));
+            properties.setProperty("JohnsonReduct",
+                    conf.getTrimmed(
+                            JOHNSON_REDUCT, JOHNSON_REDUCT_DEFAULT));
 
             reductsProvider = generatorClass.getConstructor(Properties.class, DoubleDataTable.class).
                     newInstance(properties, convertValue.convert(value.get()));
 
-            int numberOfAllAttributes = value.get().getOriginalNumberOfAttributes();
+            Subtable subtable = value.get();
 
             Collection<BitSet> reducts;
 
             reducts = reductsProvider.getReducts();
 
-
             for (BitSet actualReduct : reducts) {
 
-                actualReduct = toOrginalNumberAttributes(value, actualReduct);
+                List<Integer> listReduct = new ArrayList<>();
 
-                for (int numberOfActualAttribute = 0; numberOfActualAttribute < numberOfAllAttributes;
-                     numberOfActualAttribute++) {
+                for (int i = actualReduct.nextSetBit(0); i >= 0; i = actualReduct.nextSetBit(i + 1)) {
 
-                    addNewPair(value, context, actualReduct, numberOfActualAttribute);
+                    listReduct.add(subtable.getAttributeAtPosition(i));
+                }
+
+                for (int attribute : listReduct) {
+
+                    context.write(new IntWritable(attribute), new IntListWritable(listReduct));
                 }
             }
+
         } catch (InstantiationException | IllegalAccessException |
                 InvocationTargetException | NoSuchMethodException e) {
-            throw new IllegalStateException("Error instantiating SubtableGenerator", e);
+            throw new IllegalStateException("Error instantiating ReductsProvider");
         }
-    }
-
-    private void addNewPair(SubtableWritable value, Context context, BitSet actualReduct,
-                            int numberOfActualAttribute) throws IOException, InterruptedException {
-
-        if (actualReduct.get(numberOfActualAttribute)) {
-
-            List<Integer> toIntWritableList = rewriteToList(actualReduct);
-
-            IntListWritable toReturnListOfAttribute = new IntListWritable(toIntWritableList);
-
-            IntWritable numberOfOriginalAttribute = new IntWritable(numberOfActualAttribute);
-
-            context.write(numberOfOriginalAttribute, toReturnListOfAttribute);
-        }
-    }
-
-    private BitSet toOrginalNumberAttributes(SubtableWritable value, BitSet actualReduct) {
-        BitSet toRewriteToOriginal = new BitSet();
-
-        for (int i = 0; i < actualReduct.size(); i++) {
-
-            if (actualReduct.get(i)) {
-
-                toRewriteToOriginal.set(value.get().getAttributeAtPosition(i));
-            }
-        }
-
-        actualReduct = toRewriteToOriginal;
-
-        return actualReduct;
-    }
-
-    private List<Integer> rewriteToList(BitSet actualReduct) {
-
-        List<Integer> toIntWritableList = new ArrayList<>();
-
-        for (int i = 0; i < actualReduct.size(); i++) {
-
-            if (actualReduct.get(i)) {
-
-                toIntWritableList.add(i);
-            }
-        }
-        return toIntWritableList;
     }
 }

@@ -1,96 +1,92 @@
 package org.mimuw.mahoutattrsel.mapred;
 
 
+import com.google.common.collect.ImmutableList;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mrunit.mapreduce.MapDriver;
 import org.apache.mahout.math.DenseMatrix;
+import org.apache.mahout.math.Matrix;
 import org.mimuw.mahoutattrsel.AttributeSubtable;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import rseslib.processing.reducts.GlobalReductsProvider;
+import rseslib.processing.reducts.JohnsonReductsProvider;
+import rseslib.processing.reducts.LocalReductsProvider;
 import rseslib.processing.reducts.ReductsProvider;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-
+/**
+ * To obtain result for tests testFourAttributeThreeReducts and testThreeAttributesTwoReducts I run
+ * the GlobalReductProvider on input data. For each other tests I calculated results by hand.
+ */
 public class AttrSelMapperTest {
 
-    AttrSelMapper mapper;
-    MapDriver<IntWritable, SubtableWritable, IntWritable, IntListWritable> mapDriver;
-    ArrayList<Integer> listOfAttributs;
+    private AttrSelMapper mapper;
+    private MapDriver<IntWritable, SubtableWritable, IntWritable, IntListWritable> mapDriver;
+    private ArrayList<Integer> listOfAttributs;
+    private IntListWritable expectedOutputValue;
 
     Configuration conf = new Configuration();
 
 
-    @BeforeMethod
+    @BeforeMethod(groups = {"GlobalReductProvider"}, alwaysRun = true)
     public void setUp() {
+
+        IntListWritable expectedOutputValue = new IntListWritable();
+
+        listOfAttributs = new ArrayList();
 
         mapper = new AttrSelMapper();
         mapDriver = new MapDriver<IntWritable, SubtableWritable, IntWritable, IntListWritable>();
         mapDriver = MapDriver.newMapDriver(mapper);
 
-        listOfAttributs = new ArrayList<>();
-
         conf.setClass(AttrSelMapper.REDUCT_PROVIDER, GlobalReductsProvider.class, ReductsProvider.class);
-        conf.set("IndiscernibilityForMissing", AttrSelMapper.INDISCERNIBILITY_FOR_MISSING);
-        conf.set("DiscernibilityMethod", AttrSelMapper.DISCERNIBILITY_METHOD);
-        conf.set("GeneralizedDecisionTransitiveClosure", AttrSelMapper.GeneralizedDecisionTransitiveClosure);
+        conf.set(AttrSelMapper.INDISCERNIBILITY_FOR_MISSING, "DiscernFromValue");
+        conf.set(AttrSelMapper.DISCERNIBILITY_METHOD, "OrdinaryDecisionAndInconsistenciesOmitted");
+        conf.set(AttrSelMapper.GRNRTSLIXEDECIISIONTRANSITIVECLOSURE, "TRUE");
+
+        mapDriver.getConfiguration();
     }
 
-    @Test
+    @Test(groups = {"GlobalReductProvider"})
     public void testOneDummyReduct() throws Exception {
 
-        ArrayList<Integer> out = new ArrayList<>();
+        listOfAttributs.addAll(Arrays.asList(0, 1));
 
-        listOfAttributs.add(0);
-        listOfAttributs.add(1);
-        out.add(0);
+        expectedOutputValue = new IntListWritable(ImmutableList.of(0));
 
-        IntListWritable toOut = new IntListWritable(out);
-
-        SubtableWritable ex = new SubtableWritable(new AttributeSubtable
+        SubtableWritable mapInputValue = new SubtableWritable(new AttributeSubtable
                 (new DenseMatrix(new double[][]{{1, 1, 1}, {0, 0, 0}, {1, 0, 1}, {0, 1, 0}}), listOfAttributs, 2));
 
-        mapDriver.setConfiguration(conf);
-        mapDriver.withInput(new IntWritable(0), ex);
-        mapDriver.withOutput(new IntWritable(0), toOut);
+        mapDriver.withInput(new IntWritable(0), mapInputValue);
+        mapDriver.withOutput(new IntWritable(0), expectedOutputValue);
         mapDriver.runTest();
     }
 
-    @Test
+    @Test(groups = {"GlobalReductProvider"})
     public void testThreeAttributesOneReduct() throws Exception {
 
-        ArrayList<Integer> out = new ArrayList<>();
+        listOfAttributs.addAll(Arrays.asList(0, 1, 2));
 
-        for (int i = 0; i < 3; i++) {
+        expectedOutputValue = new IntListWritable(ImmutableList.of(2));
 
-            listOfAttributs.add(i);
-        }
+        SubtableWritable mapInputValue = new SubtableWritable(new AttributeSubtable(
+                new DenseMatrix(new double[][]{{1, 1, 1, 1}, {0, 0, 0, 0}, {1, 1, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}}),
+                listOfAttributs, 5));
 
-        out.add(2);
-
-        IntListWritable toOut = new IntListWritable(out);
-
-        SubtableWritable toMap = new SubtableWritable(new AttributeSubtable(
-                new DenseMatrix(new double[][]
-                        {{1, 1, 1, 1}, {0, 0, 0, 0}, {1, 1, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}}), listOfAttributs, 5));
-
-        mapDriver.setConfiguration(conf);
-        mapDriver.withInput(new IntWritable(0), toMap);
-        mapDriver.withOutput(new IntWritable(2), toOut);
+        mapDriver.withInput(new IntWritable(0), mapInputValue);
+        mapDriver.withOutput(new IntWritable(2), expectedOutputValue);
         mapDriver.runTest();
     }
 
-    @Test
+    @Test(groups = {"GlobalReductProvider"})
     public void testFourAttributeThreeReducts() throws Exception {
 
-        for (int i = 0; i < 4; i++) {
-
-            listOfAttributs.add(i);
-        }
+        listOfAttributs.addAll(Arrays.asList(0, 1, 2, 3));
 
         ArrayList<List<Integer>> multipleOut = new ArrayList<>();
 
@@ -107,29 +103,24 @@ public class AttrSelMapperTest {
         IntListWritable toOutFifth = new IntListWritable(multipleOut.get(4));
 
 
-        SubtableWritable toMap = new SubtableWritable(new AttributeSubtable(
-                new DenseMatrix(new double[][]
-                        {{1, 0, 2, 0, 1}, {0, 1, 0, 2, 0}, {1, 0, 0, 0, 1}, {0, 1, 1, 0, 1},
-                                {0, 0, 1, 0, 1}, {1, 0, 0, 0, 1}}), listOfAttributs, 10));
-        mapDriver.setConfiguration(conf);
-        mapDriver.withInput(new IntWritable(0), toMap);
+        SubtableWritable mapInputValue = new SubtableWritable(new AttributeSubtable(new DenseMatrix(
+                new double[][]{{1, 0, 2, 0, 1}, {0, 1, 0, 2, 0}, {1, 0, 0, 0, 1},
+                        {0, 1, 1, 0, 1}, {0, 0, 1, 0, 1}, {1, 0, 0, 0, 1}}), listOfAttributs, 10));
+
+        mapDriver.withInput(new IntWritable(0), mapInputValue);
         mapDriver.withOutput(new IntWritable(3), toOutFirst);
         mapDriver.withOutput(new IntWritable(1), toOutSecond);
         mapDriver.withOutput(new IntWritable(2), toOutThird);
         mapDriver.withOutput(new IntWritable(0), toOutFourth);
         mapDriver.withOutput(new IntWritable(2), toOutFifth);
         mapDriver.runTest();
-
     }
 
 
-    @Test
+    @Test(groups = {"GlobalReductProvider"})
     public void testThreeAttributesTwoReducts() throws Exception {
 
-        for (int i = 0; i < 3; i++) {
-
-            listOfAttributs.add(i);
-        }
+        listOfAttributs.addAll(Arrays.asList(0, 1, 2));
 
         ArrayList<List<Integer>> multipleOut = new ArrayList<>();
 
@@ -141,63 +132,110 @@ public class AttrSelMapperTest {
         IntListWritable toOutSecond = new IntListWritable(multipleOut.get(1));
         IntListWritable toOutThird = new IntListWritable(multipleOut.get(2));
 
-        SubtableWritable toMap = new SubtableWritable(new AttributeSubtable(
-                new DenseMatrix(new double[][]
-                        {{1, 2, 0, 1}, {0, 2, 2, 0}, {1, 1, 0, 1}, {0, 1, 0, 1},
-                                {0, 2, 2, 0}, {1, 1, 0, 1}, {1, 1, 1, 1}}), listOfAttributs, 3333));
-        mapDriver.setConfiguration(conf);
-        mapDriver.withInput(new IntWritable(0), toMap);
+        SubtableWritable mapInputValue = new SubtableWritable(new AttributeSubtable(new DenseMatrix(
+                new double[][]{{1, 2, 0, 1}, {0, 2, 2, 0}, {1, 1, 0, 1}, {0, 1, 0, 1},
+                        {0, 2, 2, 0}, {1, 1, 0, 1}, {1, 1, 1, 1}}), listOfAttributs, 3333));
+
+        mapDriver.withInput(new IntWritable(0), mapInputValue);
         mapDriver.withOutput(new IntWritable(2), toOutFirst);
         mapDriver.withOutput(new IntWritable(0), toOutSecond);
         mapDriver.withOutput(new IntWritable(1), toOutThird);
         mapDriver.runTest();
     }
 
-    @Test
+    @Test(groups = {"GlobalReductProvider"})
     public void testAnotherAttribute() throws Exception {
 
-        ArrayList<Integer> out = new ArrayList<>();
+        listOfAttributs.addAll(Arrays.asList(2, 5433, 4));
 
-        listOfAttributs.add(2);
-        listOfAttributs.add(5433);
-        listOfAttributs.add(4);
+        expectedOutputValue = new IntListWritable(ImmutableList.of(4));
 
-        out.add(4);
+        Matrix decisionMatrix = new DenseMatrix(new double[][]{{1, 1, 1, 1}, {0, 0, 0, 0}, {1, 1, 0, 0},
+                {0, 0, 0, 0}, {1, 0, 0, 0}});
 
-        IntListWritable toOut = new IntListWritable(out);
+        SubtableWritable mapInputValue = new SubtableWritable(new AttributeSubtable(
+                decisionMatrix, listOfAttributs, 10));
 
-        SubtableWritable toMap = new SubtableWritable(new AttributeSubtable(
-                new DenseMatrix(new double[][]
-                        {{1, 1, 1, 1}, {0, 0, 0, 0}, {1, 1, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}}), listOfAttributs, 10));
 
-        mapDriver.setConfiguration(conf);
-        mapDriver.withInput(new IntWritable(0), toMap);
-        mapDriver.withOutput(new IntWritable(4), toOut);
+        mapDriver.withInput(new IntWritable(0), mapInputValue);
+        mapDriver.withOutput(new IntWritable(4), expectedOutputValue);
         mapDriver.runTest();
-
     }
 
-    @Test
+    @Test(groups = {"GlobalReductProvider"})
     public void testOneReduct() throws Exception {
 
-        ArrayList<Integer> out = new ArrayList<>();
+        listOfAttributs.addAll(Arrays.asList(2, 3));
 
-        listOfAttributs.add(2);
-        listOfAttributs.add(3);
+        expectedOutputValue = new IntListWritable(ImmutableList.of(2));
 
-        out.add(2);
+        SubtableWritable mapInputValue = new SubtableWritable(new AttributeSubtable
+                (new DenseMatrix(new double[][]{{1, 1, 1}, {1, 1, 1}, {0, 0, 0}, {0, 1, 0}, {1, 0, 1}}),
+                        listOfAttributs, 4));
 
-        IntListWritable toOut = new IntListWritable(out);
-
-        SubtableWritable toMap = new SubtableWritable(new AttributeSubtable(
-                new DenseMatrix(new double[][]
-                        {{ 1, 1, 1}, { 1, 1, 1}, { 0, 0, 0}, { 0, 1, 0}, {1 , 0, 1}}), listOfAttributs, 4));
-
-        mapDriver.setConfiguration(conf)
-        ;
-        mapDriver.withInput(new IntWritable(0), toMap);
-        mapDriver.withOutput(new IntWritable(2), toOut);
+        mapDriver.withInput(new IntWritable(0), mapInputValue);
+        mapDriver.withOutput(new IntWritable(2), expectedOutputValue);
         mapDriver.runTest();
     }
 
+    @Test(groups = {"LocalReductProvider"})
+    public void testOneReductLocal() throws Exception {
+
+        IntListWritable expectedOutputValue = new IntListWritable();
+
+        listOfAttributs = new ArrayList();
+
+        mapper = new AttrSelMapper();
+        mapDriver = new MapDriver<IntWritable, SubtableWritable, IntWritable, IntListWritable>();
+        mapDriver = MapDriver.newMapDriver(mapper);
+
+        conf.setClass(AttrSelMapper.REDUCT_PROVIDER, LocalReductsProvider.class, ReductsProvider.class);
+        conf.set(AttrSelMapper.INDISCERNIBILITY_FOR_MISSING, "DiscernFromValue");
+        conf.set(AttrSelMapper.DISCERNIBILITY_METHOD, "OrdinaryDecisionAndInconsistenciesOmitted");
+        conf.set(AttrSelMapper.GRNRTSLIXEDECIISIONTRANSITIVECLOSURE, "TRUE");
+        mapDriver.getConfiguration();
+
+        listOfAttributs.addAll(Arrays.asList(2, 3));
+
+        expectedOutputValue = new IntListWritable(ImmutableList.of(2));
+
+        SubtableWritable mapInputValue = new SubtableWritable(new AttributeSubtable
+                (new DenseMatrix(new double[][]{{1, 1, 1}, {1, 1, 1}, {0, 0, 0}, {0, 1, 0}, {1, 0, 1}}),
+                        listOfAttributs, 4));
+
+        mapDriver.withInput(new IntWritable(0), mapInputValue);
+        mapDriver.withOutput(new IntWritable(2), expectedOutputValue);
+        mapDriver.runTest();
+    }
+
+    @Test(groups = {"JohnsonReductProvider"})
+    public void testOneReductJohnson() throws Exception {
+
+        IntListWritable expectedOutputValue = new IntListWritable();
+
+        listOfAttributs = new ArrayList();
+
+        mapper = new AttrSelMapper();
+        mapDriver = new MapDriver<IntWritable, SubtableWritable, IntWritable, IntListWritable>();
+        mapDriver = MapDriver.newMapDriver(mapper);
+
+        conf.setClass(AttrSelMapper.REDUCT_PROVIDER, JohnsonReductsProvider.class, ReductsProvider.class);
+        conf.set(AttrSelMapper.INDISCERNIBILITY_FOR_MISSING, "DiscernFromValue");
+        conf.set(AttrSelMapper.DISCERNIBILITY_METHOD, "OrdinaryDecisionAndInconsistenciesOmitted");
+        conf.set(AttrSelMapper.GRNRTSLIXEDECIISIONTRANSITIVECLOSURE, "TRUE");
+        conf.set(AttrSelMapper.JOHNSON_REDUCT, "One");
+        mapDriver.getConfiguration();
+
+        listOfAttributs.addAll(Arrays.asList(2, 3));
+
+        expectedOutputValue = new IntListWritable(ImmutableList.of(2));
+
+        SubtableWritable mapInputValue = new SubtableWritable(new AttributeSubtable
+                (new DenseMatrix(new double[][]{{1, 1, 1}, {1, 1, 1}, {0, 0, 0}, {0, 1, 0}, {1, 0, 1}}),
+                        listOfAttributs, 4));
+
+        mapDriver.withInput(new IntWritable(0), mapInputValue);
+        mapDriver.withOutput(new IntWritable(2), expectedOutputValue);
+        mapDriver.runTest();
+    }
 }
