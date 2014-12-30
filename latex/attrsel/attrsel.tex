@@ -1,0 +1,92 @@
+\documentclass[12pt]{report}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+
+\title{Ultra Massively Scalable Attribute Selection on Hadoop MapReduce and Beyond!}
+\author{Pawel Olszewski\\
+        Krzysztof Rutkowski\\
+        Wiktor Gromniak}
+\date{2015}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\chapter{Introduction}
+
+[TODO: in main Intro write DRACUS, UCL and whatnot]
+
+Attribute selection is a machine learning task, whose goal is to select relevant attributes from a given (usually large) set, for further use in model construction. It usually precedes construction of a classifier or other prediction model from the selected subset of attributes. It is most useful in the domains where tens of thousands of attributes occur such as processing of text documents, analysis of gene expression microarrays or combinatorial chemistry \cite{guyon} [TODO: more!]. A model with lower number of attributes has better performance, is faster and more memory-efficient and it is easier to find it's explanation in the domain language \cite{guyon}.
+
+To accomplish the attribute selection task we use the notions of reducts and more specifically dynamic and random reducts [TODO: cite]. They are based on the rough set theory and boolean reasoning [TODO: cite prof. Son]. We will introduce the basic concepts of rough sets and reducts in chapter \ref{chap:roughsets} and provide a unified approach towards dynamic and random reducts in chapter \ref{chap:dynamicrandomreducts}. We will further show how to use these notions in attribute selection in chapter \ref{chap:reductsattrsel}.
+
+As the datasets explored in attribute selection are usually very large and algorithms used to process them computationally expensive, we seek to make them more scalable using the recently developed paradigms capable of processing big data such as MapReduce and Apache Spark\footnote{[TODO: find out how to name Spark's computing paradigm.]}. These notions, their comparison are introduced in detail in chapter [TODO: cite Krzysiek's BigData section]. The distributed attribute selection algorithms, their characteristics and computational complexity are introduced and analysed in chapter \ref{chap:implattlsel}. We seek to provide our algorithms to the broader audience by providing their implementations open source as extensions to existing machine learning libraries. [TODO: will we provide other algos in MR, such as MCFS?]
+
+We further perform a series of experiments on artificial and freely available, real world data to access the scalability and performance of our algorithms. The results are discussed in chapter \ref{chap:experiments}. We also compare the predictive power of the models obtained using our algorithms with other state of the art methodologies (and prove that they are so much better).
+
+Our framework is further integrated with DRACUS.
+
+\chapter{Attribute selection task}
+
+[TODO: is this chapter necessary? It'd discuss what attribute selection is and what it is not and why and why not.]
+
+\chapter{Rough sets preliminaries}
+\label{chap:roughsets}
+
+
+\chapter{Unified approach towards dynamic and random reducts}
+\label{chap:dynamicrandomreducts}
+
+
+\chapter{Reducts-based attribute selection}
+\label{chap:reductsattrsel}
+  
+  
+\chapter{Implementation in big data frameworks}
+\label{chap:implattlsel}
+
+\section{MapRecude (Hadoop)}
+
+\section{Apache Spark}
+
+Spark is capable of loading all the data into the cluster's memory, thus it is very well suited for machine learning algorithms \cite{zaharia}.
+
+
+\chapter{Experiments}
+\label{chap:experiments}
+
+\section{Scalability}
+\subsection{Comparison of various implementations}
+
+Spark $\gg$ MapReduce.
+
+\chapter{Predictive performance and comparison to other methods}
+
+Our algorithms, as expected, turn out to be (so much) better than [TODO].
+
+\chapter{Conclusions}
+
+We've worked hard and achieved a lot.
+
+\begin{thebibliography}{9}
+ \addcontentsline{toc}{section}{Bibliography}
+
+\bibitem{copernicus} Nicolaus Copernicus, \emph{De revolutionibus orbium coelestium},
+                     Nuremberg, 1543
+
+% this guy is the author of spark
+% from wikipedia "Apache Spark"
+\bibitem{zaharia} Matei Zaharia, \emph{Spark: In-Memory Cluster Computing for Iterative and
+                  Interactive Applications}, Invited Talk at NIPS 2011 Big Learning
+                  Workshop: Algorithms, Systems, and Tools for Learning at Scale.
+                  \footnote{[TODO: is it legal to cite stuff like that? Find a paper.]}
+                  
+% from our Dropbox
+\bibitem{guyon} Isabelle Guyon, Andre Elisseef, \emph{An Introduction to Variable and
+                Feature Selection}
+
+\end{thebibliography}
+\end{document}
