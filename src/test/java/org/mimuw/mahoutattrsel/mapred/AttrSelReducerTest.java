@@ -3,7 +3,6 @@ package org.mimuw.mahoutattrsel.mapred;
 
 
 
-import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mrunit.mapreduce.ReduceDriver;
@@ -20,8 +19,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class AttrSelReducerTest {
 
 
-    private static final String NUM_SUBTABLE_ATTRIBUTE_PATH =
-            "file:///home/kris/DRACUS/mahout-extensions/numSubAttrs";
 
 
     @Test
@@ -33,8 +30,7 @@ public class AttrSelReducerTest {
         // writing list to file
         List<Integer> numberOfSubtablePerAttribute = Arrays.asList(3, 4, 5, 6);
         IntListWritable numberOfSubtablePerAttributeWritable = new IntListWritable(numberOfSubtablePerAttribute);
-        Path path = new Path(NUM_SUBTABLE_ATTRIBUTE_PATH);
-        FileOutputStream fos = new FileOutputStream(new File(path.toUri()));
+        FileOutputStream fos = new FileOutputStream(new File("numSubAttr"));
         DataOutput dos = new DataOutputStream(fos);
         numberOfSubtablePerAttributeWritable.write(dos);
 
@@ -49,7 +45,7 @@ public class AttrSelReducerTest {
         int attrKey2 = 2;
         DoubleWritable score2 = new DoubleWritable(0.6);
 
-        reduceDriver.withCacheFile(path.toUri())
+        reduceDriver.withCacheFile("numSubAttr")
                 .withInput(new IntWritable(attrKey1), reducts)
                 .withOutput(new IntWritable(attrKey1), score1)
                 .withInput(new IntWritable(attrKey2), reducts)
@@ -62,14 +58,13 @@ public class AttrSelReducerTest {
 
         List<Integer> numberOfSubtablePerAttribute = Arrays.asList(3, 4, 5, 6);
         IntListWritable numberOfSubtablePerAttributeWritable = new IntListWritable(numberOfSubtablePerAttribute);
-        Path path = new Path(NUM_SUBTABLE_ATTRIBUTE_PATH);
-        FileOutputStream fos = new FileOutputStream(new File(path.toUri()));
+        FileOutputStream fos = new FileOutputStream(new File("numSubAttr"));
         ObjectOutputStream oos = new ObjectOutputStream(fos);
         numberOfSubtablePerAttributeWritable.write(oos);
         oos.close();
 
 
-        FileInputStream fis = new FileInputStream(new File(path.toUri()));
+        FileInputStream fis = new FileInputStream(new File("numSubAttr"));
         ObjectInputStream ois = new ObjectInputStream(fis);
         List<Integer> list = IntListWritable.read(ois).get();
         ois.close();
