@@ -25,7 +25,7 @@ public class FrequencyScoreCalculatorTest {
     @Test
     public void testScore() throws Exception {
 
-        double result = (double) 3/10;
+        double result = 0.3;
         ArrayList<List<Integer>> reducts = new ArrayList<>();
         FrequencyScoreCalculator testCalc;
 

@@ -15,9 +15,9 @@ import java.util.List;
 public final class FrequencyScoreCalculator implements ScoreCalculator {
 
     private Iterable<List<Integer>> attrReducts;
-    private Integer attrSubsetsCount;
+    private int attrSubsetsCount;
 
-    public FrequencyScoreCalculator(Iterable<List<Integer>> reducts, Integer subsetsCount) {
+    public FrequencyScoreCalculator(Iterable<List<Integer>> reducts, int subsetsCount) {
         checkNotNull(reducts);
         checkArgument(subsetsCount > 0);
 
@@ -25,8 +25,11 @@ public final class FrequencyScoreCalculator implements ScoreCalculator {
         attrSubsetsCount = subsetsCount;
     }
 
+
+
     @Override
     public double getScore() {
-        return (double) Iterables.size(attrReducts)/attrSubsetsCount;
+        return (double) Iterables.size(attrReducts) / attrSubsetsCount;
     }
 }
+
