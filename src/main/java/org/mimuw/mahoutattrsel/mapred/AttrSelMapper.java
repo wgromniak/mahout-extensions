@@ -25,9 +25,9 @@ public final class AttrSelMapper extends Mapper<IntWritable, SubtableWritable, I
     public static final String DISCERNIBILITY_METHOD = "mahout-extensions.attrsel.DiscernibilityMethod";
     public static final String DISCERNIBILITY_METHOD_DEFAULT = "OrdinaryDecisionAndInconsistenciesOmitted";
 
-    public static final String GRNRTSLIXE_DECIISION_TRANSITIVE_CLOSURE =
+    public static final String GENERALIZED_DECISION_TRANSITIVE_CLOSURE =
             "mahout-extensions.attrsel.mahout-extensions.attrsel.DiscernibilityMethod";
-    public static final String GRNRTSLIXE_DECIISION_TRANSITIVE_CLOSURE_DEFAULT = "TRUE";
+    public static final String GENERALIZED_DECISION_TRANSITIVE_CLOSURE_DEFAULT = "TRUE";
 
     public static final String JOHNSON_REDUCTS = "mahout-extensions.attrsel.JohnsonReducts";
     public static final String JOHNSON_REDUCTS_DEFAULT = "One";
@@ -58,7 +58,7 @@ public final class AttrSelMapper extends Mapper<IntWritable, SubtableWritable, I
                     conf.getTrimmed(DISCERNIBILITY_METHOD, DISCERNIBILITY_METHOD_DEFAULT));
             properties.setProperty("GeneralizedDecisionTransitiveClosure",
                     conf.getTrimmed(
-                            GRNRTSLIXE_DECIISION_TRANSITIVE_CLOSURE, GRNRTSLIXE_DECIISION_TRANSITIVE_CLOSURE_DEFAULT));
+                            GENERALIZED_DECISION_TRANSITIVE_CLOSURE, GENERALIZED_DECISION_TRANSITIVE_CLOSURE_DEFAULT));
             properties.setProperty("JohnsonReducts",
                     conf.getTrimmed(
                             JOHNSON_REDUCTS, JOHNSON_REDUCTS_DEFAULT));

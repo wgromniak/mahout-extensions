@@ -38,7 +38,7 @@ public class AttrSelMapperTest {
         conf.setClass(AttrSelMapper.REDUCT_PROVIDER, GlobalReductsProvider.class, ReductsProvider.class);
         conf.set(AttrSelMapper.INDISCERNIBILITY_FOR_MISSING, "DiscernFromValue");
         conf.set(AttrSelMapper.DISCERNIBILITY_METHOD, "OrdinaryDecisionAndInconsistenciesOmitted");
-        conf.set(AttrSelMapper.GRNRTSLIXE_DECIISION_TRANSITIVE_CLOSURE, "TRUE");
+        conf.set(AttrSelMapper.GENERALIZED_DECISION_TRANSITIVE_CLOSURE, "TRUE");
     }
 
     @Test
@@ -180,7 +180,7 @@ public class AttrSelMapperTest {
         conf.setClass(AttrSelMapper.REDUCT_PROVIDER, LocalReductsProvider.class, ReductsProvider.class);
         conf.set(AttrSelMapper.INDISCERNIBILITY_FOR_MISSING, "DiscernFromValue");
         conf.set(AttrSelMapper.DISCERNIBILITY_METHOD, "OrdinaryDecisionAndInconsistenciesOmitted");
-        conf.set(AttrSelMapper.GRNRTSLIXE_DECIISION_TRANSITIVE_CLOSURE, "TRUE");
+        conf.set(AttrSelMapper.GENERALIZED_DECISION_TRANSITIVE_CLOSURE, "TRUE");
 
         List<Integer> listOfAttributes = Arrays.asList(2, 3);
 
@@ -206,7 +206,7 @@ public class AttrSelMapperTest {
         conf.setClass(AttrSelMapper.REDUCT_PROVIDER, JohnsonReductsProvider.class, ReductsProvider.class);
         conf.set(AttrSelMapper.INDISCERNIBILITY_FOR_MISSING, "DiscernFromValue");
         conf.set(AttrSelMapper.DISCERNIBILITY_METHOD, "OrdinaryDecisionAndInconsistenciesOmitted");
-        conf.set(AttrSelMapper.GRNRTSLIXE_DECIISION_TRANSITIVE_CLOSURE, "TRUE");
+        conf.set(AttrSelMapper.GENERALIZED_DECISION_TRANSITIVE_CLOSURE, "TRUE");
         conf.set(AttrSelMapper.JOHNSON_REDUCTS, "One");
 
         List<Integer> listOfAttributes = Arrays.asList(0, 1, 2, 3);
