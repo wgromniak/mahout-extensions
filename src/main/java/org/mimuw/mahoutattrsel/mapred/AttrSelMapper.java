@@ -25,12 +25,12 @@ public final class AttrSelMapper extends Mapper<IntWritable, SubtableWritable, I
     public static final String DISCERNIBILITY_METHOD = "mahout-extensions.attrsel.DiscernibilityMethod";
     public static final String DISCERNIBILITY_METHOD_DEFAULT = "OrdinaryDecisionAndInconsistenciesOmitted";
 
-    public static final String GRNRTSLIXEDECIISIONTRANSITIVECLOSURE =
+    public static final String GRNRTSLIXE_DECIISION_TRANSITIVE_CLOSURE =
             "mahout-extensions.attrsel.mahout-extensions.attrsel.DiscernibilityMethod";
-    public static final String GRNRTSLIXEDECIISIONTRANSITIVECLOSURE_DEFAULT = "TRUE";
+    public static final String GRNRTSLIXE_DECIISION_TRANSITIVE_CLOSURE_DEFAULT = "TRUE";
 
-    public static final String JOHNSON_REDUCT = "mahout-extensions.attrsel.JohnsonReduct";
-    public static final String JOHNSON_REDUCT_DEFAULT = "One";
+    public static final String JOHNSON_REDUCTS = "mahout-extensions.attrsel.JohnsonReducts";
+    public static final String JOHNSON_REDUCTS_DEFAULT = "One";
 
     public static final String REDUCT_PROVIDER = "ReductProvider";
 
@@ -58,10 +58,10 @@ public final class AttrSelMapper extends Mapper<IntWritable, SubtableWritable, I
                     conf.getTrimmed(DISCERNIBILITY_METHOD, DISCERNIBILITY_METHOD_DEFAULT));
             properties.setProperty("GeneralizedDecisionTransitiveClosure",
                     conf.getTrimmed(
-                            GRNRTSLIXEDECIISIONTRANSITIVECLOSURE, GRNRTSLIXEDECIISIONTRANSITIVECLOSURE_DEFAULT));
-            properties.setProperty("JohnsonReduct",
+                            GRNRTSLIXE_DECIISION_TRANSITIVE_CLOSURE, GRNRTSLIXE_DECIISION_TRANSITIVE_CLOSURE_DEFAULT));
+            properties.setProperty("JohnsonReducts",
                     conf.getTrimmed(
-                            JOHNSON_REDUCT, JOHNSON_REDUCT_DEFAULT));
+                            JOHNSON_REDUCTS, JOHNSON_REDUCTS_DEFAULT));
 
             reductsProvider = generatorClass.getConstructor(Properties.class, DoubleDataTable.class).
                     newInstance(properties, convertValue.convert(value.get()));
@@ -89,7 +89,7 @@ public final class AttrSelMapper extends Mapper<IntWritable, SubtableWritable, I
 
         } catch (InstantiationException | IllegalAccessException |
                 InvocationTargetException | NoSuchMethodException e) {
-            throw new IllegalStateException("Error instantiating ReductsProvider");
+            throw new IllegalStateException("Error instantiating ReductsProvider", e);
         }
     }
 }
