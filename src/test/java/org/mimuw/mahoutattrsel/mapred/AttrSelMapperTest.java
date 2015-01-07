@@ -51,9 +51,9 @@ public class AttrSelMapperTest {
         SubtableWritable mapInputValue = new SubtableWritable(new AttributeSubtable
                 (new DenseMatrix(new double[][]{{1, 1, 1}, {0, 0, 0}, {1, 0, 1}, {0, 1, 0}}), listOfAttributes, 2));
 
-        mapDriver.withInput(new IntWritable(0), mapInputValue);
-        mapDriver.withOutput(new IntWritable(0), expectedOutputValue);
-        mapDriver.runTest();
+        mapDriver.withInput(new IntWritable(0), mapInputValue).
+                    withOutput(new IntWritable(0), expectedOutputValue).
+                    runTest();
     }
 
     @Test
@@ -68,9 +68,9 @@ public class AttrSelMapperTest {
                 new DenseMatrix(new double[][]{{1, 1, 1, 1}, {0, 0, 0, 0}, {1, 1, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}}),
                 listOfAttributes, 5));
 
-        mapDriver.withInput(new IntWritable(0), mapInputValue);
-        mapDriver.withOutput(new IntWritable(2), expectedOutputValue);
-        mapDriver.runTest();
+        mapDriver.withInput(new IntWritable(0), mapInputValue)
+                    .withOutput(new IntWritable(2), expectedOutputValue)
+                    .runTest();
     }
 
     @Test
@@ -98,13 +98,13 @@ public class AttrSelMapperTest {
                         {0, 1, 1, 0, 1}, {0, 0, 1, 0, 1}, {1, 0, 0, 0, 1}}),
                 listOfAttributes, 10));
 
-        mapDriver.withInput(new IntWritable(0), mapInputValue);
-        mapDriver.withOutput(new IntWritable(3), toOutFirst);
-        mapDriver.withOutput(new IntWritable(1), toOutSecond);
-        mapDriver.withOutput(new IntWritable(2), toOutThird);
-        mapDriver.withOutput(new IntWritable(0), toOutFourth);
-        mapDriver.withOutput(new IntWritable(2), toOutFifth);
-        mapDriver.runTest();
+        mapDriver.withInput(new IntWritable(0), mapInputValue)
+                    .withOutput(new IntWritable(3), toOutFirst)
+                    .withOutput(new IntWritable(1), toOutSecond)
+                    .withOutput(new IntWritable(2), toOutThird)
+                    .withOutput(new IntWritable(0), toOutFourth)
+                    .withOutput(new IntWritable(2), toOutFifth)
+                    .runTest();
     }
 
 
@@ -130,11 +130,11 @@ public class AttrSelMapperTest {
         SubtableWritable mapInputValue = new SubtableWritable(
                 new AttributeSubtable(decisionMatrix, listOfAttributes, 3333));
 
-        mapDriver.withInput(new IntWritable(0), mapInputValue);
-        mapDriver.withOutput(new IntWritable(2), toOutFirst);
-        mapDriver.withOutput(new IntWritable(0), toOutSecond);
-        mapDriver.withOutput(new IntWritable(1), toOutThird);
-        mapDriver.runTest();
+        mapDriver.withInput(new IntWritable(0), mapInputValue)
+                    .withOutput(new IntWritable(2), toOutFirst)
+                    .withOutput(new IntWritable(0), toOutSecond)
+                    .withOutput(new IntWritable(1), toOutThird)
+                    .runTest();
     }
 
     @Test
@@ -152,9 +152,9 @@ public class AttrSelMapperTest {
                 new AttributeSubtable(decisionMatrix, listOfAttributes, 10));
 
 
-        mapDriver.withInput(new IntWritable(0), mapInputValue);
-        mapDriver.withOutput(new IntWritable(4), expectedOutputValue);
-        mapDriver.runTest();
+        mapDriver.withInput(new IntWritable(0), mapInputValue)
+        .withOutput(new IntWritable(4), expectedOutputValue)
+        .runTest();
     }
 
     @Test
@@ -168,9 +168,9 @@ public class AttrSelMapperTest {
                 (new DenseMatrix(new double[][]{{1, 1, 1}, {1, 1, 1}, {0, 0, 0}, {0, 1, 0}, {1, 0, 1}}),
                         listOfAttributes, 4));
 
-        mapDriver.withInput(new IntWritable(0), mapInputValue);
-        mapDriver.withOutput(new IntWritable(2), expectedOutputValue);
-        mapDriver.runTest();
+        mapDriver.withInput(new IntWritable(0), mapInputValue)
+                    .withOutput(new IntWritable(2), expectedOutputValue)
+                    .runTest();
     }
 
     @Test
@@ -190,13 +190,13 @@ public class AttrSelMapperTest {
                 (new DenseMatrix(new double[][]{{1, 1, 1}, {1, 1, 1}, {0, 0, 0}, {0, 1, 0}, {1, 0, 1}}),
                         listOfAttributes, 4));
 
-        mapDriver.withInput(new IntWritable(0), mapInputValue);
-        mapDriver.withOutput(new IntWritable(2), expectedOutputValue);
-        mapDriver.withOutput(new IntWritable(2), expectedOutputValue);
-        mapDriver.withOutput(new IntWritable(2), expectedOutputValue);
-        mapDriver.withOutput(new IntWritable(2), expectedOutputValue);
-        mapDriver.withOutput(new IntWritable(2), expectedOutputValue);
-        mapDriver.runTest();
+        mapDriver.withInput(new IntWritable(0), mapInputValue)
+                    .withOutput(new IntWritable(2), expectedOutputValue)
+                    .withOutput(new IntWritable(2), expectedOutputValue)
+                    .withOutput(new IntWritable(2), expectedOutputValue)
+                    .withOutput(new IntWritable(2), expectedOutputValue)
+                    .withOutput(new IntWritable(2), expectedOutputValue)
+                    .runTest();
     }
 
     @Test
@@ -217,8 +217,8 @@ public class AttrSelMapperTest {
                 (new DenseMatrix(new double[][]{{1, 1, 2, 3, 4}, {0, 0, 3, 1, 0}, {1, 0, 5, 6, 1}, {0, 1, 2, 4, 0}}),
                         listOfAttributes, 10560));
 
-        mapDriver.withInput(new IntWritable(0), mapInputValue);
-        mapDriver.withOutput(new IntWritable(3), expectedOutputValue);
-        mapDriver.runTest();
+        mapDriver.withInput(new IntWritable(0), mapInputValue)
+                    .withOutput(new IntWritable(3), expectedOutputValue)
+                    .runTest();
     }
 }
