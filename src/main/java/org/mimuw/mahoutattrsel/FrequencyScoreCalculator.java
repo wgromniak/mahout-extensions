@@ -18,8 +18,8 @@ public final class FrequencyScoreCalculator implements ScoreCalculator {
     private int attrSubsetsCount;
 
     public FrequencyScoreCalculator(Iterable<List<Integer>> reducts, int subsetsCount) {
-        checkNotNull(reducts);
-        checkArgument(subsetsCount > 0);
+        checkNotNull(reducts, "Reducts must not be null");
+        checkArgument(subsetsCount > 0, "SubsetCount must be positive");
 
         attrReducts = reducts;
         attrSubsetsCount = subsetsCount;

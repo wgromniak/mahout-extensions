@@ -12,16 +12,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class FrequencyScoreCalculatorTest {
 
-
-
-    private void fillReducts(int reductSize, ArrayList<List<Integer>> reducts) {
-
-        reducts.clear();
-        for (int j = 0; j < reductSize; j++) {
-            reducts.add(Arrays.asList(1, 4, 5));
-        }
-    }
-
     @Test
     public void testScore() throws Exception {
 
@@ -45,12 +35,18 @@ public class FrequencyScoreCalculatorTest {
         try {
             ArrayList<List<Integer>> reducts = new ArrayList<>();
             reducts.add(Arrays.asList(1));
-            FrequencyScoreCalculator testCalc;
-            testCalc = new FrequencyScoreCalculator(reducts, 0);
-            testCalc.getScore();
+            FrequencyScoreCalculator testCalc = new FrequencyScoreCalculator(reducts, 0);
             assert false;
         } catch (IllegalArgumentException e) {
             assert true;
+        }
+    }
+
+    private void fillReducts(int reductSize, ArrayList<List<Integer>> reducts) {
+
+        reducts.clear();
+        for (int j = 0; j < reductSize; j++) {
+            reducts.add(Arrays.asList(1, 4, 5));
         }
     }
 
