@@ -11,7 +11,7 @@ import java.io.ByteArrayInputStream;
 
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.mimuw.mahoutattrsel.assertions.AttrselAssertions.assertThat;
 
 public class CSVMatrixReaderTest {
 
@@ -29,7 +29,7 @@ public class CSVMatrixReaderTest {
 
         Matrix mat = reader.read(in);
 
-        MatrixAssert.assertThat(mat)
+        assertThat(mat)
                 .isEqualTo(new DenseMatrix(new double[][]{{1, 2.0, 3.4}, {5, 3.15, 2.72}, {3, 2.1, 6.5}}));
     }
 
@@ -44,7 +44,7 @@ public class CSVMatrixReaderTest {
 
         Matrix mat = reader.read(in);
 
-        MatrixAssert.assertThat(mat).isEqualTo(new SparseMatrix(0, 0));
+        assertThat(mat).isEqualTo(new SparseMatrix(0, 0));
     }
 
     @Test

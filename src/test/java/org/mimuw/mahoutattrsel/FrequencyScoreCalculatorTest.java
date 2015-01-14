@@ -2,10 +2,11 @@ package org.mimuw.mahoutattrsel;
 
 import org.testng.annotations.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.mimuw.mahoutattrsel.assertions.AttrselAssertions.assertThat;
 
 /**
  * assertion for the FrequencyScoreCalculator.getScore() method

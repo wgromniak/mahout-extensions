@@ -2,18 +2,17 @@
 package org.mimuw.mahoutattrsel.mapred;
 
 
-
 import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mrunit.mapreduce.ReduceDriver;
-import org.testng.annotations.*;
+import org.testng.annotations.Test;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.mimuw.mahoutattrsel.assertions.AttrselAssertions.assertThat;
 
 
 public class AttrSelReducerTest {

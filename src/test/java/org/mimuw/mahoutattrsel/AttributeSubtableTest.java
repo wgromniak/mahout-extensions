@@ -6,7 +6,7 @@ import org.apache.mahout.math.Matrix;
 import org.mimuw.mahoutattrsel.api.Subtable;
 import org.testng.annotations.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.mimuw.mahoutattrsel.assertions.AttrselAssertions.assertThat;
 
 public class AttributeSubtableTest {
 
@@ -21,6 +21,6 @@ public class AttributeSubtableTest {
         assertThat(subtable.getNumberOfAttributes()).isEqualTo(2);
         assertThat(subtable.hasAllAttributes()).isFalse();
         assertThat(subtable.iterateAttributes()).containsExactly(3, 8);
-        MatrixAssert.assertThat(subtable.getTable()).isEqualTo(matrix);
+        assertThat(subtable.getTable()).isEqualTo(matrix);
     }
 }

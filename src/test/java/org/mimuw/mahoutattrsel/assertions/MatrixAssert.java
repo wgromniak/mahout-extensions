@@ -1,4 +1,4 @@
-package org.mimuw.mahoutattrsel;
+package org.mimuw.mahoutattrsel.assertions;
 
 import org.apache.mahout.math.Matrix;
 import org.assertj.core.api.AbstractAssert;
@@ -6,14 +6,10 @@ import org.assertj.core.api.AbstractAssert;
 /**
  * Assertion for the {@link org.apache.mahout.math.Matrix} type.
  */
-public class MatrixAssert<S extends MatrixAssert<S>> extends AbstractAssert<S, Matrix> {
+public final class MatrixAssert extends AbstractAssert<MatrixAssert, Matrix> {
 
     protected MatrixAssert(Matrix actual) {
         super(actual, MatrixAssert.class);
-    }
-
-    public static MatrixAssert assertThat(Matrix actual) {
-        return new MatrixAssert(actual);
     }
 
     /**
@@ -23,7 +19,7 @@ public class MatrixAssert<S extends MatrixAssert<S>> extends AbstractAssert<S, M
      * @param expected the given Matrix to compare the actual value to.
      * @return {@code this} assertion object.
      */
-    public S isEqualTo(Matrix expected) {
+    public MatrixAssert isEqualTo(Matrix expected) {
 
         if (actual.rowSize() != expected.rowSize() || actual.columnSize() != expected.columnSize()) {
             failWithMessage("The actual has different dimensions <%sx%s>, than the expected <%sx%s>",
@@ -49,7 +45,7 @@ public class MatrixAssert<S extends MatrixAssert<S>> extends AbstractAssert<S, M
      * @param expected expected row size.
      * @return {@code this} assertion object.
      */
-    public S hasRowSize(int expected) {
+    public MatrixAssert hasRowSize(int expected) {
 
         if (actual.rowSize() != expected) {
             failWithMessage("The actual row size <%s> is different than expected <%s>", actual.rowSize(), expected);
@@ -64,7 +60,7 @@ public class MatrixAssert<S extends MatrixAssert<S>> extends AbstractAssert<S, M
      * @param expected expected column size.
      * @return {@code this} assertion object.
      */
-    public S hasColumnSize(int expected) {
+    public MatrixAssert hasColumnSize(int expected) {
 
         if (actual.columnSize() != expected) {
             failWithMessage("The actual column size <%s> is different than expected <%s>",

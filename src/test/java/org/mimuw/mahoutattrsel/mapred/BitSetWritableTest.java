@@ -6,7 +6,7 @@ import java.io.*;
 import java.util.BitSet;
 import java.util.Random;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.mimuw.mahoutattrsel.assertions.AttrselAssertions.assertThat;
 
 public class BitSetWritableTest {
 

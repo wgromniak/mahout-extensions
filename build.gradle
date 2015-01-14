@@ -1,6 +1,16 @@
 apply plugin: 'java'
 apply plugin: 'findbugs'
 
+// This plugin is used to build a jar with all the dependencies. It exposes shadowJar task.
+apply plugin: 'com.github.johnrengelman.shadow'
+
+buildscript {
+    repositories { jcenter() }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.1.1'
+    }
+}
+
 repositories {
     mavenCentral()
     jcenter()
@@ -27,6 +37,12 @@ dependencies {
     testCompile 'org.apache.hadoop:hadoop-hdfs:2.6.0'
     testCompile 'org.apache.hadoop:hadoop-hdfs:2.6.0:tests'
     testCompile 'org.apache.hadoop:hadoop-minicluster:2.6.0'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'org.mimuw.mahoutattrsel.mapred.AttrSelDriver'
+    }
 }
 
 test {

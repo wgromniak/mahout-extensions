@@ -4,14 +4,13 @@ import com.google.common.collect.ImmutableList;
 import org.apache.mahout.math.DenseMatrix;
 import org.apache.mahout.math.Matrix;
 import org.mimuw.mahoutattrsel.AttributeSubtable;
-import org.mimuw.mahoutattrsel.MatrixAssert;
 import org.mimuw.mahoutattrsel.ObjectSubtable;
 import org.mimuw.mahoutattrsel.api.Subtable;
 import org.testng.annotations.Test;
 
 import java.io.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.mimuw.mahoutattrsel.assertions.AttrselAssertions.assertThat;
 
 public class SubtableWritableTest {
 
@@ -49,7 +48,7 @@ public class SubtableWritableTest {
 
         Subtable desered = SubtableWritable.read(dataIn).get();
 
-        MatrixAssert.assertThat(desered.getTable()).isEqualTo(original.getTable());
+        assertThat(desered.getTable()).isEqualTo(original.getTable());
         assertThat(desered.hasAllAttributes()).isEqualTo(original.hasAllAttributes());
         assertThat(desered.getOriginalNumberOfAttributes()).isEqualTo(original.getOriginalNumberOfAttributes());
         assertThat(desered.getNumberOfAttributes()).isEqualTo(original.getNumberOfAttributes());

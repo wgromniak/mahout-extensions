@@ -6,7 +6,7 @@ import org.testng.annotations.Test;
 import java.util.BitSet;
 import java.util.Random;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.mimuw.mahoutattrsel.assertions.AttrselAssertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 public class AbstractMatrixFixedSizeSubtableGeneratorTest {

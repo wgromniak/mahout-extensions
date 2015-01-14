@@ -1,24 +1,17 @@
 package org.mimuw.mahoutattrsel.mapred;
 
 import com.google.common.base.Optional;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FSDataOutputStream;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.mapreduce.*;
-import org.apache.mahout.common.HadoopUtil;
-import org.apache.mahout.common.RandomUtils;
 import org.apache.mahout.math.Matrix;
-import org.mimuw.mahoutattrsel.MatrixFixedSizeObjectSubtableGenerator;
 import org.mimuw.mahoutattrsel.api.Subtable;
-import org.mimuw.mahoutattrsel.api.SubtableGenerator;
 
+import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
@@ -29,81 +22,24 @@ import static com.google.common.base.Preconditions.checkState;
  */
 final class SubtableInputFormat extends InputFormat<IntWritable, SubtableWritable> {
 
-    public static final String SUBTABLE_GEN = "mahout-extensions.attrsel.subtable.generator";
-    public static final String NUM_SUBTABLES = "mahout-extensions.attrsel.number.of.subtables";
-    public static final String SUBTABLE_CARD = "mahout-extensions.attrsel.subtable.size";
-    public static final int DEFAULT_NO_OF_SUBTABLES = 1;
-    public static final int DEFAULT_SUBTABLE_SIZE = 1;
+    private static Optional<List<Subtable>> subtables = Optional.absent();
 
-    static final String NUM_SUBTABLES_ATTRIBUTE_PATH = "hdfs:///mahout-extensions/attrsel/numSubAttrs";
-
-    private static Optional<Matrix> fullMatrix = Optional.absent();
-    private static Optional<FileSystem> fs = Optional.absent();
-
-    /**
-     * Loads the input {@link Matrix} data table.
-     */
-    public static void setDataTable(Matrix matrix) {
-        checkState(!fullMatrix.isPresent(), "Full matrix already set"); // should be set only once
-        fullMatrix = Optional.of(checkNotNull(matrix));
-    }
-
-    public static void setFileSystem(FileSystem fileSystem) {
-        checkState(!fs.isPresent(), "File system already set");
-        fs = Optional.of(fileSystem);
+    public static void setSubtables(List<Subtable> subtables) {
+        checkState(!SubtableInputFormat.subtables.isPresent(), "Expected subtables to be absent");
+        SubtableInputFormat.subtables = Optional.of(subtables);
     }
 
     @Override
     public List<InputSplit> getSplits(JobContext jobContext) throws IOException, InterruptedException {
-        checkState(fullMatrix.isPresent(), "Full matrix not set");
-        checkState(fs.isPresent(), "Filesystem not set");
+        checkState(subtables.isPresent(), "Expected subtables to be present");
 
-        Configuration conf = jobContext.getConfiguration();
+        List<InputSplit> splits = new ArrayList<>(subtables.get().size());
 
-        @SuppressWarnings("unchecked")
-        Class<SubtableGenerator<Subtable>> generatorClass =
-                (Class<SubtableGenerator<Subtable>>) conf.getClass(SUBTABLE_GEN,
-                        MatrixFixedSizeObjectSubtableGenerator.class);
-
-        int numberOfSubtables = conf.getInt(NUM_SUBTABLES, DEFAULT_NO_OF_SUBTABLES);
-        int subtableSize = conf.getInt(SUBTABLE_CARD, DEFAULT_SUBTABLE_SIZE);
-
-        SubtableGenerator<Subtable> subtableGenerator;
-
-        try {
-            subtableGenerator = generatorClass
-                    .getConstructor(Random.class, int.class, int.class, Matrix.class)
-                    .newInstance(RandomUtils.getRandom(), numberOfSubtables, subtableSize, fullMatrix.get());
-
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new IllegalStateException("Error instantiating SubtableGenerator", e);
+        for (int i = 0; i < subtables.get().size(); i++) {
+            splits.add(new SingleSubtableInputSplit(i, subtables.get().get(i)));
         }
-
-        List<Subtable> subtables = subtableGenerator.getSubtables();
-
-        List<InputSplit> splits = new ArrayList<>(subtables.size());
-
-        for (int i = 0; i < subtables.size(); i++) {
-            splits.add(new SingleSubtableInputSplit(i, subtables.get(i)));
-        }
-
-        List<Integer> numberOfSubtablesPerAttribute = subtableGenerator.getNumberOfSubtablesPerAttribute();
-
-        writeAttributeCountsToHDFSAndSetCache(numberOfSubtablesPerAttribute, jobContext);
 
         return splits;
-    }
-
-    private void writeAttributeCountsToHDFSAndSetCache(List<Integer> numberOfSubtablesPerAttribute,
-                                                       JobContext jobContext) throws IOException {
-        Path path = new Path(NUM_SUBTABLES_ATTRIBUTE_PATH);
-
-        try (FSDataOutputStream os = fs.get().create(path, true)) {
-
-            new IntListWritable(numberOfSubtablesPerAttribute).write(os);
-        }
-
-        HadoopUtil.cacheFiles(path, jobContext.getConfiguration());
     }
 
     @Override
@@ -115,12 +51,12 @@ final class SubtableInputFormat extends InputFormat<IntWritable, SubtableWritabl
     /**
      * A single InputSplit corresponds to single {@link Subtable}.
      */
-    static final class SingleSubtableInputSplit extends InputSplit {
+    static final class SingleSubtableInputSplit extends InputSplit implements Writable {
 
         private SubtableWritable matrix;
         private int key;
 
-        private SingleSubtableInputSplit() {}
+        private SingleSubtableInputSplit() {} // used by reflection
 
         private SingleSubtableInputSplit(int key, Subtable matrix) {
             this.key = key;
@@ -135,6 +71,21 @@ final class SubtableInputFormat extends InputFormat<IntWritable, SubtableWritabl
         @Override
         public String[] getLocations() {
             return new String[]{}; // for, it's in-memory
+        }
+
+        @Override
+        public void write(DataOutput out) throws IOException {
+            matrix.write(out);
+        }
+
+        @Override
+        public void readFields(DataInput in) throws IOException {
+
+            if (matrix == null) {
+                matrix = new SubtableWritable();
+            }
+
+            matrix.readFields(in);
         }
     }
 

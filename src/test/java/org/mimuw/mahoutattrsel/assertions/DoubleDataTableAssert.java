@@ -1,6 +1,5 @@
-package org.mimuw.mahoutattrsel;
+package org.mimuw.mahoutattrsel.assertions;
 
-import org.apache.mahout.math.Matrix;
 import org.assertj.core.api.AbstractAssert;
 import rseslib.structure.attribute.Attribute;
 import rseslib.structure.data.DoubleData;
@@ -11,17 +10,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Assertion for the {@link DoubleDataTable} type.
  */
-public class DoubleDataTableAssert<S extends DoubleDataTableAssert<S>> extends AbstractAssert<S, DoubleDataTable> {
+public final class DoubleDataTableAssert extends AbstractAssert<DoubleDataTableAssert, DoubleDataTable> {
 
     protected DoubleDataTableAssert(DoubleDataTable actual) {
         super(actual, DoubleDataTableAssert.class);
     }
 
-    public static DoubleDataTableAssert assertThat(DoubleDataTable actual) {
-        return new DoubleDataTableAssert(actual);
-    }
-
-    public S hasAttributeNames(String... expected) {
+    public DoubleDataTableAssert hasAttributeNames(String... expected) {
 
         if (actual.attributes().noOfAttr() != expected.length) {
             failWithMessage("Actual has different number of attributes <%s> than expected <%s>",
@@ -39,7 +34,7 @@ public class DoubleDataTableAssert<S extends DoubleDataTableAssert<S>> extends A
         return myself;
     }
 
-    public S hasAttributeTypes(Attribute.Type... expected) {
+    public DoubleDataTableAssert hasAttributeTypes(Attribute.Type... expected) {
 
         if (actual.attributes().noOfAttr() != expected.length) {
             failWithMessage("Actual has different number of attributes <%s> than expected <%s>",
@@ -73,7 +68,7 @@ public class DoubleDataTableAssert<S extends DoubleDataTableAssert<S>> extends A
         return myself;
     }
 
-    public S hasAttributeValueSets(Attribute.ValueSet... expected) {
+    public DoubleDataTableAssert hasAttributeValueSets(Attribute.ValueSet... expected) {
 
         if (actual.attributes().noOfAttr() != expected.length) {
             failWithMessage("Actual has different number of attributes <%s> than expected <%s>",
@@ -116,7 +111,7 @@ public class DoubleDataTableAssert<S extends DoubleDataTableAssert<S>> extends A
         return new RowAssert(actual.getDataObjects().get(index));
     }
 
-    public S hasNoRow(int index) {
+    public DoubleDataTableAssert hasNoRow(int index) {
         try {
             actual.getDataObjects().get(index);
             // this is unexpected
@@ -136,7 +131,7 @@ public class DoubleDataTableAssert<S extends DoubleDataTableAssert<S>> extends A
             this.actual = checkNotNull(actual);
         }
 
-        public S whichContainsExactly(double... expected) {
+        public DoubleDataTableAssert whichContainsExactly(double... expected) {
 
             int i;
 

@@ -6,7 +6,7 @@ import org.testng.annotations.Test;
 import java.io.*;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.mimuw.mahoutattrsel.assertions.AttrselAssertions.assertThat;
 
 public class IntListWritableTest {
 

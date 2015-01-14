@@ -10,7 +10,7 @@ import rseslib.structure.table.DoubleDataTable;
 
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.mimuw.mahoutattrsel.assertions.AttrselAssertions.assertThat;
 
 public class RsesMatrixConverterTest {
 
@@ -23,7 +23,7 @@ public class RsesMatrixConverterTest {
 
         DoubleDataTable doubleDataTable = converter.convert(mat);
 
-        DoubleDataTableAssert.assertThat(doubleDataTable)
+        assertThat(doubleDataTable)
                 .hasAttributeNames("attribute_0", "attribute_1", "attribute_2", "decision")
                 .hasAttributeTypes(Attribute.Type.conditional, Attribute.Type.conditional, Attribute.Type.conditional,
                         Attribute.Type.decision)
@@ -46,7 +46,7 @@ public class RsesMatrixConverterTest {
 
         DoubleDataTable doubleDataTable = converter.convert(mat);
 
-        DoubleDataTableAssert.assertThat(doubleDataTable)
+        assertThat(doubleDataTable)
                 .hasAttributeNames("a0", "a1", "a2", "d")
                 .hasAttributeTypes(Attribute.Type.conditional, Attribute.Type.conditional, Attribute.Type.conditional,
                         Attribute.Type.decision)
@@ -69,7 +69,7 @@ public class RsesMatrixConverterTest {
 
         DoubleDataTable doubleDataTable = converter.convert(mat);
 
-        DoubleDataTableAssert.assertThat(doubleDataTable)
+        assertThat(doubleDataTable)
                 .hasAttributeNames("a0", "attribute_1", "attribute_2", "d")
                 .hasAttributeTypes(Attribute.Type.conditional, Attribute.Type.conditional, Attribute.Type.conditional,
                         Attribute.Type.decision)
@@ -91,7 +91,7 @@ public class RsesMatrixConverterTest {
 
         DoubleDataTable doubleDataTable = converter.convert(mat);
 
-        DoubleDataTableAssert.assertThat(doubleDataTable)
+        assertThat(doubleDataTable)
                 .hasAttributeNames("decision")
                 .hasAttributeTypes(Attribute.Type.decision)
                 .hasAttributeValueSets(Attribute.ValueSet.nominal)
