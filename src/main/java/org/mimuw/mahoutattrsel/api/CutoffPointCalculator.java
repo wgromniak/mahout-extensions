@@ -5,6 +5,6 @@ import java.util.List;
 
 public interface CutoffPointCalculator {
 
-    int calculateCutoffPoint(List<Double> scores);
+    List<Integer> calculateCutoffPoint(List<Double> scores);
 
 }
