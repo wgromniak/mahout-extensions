@@ -1,5 +1,6 @@
 package org.mimuw.mahoutattrsel;
 
+import com.google.common.collect.ImmutableList;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
@@ -15,15 +16,12 @@ public class FastCutoffPointTest {
     @Test
     public void testCalculateCutoffPoint() throws Exception {
 
+
         List<Double> scores = new ArrayList<>();
-        scores.add(0, 2.0);
-        scores.add(1, 1.0);
-        scores.add(2, 3.0);
-        scores.add(3, 5.0);
+        scores.addAll(ImmutableList.of(2.0,1.0,3.0, 5.0));
 
         List<Integer> expectedListOfAttributes = new ArrayList<>();
-        expectedListOfAttributes.add(3);
-        expectedListOfAttributes.add(2);
+        expectedListOfAttributes.addAll(ImmutableList.of(3,2));
 
         FastCutoffPoint toTest = new FastCutoffPoint();
         assertThat(toTest.calculateCutoffPoint(scores)).isEqualTo(expectedListOfAttributes);
@@ -33,10 +31,10 @@ public class FastCutoffPointTest {
     public void testOneElementInScore() throws Exception {
 
         List<Double> scores = new ArrayList<>();
-        scores.add(0, 6.77);
+        scores.addAll(ImmutableList.of(6.777));
 
         List<Integer> expectedListOfAttributes = new ArrayList<>();
-        expectedListOfAttributes.add(0);
+        expectedListOfAttributes.addAll(ImmutableList.of(0));
 
         FastCutoffPoint toTest = new FastCutoffPoint();
         assertThat(toTest.calculateCutoffPoint(scores)).isEqualTo(expectedListOfAttributes);
@@ -47,16 +45,57 @@ public class FastCutoffPointTest {
 
 
         List<Double> scores = new ArrayList<>();
+        List<Double> scoresVector = new ArrayList<>();
         List<Integer> expectedListOfAttributes = new ArrayList<>();
+        List<Integer> expectedListOfAttributesVector = new ArrayList<>();
 
         for (int i = 0; i < 20; i++) {
-            scores.add(i, (double) (i + 1));
+            scoresVector.add(i, (double) (i + 1));
         }
+
+        scores.addAll(ImmutableList.copyOf(scoresVector));
 
         for (int i = 19; i > 11; i--) {
-            expectedListOfAttributes.add(i);
+            expectedListOfAttributesVector.add(i);
         }
 
+        expectedListOfAttributes.addAll(ImmutableList.copyOf(expectedListOfAttributesVector));
+
+        FastCutoffPoint toTest = new FastCutoffPoint();
+        assertThat(toTest.calculateCutoffPoint(scores)).isEqualTo(expectedListOfAttributes);
+    }
+
+    @Test
+    public void testAllScoresEqualsOne() throws Exception {
+
+        List<Double> scores = new ArrayList<>();
+        scores.addAll(ImmutableList.of(1.0,1.0,1.0,1.0));
+
+        List<Integer> expectedListOfAttributes = new ArrayList<>();
+        expectedListOfAttributes.addAll(ImmutableList.of(0,1));
+
+        FastCutoffPoint toTest = new FastCutoffPoint();
+        assertThat(toTest.calculateCutoffPoint(scores)).isEqualTo(expectedListOfAttributes);
+    }
+
+    @Test
+    public void testAllDoubleScores() throws Exception {
+
+        List<Double> scores = new ArrayList<>();
+        scores.addAll(ImmutableList.of(1.123,2.333,3.321));
+
+        List<Integer> expectedListOfAttributes = new ArrayList<>();
+        expectedListOfAttributes.addAll(ImmutableList.of(2));
+
+        FastCutoffPoint toTest = new FastCutoffPoint();
+        assertThat(toTest.calculateCutoffPoint(scores)).isEqualTo(expectedListOfAttributes);
+    }
+
+    @Test
+    public void testEmptyScores() throws Exception {
+
+        List<Double> scores = new ArrayList<>();
+        List<Integer> expectedListOfAttributes = new ArrayList<>();
         FastCutoffPoint toTest = new FastCutoffPoint();
         assertThat(toTest.calculateCutoffPoint(scores)).isEqualTo(expectedListOfAttributes);
     }
