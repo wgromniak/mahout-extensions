@@ -31,16 +31,11 @@ public class FrequencyScoreCalculatorTest {
 
     }
 
-    @Test
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void testIllegalArgumentException() {
-        try {
-            ArrayList<List<Integer>> reducts = new ArrayList<>();
-            reducts.add(Arrays.asList(1));
-            FrequencyScoreCalculator testCalc = new FrequencyScoreCalculator(reducts, 0);
-            assert false;
-        } catch (IllegalArgumentException e) {
-            assert true;
-        }
+        ArrayList<List<Integer>> reducts = new ArrayList<>();
+        reducts.add(Arrays.asList(1));
+        new FrequencyScoreCalculator(reducts, 0);
     }
 
     private void fillReducts(int reductSize, ArrayList<List<Integer>> reducts) {
