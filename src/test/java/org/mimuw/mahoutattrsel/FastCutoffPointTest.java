@@ -18,10 +18,10 @@ public class FastCutoffPointTest {
 
 
         List<Double> scores = new ArrayList<>();
-        scores.addAll(ImmutableList.of(2.0,1.0,3.0, 5.0));
+        scores.addAll(ImmutableList.of(2.0, 1.0, 3.0, 5.0));
 
         List<Integer> expectedListOfAttributes = new ArrayList<>();
-        expectedListOfAttributes.addAll(ImmutableList.of(3,2));
+        expectedListOfAttributes.addAll(ImmutableList.of(3, 2));
 
         FastCutoffPoint toTest = new FastCutoffPoint();
         assertThat(toTest.calculateCutoffPoint(scores)).isEqualTo(expectedListOfAttributes);
@@ -69,10 +69,10 @@ public class FastCutoffPointTest {
     public void testAllScoresEqualsOne() throws Exception {
 
         List<Double> scores = new ArrayList<>();
-        scores.addAll(ImmutableList.of(1.0,1.0,1.0,1.0));
+        scores.addAll(ImmutableList.of(1.0, 1.0, 1.0, 1.0));
 
         List<Integer> expectedListOfAttributes = new ArrayList<>();
-        expectedListOfAttributes.addAll(ImmutableList.of(0,1));
+        expectedListOfAttributes.addAll(ImmutableList.of(0, 1));
 
         FastCutoffPoint toTest = new FastCutoffPoint();
         assertThat(toTest.calculateCutoffPoint(scores)).isEqualTo(expectedListOfAttributes);
@@ -82,7 +82,7 @@ public class FastCutoffPointTest {
     public void testAllDoubleScores() throws Exception {
 
         List<Double> scores = new ArrayList<>();
-        scores.addAll(ImmutableList.of(1.123,2.333,3.321));
+        scores.addAll(ImmutableList.of(1.123, 2.333, 3.321));
 
         List<Integer> expectedListOfAttributes = new ArrayList<>();
         expectedListOfAttributes.addAll(ImmutableList.of(2));

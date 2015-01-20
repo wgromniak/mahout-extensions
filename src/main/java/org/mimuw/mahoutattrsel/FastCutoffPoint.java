@@ -1,16 +1,17 @@
 package org.mimuw.mahoutattrsel;
 
+import org.apache.mahout.common.Pair;
 import org.mimuw.mahoutattrsel.api.CutoffPointCalculator;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
- * This implementation calculate number of significant attributes and returns list whit position of these attributes
- * which is sorted according to the highest scores.
+ * This implementations calculate number of significant attributes.
  * The model which is implemented  was published in a paper "Random Reducts: A Monte Carlo Rough Set-based Method
- * for Feature Selection in Large Datasets" 3.4.2 equation (5)
+ * for Feature Selection in Large Datasets"
  */
 public class FastCutoffPoint implements CutoffPointCalculator {
 
@@ -20,44 +21,58 @@ public class FastCutoffPoint implements CutoffPointCalculator {
         int numberOfSignificantAttributes = 0;
         double valueOfModel = Double.POSITIVE_INFINITY;
         int numberOfAllAttributes = scores.size();
-
         List<Integer> listOfSignificantAttributes = new ArrayList<>();
-        List<Double> scoresCopy = new ArrayList<>(scores);
 
-        //Clone scores
-        List<Double> sortScores = new ArrayList<>(scores);
-        Collections.sort(sortScores);
-        Collections.reverse(sortScores);
+        List<Pair<Integer, Double>> scoresWithNumbersOfAttributes = new ArrayList<>();
+        buildScoresWithNumbersOfAttributes(scores, scoresWithNumbersOfAttributes);
 
-        double scoreOfAllAttributes = sumScore(sortScores, numberOfAllAttributes);
+        //decreasing sort
+        Collections.sort(scoresWithNumbersOfAttributes, new Comparator<Pair<Integer, Double>>() {
+            @Override
+            public int compare(Pair<Integer, Double> o1, Pair<Integer, Double> o2) {
+                if (o1.getSecond() <= o2.getSecond()) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+
+            }
+        });
+
+        double scoreOfAllAttributes = sumScore(scoresWithNumbersOfAttributes, numberOfAllAttributes);
 
         for (int i = 1; i <= numberOfAllAttributes; i++) {
-            double ithSumOfScoresScore = sumScore(sortScores, i);
-            double fir = (1 - ithSumOfScoresScore / scoreOfAllAttributes) *
-                    (1 - ithSumOfScoresScore / scoreOfAllAttributes);
+            double ithScore = sumScore(scoresWithNumbersOfAttributes, i);
+            double fir = (1 - ithScore / scoreOfAllAttributes) * (1 - ithScore / scoreOfAllAttributes);
             double sec = ((double) i / (double) numberOfAllAttributes) * ((double) i / (double) numberOfAllAttributes);
-            double actualValueOfModel = fir + sec;
+            fir += sec;
 
-            if (actualValueOfModel < valueOfModel) {
-                valueOfModel = actualValueOfModel;
+            if (fir < valueOfModel) {
+                valueOfModel = fir;
                 numberOfSignificantAttributes = i;
             }
         }
 
         for (int i = 0; i < numberOfSignificantAttributes; i++) {
-            listOfSignificantAttributes.add(scoresCopy.indexOf(sortScores.get(i)));
-            scoresCopy.add(scores.indexOf(sortScores.get(i)), null);
+            listOfSignificantAttributes.add(scoresWithNumbersOfAttributes.get(i).getFirst());
         }
 
         return listOfSignificantAttributes;
     }
 
-    private double sumScore(List<Double> sortScores, int numberOfAttributesToScore) {
+    private void buildScoresWithNumbersOfAttributes(List<Double> scores,
+                                                    List<Pair<Integer, Double>> scoresWithNumbersOfAttributes) {
+        for (int i = 0; i < scores.size(); i++) {
+            scoresWithNumbersOfAttributes.add(new Pair<>(i, scores.get(i)));
+        }
+    }
+
+    private double sumScore(List<Pair<Integer, Double>> sortScores, int numberOfAttributesToScore) {
 
         double result = 0;
 
         for (int i = 0; i < numberOfAttributesToScore; i++) {
-            result += sortScores.get(i);
+            result += sortScores.get(i).getSecond();
         }
         return result;
     }
