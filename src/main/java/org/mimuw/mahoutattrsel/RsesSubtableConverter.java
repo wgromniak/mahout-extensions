@@ -13,7 +13,7 @@ public final class RsesSubtableConverter implements RsesConverter<Subtable> {
 
     private static final RsesSubtableConverter INSTANCE = new RsesSubtableConverter();
 
-    public RsesSubtableConverter() {}
+    private RsesSubtableConverter() {}
 
     public static RsesSubtableConverter getInstance() {
         return INSTANCE;

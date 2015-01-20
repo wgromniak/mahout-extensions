@@ -9,17 +9,15 @@ import org.mimuw.mahoutattrsel.AttributeSubtable;
 import org.mimuw.mahoutattrsel.ObjectSubtable;
 import org.mimuw.mahoutattrsel.api.Subtable;
 
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public final class SubtableWritable implements Writable {
+public final class SubtableWritable implements Writable, Serializable {
 
-    private Subtable subtable;
+    transient private Subtable subtable; // handled by custom readObject/writeObject
 
     public SubtableWritable(Subtable subtable) {
         this.subtable = checkNotNull(subtable, "Expected subtable not to be null");
@@ -83,6 +81,16 @@ public final class SubtableWritable implements Writable {
         SubtableWritable w = new SubtableWritable();
         w.readFields(dataInput);
         return w;
+    }
+
+    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        ois.defaultReadObject();
+        readFields(ois);
+    }
+
+    private void writeObject(ObjectOutputStream ous) throws IOException {
+        ous.defaultWriteObject();
+        write(ous);
     }
 
     @Override

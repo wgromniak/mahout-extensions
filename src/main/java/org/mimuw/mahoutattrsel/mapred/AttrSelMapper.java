@@ -40,7 +40,7 @@ public final class AttrSelMapper extends Mapper<IntWritable, SubtableWritable, I
 
         try {
 
-            RsesSubtableConverter convertValue = new RsesSubtableConverter();
+            RsesSubtableConverter convertValue = RsesSubtableConverter.getInstance();
 
             Configuration conf = context.getConfiguration();
 

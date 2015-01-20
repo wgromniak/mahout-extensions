@@ -26,6 +26,7 @@ dependencies {
     compile 'org.apache.mahout:mahout-integration:0.9'
     compile 'org.apache.hadoop:hadoop-common:2.6.0'
     compile 'org.apache.hadoop:hadoop-mapreduce-client-core:2.6.0'
+    compile 'org.apache.spark:spark-core_2.10:1.0.0'
 
     compile files('libs/rseslib-3.0.4.jar')
 
@@ -39,9 +40,22 @@ dependencies {
     testCompile 'org.apache.hadoop:hadoop-minicluster:2.6.0'
 }
 
+// TODO: make separate tasks for spark & hadoop jar
+
+shadowJar {
+    //defines minimal jar for spark to work
+    dependencies {
+        include(dependency('com.google.guava:guava:18.0'))
+        include(dependency('org.apache.mahout:mahout-core:0.9'))
+        include(dependency('org.apache.mahout:mahout-math:0.9'))
+        include(dependency('org.apache.mahout:mahout-integration:0.9'))
+        include(dependency('org.apache.solr:solr-commons-csv:3.5.0'))
+    }
+}
+
 jar {
     manifest {
-        attributes 'Main-Class': 'org.mimuw.mahoutattrsel.mapred.AttrSelDriver'
+        attributes 'Main-Class': 'org.mimuw.mahoutattrsel.spark.AttrSelDriver'
     }
 }
 
