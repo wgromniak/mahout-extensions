@@ -5,11 +5,11 @@
 \usepackage{amssymb}
 \usepackage{graphicx}
 
-\title{Ultra Massively Scalable Attribute Selection on Hadoop MapReduce and Beyond!}
-\author{Pawel Olszewski\\
+\title{Attribute Selection}
+\author{Pawe\l{} Olszewski\\
         Krzysztof Rutkowski\\
         Wiktor Gromniak}
-\date{2015}
+\date{(hopefully) May 2015}
 
 \begin{document}
 \maketitle
@@ -17,21 +17,27 @@
 
 \chapter{Introduction}
 
-[TODO: in main Intro write DRACUS, UCL and whatnot]
+[TODO: in the main thesis Introduction write about DRACUS, UCL, etc.]
 
-Attribute selection is a machine learning task, whose goal is to select relevant attributes from a given (usually large) set, for further use in model construction. It usually precedes construction of a classifier or other prediction model from the selected subset of attributes. It is most useful in the domains where tens of thousands of attributes occur such as processing of text documents, analysis of gene expression microarrays or combinatorial chemistry \cite{guyon} [TODO: more!]. A model with lower number of attributes has better performance, is faster and more memory-efficient and it is easier to find it's explanation in the domain language \cite{guyon}.
+Attribute selection is a machine learning task, whose goal is to select relevant attributes from a given (usually large) set, which usually precedes construction of a classifier or other prediction model from the selected subset of attributes. It is most useful in the domains where tens of thousands of attributes occur, such as processing of text documents, analysis of gene expression microarrays or combinatorial chemistry \cite{guyon} [TODO: more refs available]. A model with lower number of attributes has better performance, is faster and more memory-efficient and it is easier to find it's explanation in the domain language \cite{guyon}. The task of attribute selection is described in detail in chapter \ref{chap:attrsel}.
 
-To accomplish the attribute selection task we use the notions of reducts and more specifically dynamic and random reducts [TODO: cite]. They are based on the rough set theory and boolean reasoning [TODO: cite prof. Son]. We will introduce the basic concepts of rough sets and reducts in chapter \ref{chap:roughsets} and provide a unified approach towards dynamic and random reducts in chapter \ref{chap:dynamicrandomreducts}. We will further show how to use these notions in attribute selection in chapter \ref{chap:reductsattrsel}.
+To accomplish the attribute selection task we use the notions of reducts and more specifically dynamic and random reducts [TODO: cite]. They are based on the rough set theory and boolean reasoning [TODO: cite]. We will introduce the basic concepts of rough sets and reducts in chapter \ref{chap:roughsets} and provide a unified approach towards dynamic and random reducts in chapter \ref{chap:dynamicrandomreducts}. We will further show how to use these notions in attribute selection in chapter \ref{chap:reductsattrsel}.
 
-As the datasets explored in attribute selection are usually very large and algorithms used to process them computationally expensive, we seek to make them more scalable using the recently developed paradigms capable of processing big data such as MapReduce and Apache Spark\footnote{[TODO: find out how to name Spark's computing paradigm.]}. These notions, their comparison are introduced in detail in chapter [TODO: cite Krzysiek's BigData section]. The distributed attribute selection algorithms, their characteristics and computational complexity are introduced and analysed in chapter \ref{chap:implattlsel}. We seek to provide our algorithms to the broader audience by providing their implementations open source as extensions to existing machine learning libraries. [TODO: will we provide other algos in MR, such as MCFS?]
+As the datasets explored in attribute selection are usually very large and algorithms used to process them computationally expensive, we seek to make them more scalable using the recently developed paradigms capable of processing large amounts of data in distributed computing environments, namely MapReduce and Apache Spark\footnote{[TODO: find out how to name Spark's computing paradigm.]}. These notions, their comparison are introduced in detail in chapter [TODO: cite Krzysztof's BigData section]. The distributed attribute selection algorithms, their characteristics and computational complexity are introduced and analysed in chapter \ref{chap:implattlsel}. We seek to provide our algorithms to the broader audience by providing their implementations open source as extensions to existing machine learning libraries. [TODO: document this]
 
-We further perform a series of experiments on artificial and freely available, real world data to asses the scalability and performance of our algorithms. The results are discussed in chapter \ref{chap:experiments}. We also compare the predictive power of the models obtained using our algorithms with other state of the art methodologies (and prove that they are so much better).
+We further perform a series of experiments on artificial and freely available, real world data to asses the scalability and performance of our algorithms. The results are discussed in chapter \ref{chap:experiments}. We also compare the predictive power of the models obtained using our algorithms with other state of the art methodologies.
 
-Our framework is further integrated with DRACUS.
+[TODO: DRACUS if we manage]
 
 \chapter{Attribute selection task}
+\label{chap:attrsel}
 
-[TODO: is this chapter necessary? It'd discuss what attribute selection is and what it is not and why and why not.]
+\begin{itemize}
+  \item information systems, attributes, etc.
+  \item what attribute selection is
+  \item the assumption of redundant and irrelevant features
+  \item benefits and areas of utilisation
+\end{itemize}
 
 \chapter{Rough sets preliminaries}
 \label{chap:roughsets}
@@ -52,7 +58,7 @@ Our framework is further integrated with DRACUS.
 
 \section{Apache Spark}
 
-Spark is capable of loading all the data into the cluster's memory, thus it is very well suited for machine learning algorithms \cite{zaharia}.
+Spark is capable of loading all the data into the cluster's memory, thus it is well suited for machine learning algorithms \cite{zaharia}.
 
 
 \chapter{Experiments}
@@ -63,26 +69,21 @@ Spark is capable of loading all the data into the cluster's memory, thus it is v
 
 Spark $\gg$ MapReduce.
 
-\chapter{Predictive performance and comparison to other methods}
-
-Our algorithms, as expected, turn out to be (so much) better than [TODO].
+\section{Predictive performance and comparison to other methods}
 
 \chapter{Conclusions}
 
-We've worked hard and achieved a lot.
+We've worked hard and achieved very little.
 
 \begin{thebibliography}{9}
- \addcontentsline{toc}{section}{Bibliography}
-
-\bibitem{copernicus} Nicolaus Copernicus, \emph{De revolutionibus orbium coelestium},
-                     Nuremberg, 1543
+\addcontentsline{toc}{chapter}{Bibliography}
 
 % this guy is the author of spark
 % from wikipedia "Apache Spark"
 \bibitem{zaharia} Matei Zaharia, \emph{Spark: In-Memory Cluster Computing for Iterative and
                   Interactive Applications}, Invited Talk at NIPS 2011 Big Learning
                   Workshop: Algorithms, Systems, and Tools for Learning at Scale.
-                  \footnote{[TODO: is it legal to cite stuff like that? Find a paper.]}
+                  \footnote{[TODO: find a paper]}
                   
 % from our Dropbox
 \bibitem{guyon} Isabelle Guyon, Andre Elisseef, \emph{An Introduction to Variable and
