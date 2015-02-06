@@ -40,11 +40,9 @@ public final class MatrixFixedSizeAttributeSubtableGenerator extends AbstractMat
     @Override
     void calculateSubtables() {
 
-        Matrix dataTableTranspose = dataTable.transpose();
-
         ImmutableList.Builder<Subtable> resultBuilder = ImmutableList.builder();
 
-        int numberOfAttributes = dataTableTranspose.rowSize() - 1;
+        int numberOfAttributes = dataTable.columnSize() - 1;
 
         int[] numberOfSubtablesPerAttribute = new int[numberOfAttributes]; // array since it's already inited to 0s
 
@@ -52,7 +50,7 @@ public final class MatrixFixedSizeAttributeSubtableGenerator extends AbstractMat
 
             BitSet selectedObjects = draw(numberOfAttributes, subtableSize);
 
-            Matrix subtable = new DenseMatrix(subtableSize + 1, dataTableTranspose.columnSize());
+            Matrix subtable = new DenseMatrix(subtableSize + 1, dataTable.rowSize());
 
             List<Integer> attributes = new ArrayList<>();
 
@@ -62,7 +60,7 @@ public final class MatrixFixedSizeAttributeSubtableGenerator extends AbstractMat
 
                 if (selectedObjects.get(rowNum)) {
 
-                    subtable.assignRow(numOfRow, dataTableTranspose.viewRow(rowNum).clone());
+                    subtable.assignRow(numOfRow, dataTable.viewColumn(rowNum));
                     attributes.add(rowNum);
                     numOfRow++;
 
@@ -70,7 +68,7 @@ public final class MatrixFixedSizeAttributeSubtableGenerator extends AbstractMat
                 }
             }
 
-            subtable.assignRow(numOfRow, dataTableTranspose.viewRow(dataTableTranspose.rowSize() - 1).clone());
+            subtable.assignRow(numOfRow, dataTable.viewColumn(dataTable.columnSize() - 1));
 
             subtable = subtable.transpose();
 

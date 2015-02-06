@@ -53,7 +53,7 @@ public final class MatrixFixedSizeObjectSubtableGenerator extends AbstractMatrix
 
                 if (selectedObjects.get(rowNum)) {
 
-                    subtable.assignRow(numOfRow, dataTable.viewRow(rowNum).clone());
+                    subtable.assignRow(numOfRow, dataTable.viewRow(rowNum));
                     numOfRow++;
                 }
             }

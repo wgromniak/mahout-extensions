@@ -33,6 +33,10 @@ abstract class AbstractMatrixFixedSizeSubtableGenerator implements SubtableGener
         this.dataTable = checkNotNull(dataTable);
     }
 
+    /**
+     * Generated subtables are views on the original table - the data is not copied, any changes made to the subtables
+     * will be visible in the original table. This is due to memory efficiency.
+     */
     @Override
     public final List<Subtable> getSubtables() {
         if (subtables == null) {

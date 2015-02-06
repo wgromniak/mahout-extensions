@@ -7,6 +7,8 @@ import java.util.List;
 public interface SubtableGenerator<T> {
 
     /**
+     * Returned subtables may be views on the origins table, according to the implementation.
+     *
      * @return unmodifiable list of subtables
      */
     List<T> getSubtables();
