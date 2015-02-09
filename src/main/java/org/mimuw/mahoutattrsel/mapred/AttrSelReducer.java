@@ -21,6 +21,8 @@ import java.util.List;
 /**
  * Input - ( attribute, [it's reducts] ), output - ( attribute, it's score ).
  */
+
+
 public final class AttrSelReducer extends Reducer<IntWritable, IntListWritable, IntWritable, DoubleWritable>  {
 
 
@@ -31,9 +33,12 @@ public final class AttrSelReducer extends Reducer<IntWritable, IntListWritable, 
         Configuration conf = context.getConfiguration();
         FileSystem fs = FileSystem.get(conf);
         URI[] cacheFiles = Job.getInstance(conf).getCacheFiles();
-        Path filePath = new Path(cacheFiles[0].getPath());
-        DataInput in = fs.open(filePath);
-        numberOfSubtablesPerAttribute = IntListWritable.read(in);
+        try {
+            Path filePath = new Path(cacheFiles[0].getPath());
+            DataInput in = fs.open(filePath);
+            numberOfSubtablesPerAttribute = IntListWritable.read(in);
+        }
+        catch(ArrayIndexOutOfBoundsException e){}
     }
 
     @Override
@@ -48,8 +53,10 @@ public final class AttrSelReducer extends Reducer<IntWritable, IntListWritable, 
                         return input.get();
                     }
                 });
+
         FrequencyScoreCalculator score = new FrequencyScoreCalculator(realValues, numberOfSubtables);
         DoubleWritable keyScore = new DoubleWritable(score.getScore());
+
         context.write(key, keyScore);
     }
 }

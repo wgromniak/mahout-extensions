@@ -2,6 +2,7 @@
 package org.mimuw.mahoutattrsel.mapred;
 
 
+import com.google.common.collect.ImmutableList;
 import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mrunit.mapreduce.ReduceDriver;
@@ -26,25 +27,24 @@ public class AttrSelReducerTest {
         ReduceDriver<IntWritable, IntListWritable, IntWritable, DoubleWritable> reduceDriver =
                 ReduceDriver.newReduceDriver(reducer);
 
-        // writing list to file
-        List<Integer> numberOfSubtablePerAttribute = Arrays.asList(3, 4, 5, 6);
+        List<Integer> numberOfSubtablePerAttribute = ImmutableList.of(3, 4, 5, 6);
         IntListWritable numberOfSubtablePerAttributeWritable = new IntListWritable(numberOfSubtablePerAttribute);
-        FileOutputStream fos = new FileOutputStream(new File("numSubAttr"));
+        File temp = File.createTempFile("numSubAttr", ".tmp");
+        FileOutputStream fos = new FileOutputStream(temp);
         DataOutput dos = new DataOutputStream(fos);
         numberOfSubtablePerAttributeWritable.write(dos);
 
         ArrayList<IntListWritable> reducts = new ArrayList<>();
-        reducts.add(new IntListWritable(Arrays.asList(1, 3, 4)));
-        reducts.add(new IntListWritable(Arrays.asList(1, 3, 4)));
-        reducts.add(new IntListWritable(Arrays.asList(1, 3, 4)));
-
+        reducts.add(new IntListWritable(ImmutableList.of(1, 3, 4)));
+        reducts.add(new IntListWritable(ImmutableList.of(1, 3, 4)));
+        reducts.add(new IntListWritable(ImmutableList.of(1, 3, 4)));
 
         int attrKey1 = 1;
         DoubleWritable score1 = new DoubleWritable(0.75);
         int attrKey2 = 2;
         DoubleWritable score2 = new DoubleWritable(0.6);
 
-        reduceDriver.withCacheFile("numSubAttr")
+        reduceDriver.withCacheFile(temp.getAbsolutePath())
                 .withInput(new IntWritable(attrKey1), reducts)
                 .withOutput(new IntWritable(attrKey1), score1)
                 .withInput(new IntWritable(attrKey2), reducts)
@@ -52,23 +52,6 @@ public class AttrSelReducerTest {
                 .runTest();
     }
 
-    @Test
-    public void testFileWriting() throws Exception {
 
-        List<Integer> numberOfSubtablePerAttribute = Arrays.asList(3, 4, 5, 6);
-        IntListWritable numberOfSubtablePerAttributeWritable = new IntListWritable(numberOfSubtablePerAttribute);
-        FileOutputStream fos = new FileOutputStream(new File("numSubAttr"));
-        ObjectOutputStream oos = new ObjectOutputStream(fos);
-        numberOfSubtablePerAttributeWritable.write(oos);
-        oos.close();
-
-
-        FileInputStream fis = new FileInputStream(new File("numSubAttr"));
-        ObjectInputStream ois = new ObjectInputStream(fis);
-        List<Integer> list = IntListWritable.read(ois).get();
-        ois.close();
-
-        assertThat(list).isEqualTo(numberOfSubtablePerAttribute);
-    }
 
 }
