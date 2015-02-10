@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 apply plugin: 'java'
 apply plugin: 'findbugs'
 
@@ -40,10 +42,16 @@ dependencies {
     testCompile 'org.apache.hadoop:hadoop-minicluster:2.6.0'
 }
 
-// TODO: make separate tasks for spark & hadoop jar
+task jar4Spark(type: ShadowJar) {
 
-shadowJar {
-    //defines minimal jar for spark to work
+    group = "shadow"
+    classifier = 'spark'
+    from(project.convention.getPlugin(JavaPluginConvention).sourceSets.main.output)
+    configurations = [project.configurations.runtime]
+    exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
+
+    manifest.attributes 'Main-Class': 'org.mimuw.mahoutattrsel.spark.AttrSelDriver'
+
     dependencies {
         include(dependency('com.google.guava:guava:18.0'))
         include(dependency('org.apache.mahout:mahout-core:0.9'))
@@ -53,9 +61,23 @@ shadowJar {
     }
 }
 
-jar {
-    manifest {
-        attributes 'Main-Class': 'org.mimuw.mahoutattrsel.spark.AttrSelDriver'
+task jar4MapRed(type: ShadowJar) {
+
+    group = "shadow"
+    classifier = 'mapred'
+    from(project.convention.getPlugin(JavaPluginConvention).sourceSets.main.output)
+    configurations = [project.configurations.runtime]
+    exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
+
+    manifest.attributes 'Main-Class': 'org.mimuw.mahoutattrsel.mapred.AttrSelDriver'
+
+    dependencies {
+        include(dependency('com.google.guava:guava:18.0'))
+        include(dependency('org.apache.mahout:mahout-core:0.9'))
+        include(dependency('org.apache.mahout:mahout-math:0.9'))
+        include(dependency('org.apache.mahout:mahout-integration:0.9'))
+        include(dependency('org.apache.solr:solr-commons-csv:3.5.0'))
+        include(dependency('org.apache.mahout.commons:commons-cli:2.0-mahout'))
     }
 }
 
