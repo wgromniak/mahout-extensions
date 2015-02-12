@@ -2,6 +2,7 @@ package org.mimuw.mahoutattrsel.mapred;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Slf4jReporter;
+import com.google.common.collect.Iterables;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
@@ -19,7 +20,9 @@ import org.apache.mahout.common.iterator.sequencefile.PathType;
 import org.apache.mahout.common.iterator.sequencefile.SequenceFileDirIterable;
 import org.apache.mahout.math.Matrix;
 import org.mimuw.mahoutattrsel.CSVMatrixReader;
+import org.mimuw.mahoutattrsel.FastCutoffPoint;
 import org.mimuw.mahoutattrsel.MatrixFixedSizeAttributeSubtableGenerator;
+import org.mimuw.mahoutattrsel.api.CutoffPointCalculator;
 import org.mimuw.mahoutattrsel.api.Subtable;
 import org.mimuw.mahoutattrsel.api.SubtableGenerator;
 import org.mimuw.mahoutattrsel.utils.MemoryGauge;
@@ -27,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -108,10 +112,21 @@ public final class AttrSelDriver extends AbstractJob {
         SequenceFileDirIterable<IntWritable, DoubleWritable> dirIterable
                 = new SequenceFileDirIterable<>(getOutputPath(), PathType.LIST, PathFilters.partFilter(), getConf());
 
-        // TODO: calculate cutoff point based on scores
+        List<Double> scores = new ArrayList<>(Iterables.size(dirIterable));
+
         for (Pair<IntWritable, DoubleWritable> attrScore : dirIterable) {
-            System.out.printf("Score for attr: %s is: %s%n", attrScore.getFirst(), attrScore.getSecond());
+            scores.add(attrScore.getFirst().get(), attrScore.getSecond().get());
         }
+
+        System.out.println("Scores are (<attr>: <score>):");
+        for (int i = 0; i < scores.size(); i++) {
+            System.out.printf("%s: %s%n", i, scores.get(i));
+        }
+
+        CutoffPointCalculator cutoffCalculator = new FastCutoffPoint();
+        List<Integer> selected = cutoffCalculator.calculateCutoffPoint(scores);
+
+        System.out.printf("Selected atts: %s%n", selected);
 
         return 0;
     }
