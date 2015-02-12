@@ -1,5 +1,7 @@
 package org.mimuw.mahoutattrsel.spark;
 
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Slf4jReporter;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -12,26 +14,41 @@ import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.broadcast.Broadcast;
 import org.mimuw.mahoutattrsel.CSVMatrixReader;
 import org.mimuw.mahoutattrsel.FrequencyScoreCalculator;
-import org.mimuw.mahoutattrsel.MatrixFixedSizeObjectSubtableGenerator;
+import org.mimuw.mahoutattrsel.MatrixFixedSizeAttributeSubtableGenerator;
 import org.mimuw.mahoutattrsel.RsesSubtableConverter;
 import org.mimuw.mahoutattrsel.api.Subtable;
 import org.mimuw.mahoutattrsel.api.SubtableGenerator;
 import org.mimuw.mahoutattrsel.mapred.AttrSelMapper;
 import org.mimuw.mahoutattrsel.mapred.SubtableWritable;
-import rseslib.processing.reducts.GlobalReductsProvider;
+import org.mimuw.mahoutattrsel.utils.MemoryGauge;
+import org.slf4j.LoggerFactory;
+import rseslib.processing.reducts.JohnsonReductsProvider;
 import rseslib.processing.reducts.ReductsProvider;
 import scala.Tuple2;
 
 import javax.annotation.Nullable;
 import java.io.ByteArrayInputStream;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
+import static com.codahale.metrics.MetricRegistry.name;
 import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * TODO: Dirty and ugly.
  */
 public final class AttrSelDriver {
+
+    public static final MetricRegistry METRICS = new MetricRegistry();
+    static {
+        METRICS.register("MemoryGauge", new MemoryGauge());
+        Slf4jReporter.forRegistry(METRICS)
+                .outputTo(LoggerFactory.getLogger(name(AttrSelDriver.class, "Metrics")))
+                .convertRatesTo(TimeUnit.SECONDS)
+                .convertDurationsTo(TimeUnit.MILLISECONDS)
+                .build()
+                .start(5, TimeUnit.SECONDS);
+    }
 
     public static void main(String... args) throws Exception {
 
@@ -59,7 +76,7 @@ public final class AttrSelDriver {
         SerializableMatrix inputDataTable = inputMatrix.collect().get(0); // should be exactly one
 
         SubtableGenerator<Subtable> subtableGenerator
-                = new MatrixFixedSizeObjectSubtableGenerator(new Random(1234), Integer.parseInt(args[1]), Integer.parseInt(args[2]), inputDataTable.get());
+                = new MatrixFixedSizeAttributeSubtableGenerator(new Random(1234), Integer.parseInt(args[1]), Integer.parseInt(args[2]), inputDataTable.get());
 
         List<Subtable> subtables = subtableGenerator.getSubtables();
         List<SubtableWritable> subtablesWritable = Lists.transform(subtables, new Function<Subtable, SubtableWritable>() {
@@ -82,7 +99,7 @@ public final class AttrSelDriver {
             @Override
             public Iterable<Reduct> call(SubtableWritable subtable) throws Exception {
 
-                ReductsProvider reductsProvider = new GlobalReductsProvider(properties, RsesSubtableConverter.getInstance().convert(subtable.get()));
+                ReductsProvider reductsProvider = new JohnsonReductsProvider(properties, RsesSubtableConverter.getInstance().convert(subtable.get()));
 
                 Collection<BitSet> reducts = reductsProvider.getReducts();
 

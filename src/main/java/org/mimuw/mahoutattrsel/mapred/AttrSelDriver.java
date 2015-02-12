@@ -1,5 +1,7 @@
 package org.mimuw.mahoutattrsel.mapred;
 
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Slf4jReporter;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
@@ -17,9 +19,10 @@ import org.apache.mahout.common.iterator.sequencefile.PathType;
 import org.apache.mahout.common.iterator.sequencefile.SequenceFileDirIterable;
 import org.apache.mahout.math.Matrix;
 import org.mimuw.mahoutattrsel.CSVMatrixReader;
-import org.mimuw.mahoutattrsel.MatrixFixedSizeObjectSubtableGenerator;
+import org.mimuw.mahoutattrsel.MatrixFixedSizeAttributeSubtableGenerator;
 import org.mimuw.mahoutattrsel.api.Subtable;
 import org.mimuw.mahoutattrsel.api.SubtableGenerator;
+import org.mimuw.mahoutattrsel.utils.MemoryGauge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,10 +30,24 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
+
+import static com.codahale.metrics.MetricRegistry.name;
 
 public final class AttrSelDriver extends AbstractJob {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AttrSelDriver.class);
+
+    public static final MetricRegistry METRICS = new MetricRegistry();
+    static {
+        METRICS.register("MemoryGauge", new MemoryGauge());
+        Slf4jReporter.forRegistry(METRICS)
+                .outputTo(LoggerFactory.getLogger(name(AttrSelDriver.class, "Metrics")))
+                .convertRatesTo(TimeUnit.SECONDS)
+                .convertDurationsTo(TimeUnit.MILLISECONDS)
+                .build()
+                .start(5, TimeUnit.SECONDS);
+    }
 
     public static final String SEED = "mahout-extensions.attrsel.random.seed";
     public static final String SUBTABLE_GEN = "mahout-extensions.attrsel.subtable.generator";
@@ -72,7 +89,7 @@ public final class AttrSelDriver extends AbstractJob {
         job.getConfiguration().setInt(NUM_SUBTABLES, Integer.parseInt(getOption("numSubtables")));
         job.getConfiguration().setInt(SUBTABLE_CARD, Integer.parseInt(getOption("subtableCardinality")));
         if (hasOption("subtableGenerator")) {
-            job.getConfiguration().setClass(SUBTABLE_GEN, Class.forName(getOption(SUBTABLE_GEN)),
+            job.getConfiguration().setClass(SUBTABLE_GEN, Class.forName(getOption("subtableGenerator")),
                     SubtableGenerator.class);
         }
         if (hasOption("seed")) {
@@ -106,7 +123,7 @@ public final class AttrSelDriver extends AbstractJob {
         @SuppressWarnings("unchecked")
         Class<SubtableGenerator<Subtable>> generatorClass =
                 (Class<SubtableGenerator<Subtable>>) conf.getClass(SUBTABLE_GEN,
-                        MatrixFixedSizeObjectSubtableGenerator.class);
+                        MatrixFixedSizeAttributeSubtableGenerator.class);
 
         int numberOfSubtables = conf.getInt(NUM_SUBTABLES, 1);
         int subtableSize = conf.getInt(SUBTABLE_CARD, 1);

@@ -5,7 +5,7 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.mimuw.mahoutattrsel.RsesSubtableConverter;
 import org.mimuw.mahoutattrsel.api.Subtable;
-import rseslib.processing.reducts.GlobalReductsProvider;
+import rseslib.processing.reducts.JohnsonReductsProvider;
 import rseslib.processing.reducts.ReductsProvider;
 import rseslib.structure.table.DoubleDataTable;
 
@@ -30,7 +30,7 @@ public final class AttrSelMapper extends Mapper<IntWritable, SubtableWritable, I
     public static final String GENERALIZED_DECISION_TRANSITIVE_CLOSURE_DEFAULT = "TRUE";
 
     public static final String JOHNSON_REDUCTS = "mahout-extensions.attrsel.JohnsonReducts";
-    public static final String JOHNSON_REDUCTS_DEFAULT = "One";
+    public static final String JOHNSON_REDUCTS_DEFAULT = "All";
 
     public static final String REDUCT_PROVIDER = "ReductProvider";
 
@@ -48,7 +48,7 @@ public final class AttrSelMapper extends Mapper<IntWritable, SubtableWritable, I
 
             @SuppressWarnings("unchecked")
             Class<ReductsProvider> generatorClass = (Class<ReductsProvider>)
-                    conf.getClass(REDUCT_PROVIDER, GlobalReductsProvider.class, ReductsProvider.class);
+                    conf.getClass(REDUCT_PROVIDER, JohnsonReductsProvider.class, ReductsProvider.class);
 
             Properties properties = new Properties();
 

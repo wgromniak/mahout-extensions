@@ -29,6 +29,7 @@ dependencies {
     compile 'org.apache.hadoop:hadoop-common:2.6.0'
     compile 'org.apache.hadoop:hadoop-mapreduce-client-core:2.6.0'
     compile 'org.apache.spark:spark-core_2.10:1.0.0'
+    compile 'com.codahale.metrics:metrics-core:3.0.2'
 
     compile files('libs/rseslib-3.0.4.jar')
 
@@ -58,6 +59,7 @@ task jar4Spark(type: ShadowJar) {
         include(dependency('org.apache.mahout:mahout-math:0.9'))
         include(dependency('org.apache.mahout:mahout-integration:0.9'))
         include(dependency('org.apache.solr:solr-commons-csv:3.5.0'))
+        include(dependency('com.codahale.metrics:metrics-core:3.0.2'))
     }
 }
 
@@ -78,6 +80,7 @@ task jar4MapRed(type: ShadowJar) {
         include(dependency('org.apache.mahout:mahout-integration:0.9'))
         include(dependency('org.apache.solr:solr-commons-csv:3.5.0'))
         include(dependency('org.apache.mahout.commons:commons-cli:2.0-mahout'))
+        include(dependency('com.codahale.metrics:metrics-core:3.0.2'))
     }
 }
 
