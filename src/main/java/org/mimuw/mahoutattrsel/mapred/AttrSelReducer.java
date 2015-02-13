@@ -29,16 +29,18 @@ public final class AttrSelReducer extends Reducer<IntWritable, IntListWritable, 
     private IntListWritable numberOfSubtablesPerAttribute;
 
     @Override
-    protected void setup(Context context) throws IOException, InterruptedException {
+    protected void setup(Context context) throws IOException, InterruptedException{
         Configuration conf = context.getConfiguration();
         FileSystem fs = FileSystem.get(conf);
         URI[] cacheFiles = Job.getInstance(conf).getCacheFiles();
-        try {
+        if (cacheFiles.length > 0) {
             Path filePath = new Path(cacheFiles[0].getPath());
             DataInput in = fs.open(filePath);
             numberOfSubtablesPerAttribute = IntListWritable.read(in);
         }
-        catch(ArrayIndexOutOfBoundsException e){}
+        else {
+            throw new InterruptedException("No cache file found in hdfs cache!");
+        }
     }
 
     @Override
