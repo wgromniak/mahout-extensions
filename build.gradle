@@ -103,3 +103,10 @@ findbugsTest {
         html.enabled = true
     }
 }
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+wrapper {
+    gradleVersion '2.3'
+}
