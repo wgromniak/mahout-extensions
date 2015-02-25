@@ -30,12 +30,7 @@ public class FastCutoffPoint implements CutoffPointCalculator {
         Collections.sort(scoresWithNumbersOfAttributes, new Comparator<Pair<Integer, Double>>() {
             @Override
             public int compare(Pair<Integer, Double> o1, Pair<Integer, Double> o2) {
-                if (o1.getSecond() <= o2.getSecond()) {
-                    return 1;
-                } else {
-                    return -1;
-                }
-
+                return -o1.getSecond().compareTo(o2.getSecond());
             }
         });
 

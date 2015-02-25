@@ -2,7 +2,7 @@ package org.mimuw.mahoutattrsel.mapred;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Slf4jReporter;
-import com.google.common.collect.Iterables;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -112,19 +112,19 @@ public final class AttrSelDriver extends AbstractJob {
         SequenceFileDirIterable<IntWritable, DoubleWritable> dirIterable
                 = new SequenceFileDirIterable<>(getOutputPath(), PathType.LIST, PathFilters.partFilter(), getConf());
 
-        List<Double> scores = new ArrayList<>(Iterables.size(dirIterable));
+        double[] scores = new double[inputDataTable.columnSize()];
 
         for (Pair<IntWritable, DoubleWritable> attrScore : dirIterable) {
-            scores.add(attrScore.getFirst().get(), attrScore.getSecond().get());
+            scores[attrScore.getFirst().get()] = attrScore.getSecond().get();
         }
 
         System.out.println("Scores are (<attr>: <score>):");
-        for (int i = 0; i < scores.size(); i++) {
-            System.out.printf("%s: %s%n", i, scores.get(i));
+        for (int i = 0; i < scores.length; i++) {
+            System.out.printf("%s: %s%n", i, scores[i]);
         }
 
         CutoffPointCalculator cutoffCalculator = new FastCutoffPoint();
-        List<Integer> selected = cutoffCalculator.calculateCutoffPoint(scores);
+        List<Integer> selected = cutoffCalculator.calculateCutoffPoint(Arrays.asList(ArrayUtils.toObject(scores)));
 
         System.out.printf("Selected atts: %s%n", selected);
 
@@ -155,7 +155,7 @@ public final class AttrSelDriver extends AbstractJob {
 
         SubtableInputFormat.setSubtables(subtables);
 
-        Path path = new Path("attrsel/numSubtables");
+        Path path = new Path("/tmp/attrsel/numSubtables");
 
         try (FSDataOutputStream os = FileSystem.get(job.getConfiguration()).create(path, true)) {
 
