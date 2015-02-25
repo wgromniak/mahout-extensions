@@ -8,10 +8,7 @@ import org.apache.mahout.math.Matrix;
 import org.apache.mahout.math.MatrixSlice;
 import org.apache.mahout.math.Vector;
 import org.mimuw.mahoutattrsel.api.RsesConverter;
-import rseslib.structure.attribute.ArrayHeader;
-import rseslib.structure.attribute.Attribute;
-import rseslib.structure.attribute.Header;
-import rseslib.structure.attribute.NominalAttribute;
+import rseslib.structure.attribute.*;
 import rseslib.structure.data.DoubleDataObject;
 import rseslib.structure.table.ArrayListDoubleDataTable;
 import rseslib.structure.table.DoubleDataTable;
@@ -92,11 +89,11 @@ public final class RsesMatrixConverter implements RsesConverter<Matrix> {
 
             if (colBinding.isPresent()) {
 
-                attributes[i] = new Attribute(Attribute.Type.conditional, Attribute.ValueSet.numeric, colBinding.get());
+                attributes[i] = new NumericAttribute(Attribute.Type.conditional, colBinding.get());
 
             } else {
 
-                attributes[i] = new Attribute(Attribute.Type.conditional, Attribute.ValueSet.numeric, "attribute_" + i);
+                attributes[i] = new NumericAttribute(Attribute.Type.conditional, "attribute_" + i);
             }
         }
 
