@@ -150,9 +150,82 @@ As the decision attribute is usually of the most interest for us, we would like 
 \chapter{Unified approach towards dynamic and random reducts}
 \label{chap:dynamicrandomreducts}
 
+\begin{definition}[object subtable]
+
+  Let $\mathcal{A} = (U, A \cup \{d\})$ - decision table, where $A = \{a_1, \dots, a_m\}$. 
+  We will call a pair $\mathcal{A'}  = (U', A' \cup \{d\})$, where 
+  \begin{itemize}
+    \item $U' \subseteq U$,
+    \item $d' = d |_{U'}$,
+    \item $A' = \{a_1', \dots,  a_m'\}$ and $a_i' = a_i |_{U'}$, $i = 1, 2, \dots, m$
+  \end{itemize}
+  an \emph{object subtable} of table $\mathcal{A}$.
+  
+\end{definition}
+
+Notice that the number off attributes is exactly the same in both: the original table $\mathcal{A}$ and the object subtable $\mathcal{A'}$. They were just given different names, 
+for formally they are different functions (recall how we've defined attributes as functions
+in [def].
+
+\begin{definition}[attribute subtable]
+
+  Let $\mathcal{A} = (U, A \cup \{d\})$ - decision table, where $A = \{a_1, \dots, a_m\}$. 
+  We will call a pair $\mathcal{A'}  = (U, A' \cup \{d\})$, where 
+  \begin{itemize}
+    \item $d' = d |_{U'}$,
+    \item $A' \subseteq A$
+  \end{itemize}
+  an \emph{attribute subtable} of table $\mathcal{A}$.
+  
+\end{definition}
+
+\begin{remark}
+
+  $P_O(\mathcal{A})$ and $P_A(\mathcal{A})$ will denote the families of all object and
+  attribute, respectively, subtables of the table $\mathcal{A}$.
+
+\end{remark}
+
+In the following definitions we won't distinguish between object and attribute subtables,
+since they work for both. Thus, we will simply write \emph{subtable} in each case.
+
+\begin{definition}[$F$-dynamic reducts]
+
+  Let $\mathcal{A} = (U, A \cup \{d\})$ and $\mathcal{F} \subseteq P(\mathcal{A})$. Then
+  $$
+  GDR(\mathcal{A},\mathcal{F}) = \bigcap_{\mathcal{B} \in \mathcal{F}} RED(\mathcal{B}, D)
+  $$
+  is a set of \emph{generalised $F$-dynamic reducts}.
+  
+\end{definition}
+
+\begin{definition}[$(F,\varepsilon)$-dynamic reducts]
+
+  Let $\mathcal{A} = (U, A \cup \{d\})$, $\mathcal{F} \subseteq P(\mathcal{A})$ and
+  $\varepsilon \in [0, 1]$. Then
+  \begin{align*}
+  GDR_\varepsilon(\mathcal{A},\mathcal{F}) = \{C \subseteq A :
+  \frac{|\{\mathcal{B} \in \mathcal{F} : C \in RED(\mathcal{B}, d)\}|}{|\mathcal{F}|} \geq 
+  1 - \varepsilon \}
+  \end{align*}
+  is a set of \emph{generalised $(F,\varepsilon)$-dynamic reducts}.
+  
+\end{definition}
+
+\begin{definition}[stability factor]
+
+  For $R \in RED(\mathcal{B},d)$, $\mathcal{B} \in \mathcal{F}$, we will call the number
+  $$ \frac{|\{\mathcal{B} \in \mathcal{F} : R \in RED(\mathcal{B}, d)\}|}{|\mathcal{F}|} $$
+  a \emph{stability factor} of the reduct $R$.
+  
+\end{definition}
+
 
 \chapter{Reducts-based attribute selection}
 \label{chap:reductsattrsel}
+
+\chapter{MapReduce and Apache Spark}
+\label{chap:mapredspark}
   
   
 \chapter{Implementation in big data frameworks}
