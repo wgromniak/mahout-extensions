@@ -57,6 +57,46 @@ We further perform a series of experiments on artificial and freely available, r
 \chapter{Attribute selection task}
 \label{chap:attrsel}
 
+\section{Information systems informally}
+
+One of the basic notions in machine learning is an \emph{information system}
+\footnote{Defined formally in the next chapter, in Definition \ref{infsysdef}.}, which may 
+be understood as a collection of information about particular phenomenon, which may be 
+described in terms of \emph{objects}, \emph{attributes} (also: \emph{features}) and 
+\emph{objects having some values of those attributes}. It is usually represented in tabular 
+form, as shown in Table [TODO: ref a table] - each row corresponds to values of attributes 
+$a_1, a_2, \dots, a_m, d$ for objects $o_1, o_2, \dots, o_n$. In cases that will be of 
+interest to us, usually one of the attributes is distinguished as a \emph{decision 
+attribute} (or shortly: \emph{decision}). Then the rest of attributes is treated as 
+\emph{conditional attributes} and we usually want to infer (e.g. predict) something about 
+the decision, given the conditional attributes. [TODO: add citations]
+
+\section{Attribute selection}
+
+In some applications of machine learning we meet information systems having a large number 
+of attributes\footnote{Example applications are discussed in Section [TODO] of this 
+chapter.}. Then, attribute selection comes in handy, allowing for reduction of this number. 
+This process usually only precedes the actual analysis of the data, e.g. performing 
+statistical analysis or performing or constructing a predictive model based on a classifier.
+
+Reasonableness of attribute selection is based on the assumption that the data may contain a 
+number of \emph{irrelevant} or \emph{redundant} features, where by irrelevant features we 
+mean those which do not provide any additional information and by redundant we mean those 
+which do not provide any additional information given some already selected subset of 
+features. The goal of the attribute selection algorithm is to pinpoint the relevant 
+attributes, i.e. those that are neither irrelevant nor redundant.
+
+By reducing the number of attributes we achieve better predictive performance of 
+classification algorithms, we lower the computational and memory cost of processing the data
+\footnote{Having data with large number of attributes sometimes precludes any kind of its 
+further processing.} as well as gain better interpretability of the results, i.e. better 
+express the rules governing the data in the domain language.
+
+\section{A survey of methodologies}
+
+\section{Areas of utilisation}
+
+
 \begin{itemize}
   \item information systems, attributes, etc.
   \item what attribute selection is
@@ -72,10 +112,9 @@ this theory\footnote{In the definitions we will most closely follow [TODO cite B
 
 Let us introduce the basic notion, which we have already used informally in the previous chapter - \emph{the information system } [TODO: cite 111 from Son hab].
 
-\begin{definition}[information system]
+\begin{definition}[information system]\label{infsysdef}
 
-\emph{Information system}\footnote{Also referred to simply as \emph{decision table}.}, is a 
-pair $\mathcal{A} = (U, A \cup \{d\})$, where
+\emph{Information system}, is a pair $\mathcal{A} = (U, A \cup \{d\})$, where
   \begin{itemize}
     \item $\textrm{U}$ is a finite set, whose elements will be referred to as \emph{objects}
     \item $A$ is a set of \emph{attributes}, such that $a \in A$ is a function
@@ -145,6 +184,7 @@ As the decision attribute is usually of the most interest for us, we would like 
 \end{definition}
 
 
+\section{Calculating reducts}
 
 
 \chapter{Unified approach towards dynamic and random reducts}
@@ -153,7 +193,7 @@ As the decision attribute is usually of the most interest for us, we would like 
 \begin{definition}[object subtable]
 
   Let $\mathcal{A} = (U, A \cup \{d\})$ - decision table, where $A = \{a_1, \dots, a_m\}$. 
-  We will call a pair $\mathcal{A'}  = (U', A' \cup \{d\})$, where 
+  We will call a pair $\mathcal{A'}  = (U', A' \cup \{d'\})$, where 
   \begin{itemize}
     \item $U' \subseteq U$,
     \item $d' = d |_{U'}$,
@@ -182,33 +222,33 @@ in [def].
 \begin{remark}
 
   $P_O(\mathcal{A})$ and $P_A(\mathcal{A})$ will denote the families of all object and
-  attribute, respectively, subtables of the table $\mathcal{A}$.
+  attribute subtables of the table $\mathcal{A}$, respectively.
 
 \end{remark}
 
 In the following definitions we won't distinguish between object and attribute subtables,
 since they work for both. Thus, we will simply write \emph{subtable} in each case.
 
-\begin{definition}[$F$-dynamic reducts]
+\begin{definition}[$\mathcal{F}$-dynamic reducts]
 
   Let $\mathcal{A} = (U, A \cup \{d\})$ and $\mathcal{F} \subseteq P(\mathcal{A})$. Then
   $$
   GDR(\mathcal{A},\mathcal{F}) = \bigcap_{\mathcal{B} \in \mathcal{F}} RED(\mathcal{B}, D)
   $$
-  is a set of \emph{generalised $F$-dynamic reducts}.
+  is a set of \emph{generalised $\mathcal{F}$-dynamic reducts}.
   
 \end{definition}
 
-\begin{definition}[$(F,\varepsilon)$-dynamic reducts]
+\begin{definition}[$(\mathcal{F},\varepsilon)$-dynamic reducts]
 
   Let $\mathcal{A} = (U, A \cup \{d\})$, $\mathcal{F} \subseteq P(\mathcal{A})$ and
   $\varepsilon \in [0, 1]$. Then
-  \begin{align*}
+  $$
   GDR_\varepsilon(\mathcal{A},\mathcal{F}) = \{C \subseteq A :
   \frac{|\{\mathcal{B} \in \mathcal{F} : C \in RED(\mathcal{B}, d)\}|}{|\mathcal{F}|} \geq 
   1 - \varepsilon \}
-  \end{align*}
-  is a set of \emph{generalised $(F,\varepsilon)$-dynamic reducts}.
+  $$
+  is a set of \emph{generalised $(\mathcal{F},\varepsilon)$-dynamic reducts}.
   
 \end{definition}
 
@@ -223,6 +263,8 @@ since they work for both. Thus, we will simply write \emph{subtable} in each cas
 
 \chapter{Reducts-based attribute selection}
 \label{chap:reductsattrsel}
+
+Rough sets are suitable for attribute selection, cf. prof. Son hab.
 
 \chapter{MapReduce and Apache Spark}
 \label{chap:mapredspark}
@@ -244,13 +286,23 @@ Spark is capable of loading all the data into the cluster's memory, thus it is w
 \section{Scalability}
 \subsection{Comparison of various implementations}
 
-Spark $\gg$ MapReduce.
+\begin{itemize}
+  \item Optimal non-distributed implementation.
+  \item Spark tuning to fix in-mem.
+  \item Spark truly distributed implementation with transpositions to get attribute
+        subtables.
+\end{itemize}
+
 
 \section{Predictive performance and comparison to other methods}
 
 \chapter{Conclusions}
 
-We've worked hard and achieved very little.
+Further research might try too increase the predictive performance of classifiers build upon
+selected attributes, by using the fact that they are ranked (are given scores). Another 
+direction is using the fact that the attributes are in naturally grouped into subsets, i.e.
+into reducts (and achieve "subset selection", cf. \cite{guyon} chap. 4). Actually, what we
+do here is kind of Wrapper in the sense of czap4. Example selection is another topic of interest.
 
 \begin{thebibliography}{9}
 \addcontentsline{toc}{chapter}{Bibliography}
