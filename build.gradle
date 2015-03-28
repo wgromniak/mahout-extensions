@@ -30,6 +30,7 @@ dependencies {
     compile 'org.apache.hadoop:hadoop-mapreduce-client-core:2.6.0'
     compile 'org.apache.spark:spark-core_2.10:1.0.0'
     compile 'com.codahale.metrics:metrics-core:3.0.2'
+    compile 'gov.sandia.foundry:gov-sandia-cognition-learning-core:3.3.3'
 
     compile files('libs/rseslib-3.0.4.jar')
 
@@ -51,7 +52,7 @@ task jar4Spark(type: ShadowJar) {
     configurations = [project.configurations.runtime]
     exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
 
-    manifest.attributes 'Main-Class': 'org.mimuw.mahoutattrsel.spark.AttrSelDriver'
+    manifest.attributes 'Main-Class': 'org.mimuw.mahoutattrsel.reducts.spark.AttrSelDriver'
 
     dependencies {
         include(dependency('com.google.guava:guava:18.0'))
@@ -71,7 +72,7 @@ task jar4MapRed(type: ShadowJar) {
     configurations = [project.configurations.runtime]
     exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
 
-    manifest.attributes 'Main-Class': 'org.mimuw.mahoutattrsel.mapred.AttrSelDriver'
+    manifest.attributes 'Main-Class': 'org.mimuw.mahoutattrsel.reducts.mapred.AttrSelDriver'
 
     dependencies {
         include(dependency('com.google.guava:guava:18.0'))
