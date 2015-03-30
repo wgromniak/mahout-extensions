@@ -1,12 +1,9 @@
 package org.mimuw.attrsel.trees;
 
 import gov.sandia.cognition.learning.algorithm.tree.CategorizationTree;
-import gov.sandia.cognition.learning.algorithm.tree.CategorizationTreeLearner;
-import gov.sandia.cognition.learning.algorithm.tree.CategorizationTreeNode;
 import gov.sandia.cognition.learning.data.DefaultInputOutputPair;
 import gov.sandia.cognition.learning.data.InputOutputPair;
 import gov.sandia.cognition.learning.experiment.CrossFoldCreator;
-import gov.sandia.cognition.learning.experiment.SupervisedLearnerValidationExperiment;
 import gov.sandia.cognition.learning.performance.categorization.ConfusionMatrix;
 import gov.sandia.cognition.learning.performance.categorization.ConfusionMatrixPerformanceEvaluator;
 import gov.sandia.cognition.learning.performance.categorization.DefaultConfusionMatrix;
@@ -37,13 +34,15 @@ public final class TreeExperiments {
                 DefaultInputOutputPair.mergeCollections(objects, targets);
 
         CrossFoldCreator<InputOutputPair<Vector, Integer>> foldCreator = new CrossFoldCreator<>(10, new Random(123));
-        SupervisedLearnerValidationExperiment
+        SupervisedLearnerValidationExperimentStoringModels
                 <Vector, Integer, ConfusionMatrix<Integer>, DefaultConfusionMatrix<Integer>>
-                experiment = new SupervisedLearnerValidationExperiment<>(foldCreator, confMatEval, confMatSumm);
+                experiment =
+                new SupervisedLearnerValidationExperimentStoringModels<>(foldCreator, confMatEval, confMatSumm);
 
         VectorThresholdInformationGainLearnerStoringGain<Integer> deciderLearner =
                 new VectorThresholdInformationGainLearnerStoringGain<>();
-        CategorizationTreeLearner<Vector, Integer> treeLearner = new CategorizationTreeLearner<>(deciderLearner);
+        CategorizationTreeLearnerStoringCardinality<Vector, Integer> treeLearner =
+                new CategorizationTreeLearnerStoringCardinality<>(deciderLearner);
 
         // this will run a cross validation experiment with the tree
         DefaultConfusionMatrix<Integer> confMat = experiment.evaluatePerformance(treeLearner, labeledDataset);
@@ -54,13 +53,13 @@ public final class TreeExperiments {
         CategorizationTree<Vector, Integer> tree = treeLearner.learn(labeledDataset);
         System.out.println(
                 ((VectorElementThresholdCategorizerWithGain)
-                        ((CategorizationTreeNode) tree.getRootNode().getChildren().iterator().next()).getDecider()
-                                ).getGain());
+                        ((CategorizationTreeNodeWithCardinality) tree.getRootNode().getChildren().iterator().next()).getDecider()
+                                ).getCategories());
         Integer clz = tree.evaluate(DenseVectorFactoryMTJ.INSTANCE.copyValues(1, 1, 0, 1, 1, 0, 0, 1, 1, 0));
         System.out.println(clz);
     }
 
-    private static List<Vector> extractObjects(Matrix mat) {
+    public static List<Vector> extractObjects(Matrix mat) {
 
         List<Vector> vecs = new ArrayList<>(mat.columnSize());
 
@@ -72,7 +71,7 @@ public final class TreeExperiments {
         return vecs;
     }
 
-    private static Vector vecToVec(org.apache.mahout.math.Vector source) {
+    public static Vector vecToVec(org.apache.mahout.math.Vector source) {
 
         Vector dest = DenseVectorFactoryMTJ.INSTANCE.createVector(source.size());
 
@@ -84,7 +83,7 @@ public final class TreeExperiments {
         return dest;
     }
 
-    private static List<Integer> extractTargets(Matrix mat) {
+    public static List<Integer> extractTargets(Matrix mat) {
 
         org.apache.mahout.math.Vector lastCol = mat.viewColumn(mat.columnSize() - 1);
 
