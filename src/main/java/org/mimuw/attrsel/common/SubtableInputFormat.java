@@ -1,5 +1,6 @@
-package org.mimuw.attrsel.reducts.mapred;
+package org.mimuw.attrsel.common;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Writable;
@@ -20,7 +21,7 @@ import static com.google.common.base.Preconditions.checkState;
  * {@link InputFormat} that splits given {@link Matrix} data table into subtables. All the processing is in-memory, so
  * the input table has to fit into single-workstation's memory.
  */
-final class SubtableInputFormat extends InputFormat<IntWritable, SubtableWritable> {
+public final class SubtableInputFormat extends InputFormat<IntWritable, SubtableWritable> {
 
     private static Optional<List<Subtable>> subtables = Optional.absent();
 
@@ -92,14 +93,16 @@ final class SubtableInputFormat extends InputFormat<IntWritable, SubtableWritabl
     /**
      * A single record corresponds to single {@link Subtable} from {@link SingleSubtableInputSplit}.
      */
-    static final class SingleSubtableRecordReader extends RecordReader<IntWritable, SubtableWritable> {
+    @VisibleForTesting
+    public static final class SingleSubtableRecordReader extends RecordReader<IntWritable, SubtableWritable> {
 
         private int key;
         private SubtableWritable matrix;
 
         private boolean processed = false; // whether this record has been processed
 
-        SingleSubtableRecordReader() {}
+        @VisibleForTesting
+        public SingleSubtableRecordReader() {}
 
         @Override
         public void initialize(InputSplit split, TaskAttemptContext context) {

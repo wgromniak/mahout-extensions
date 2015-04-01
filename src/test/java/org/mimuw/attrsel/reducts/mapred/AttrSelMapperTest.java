@@ -7,6 +7,7 @@ import org.apache.hadoop.mrunit.mapreduce.MapDriver;
 import org.apache.mahout.math.DenseMatrix;
 import org.apache.mahout.math.Matrix;
 import org.mimuw.attrsel.common.AttributeSubtable;
+import org.mimuw.attrsel.common.SubtableWritable;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import rseslib.processing.reducts.GlobalReductsProvider;

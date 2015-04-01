@@ -3,6 +3,7 @@ package org.mimuw.attrsel.reducts.mapred;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapreduce.Mapper;
+import org.mimuw.attrsel.common.SubtableWritable;
 import org.mimuw.attrsel.common.api.Subtable;
 import org.mimuw.attrsel.reducts.RsesDiscretizer;
 import org.mimuw.attrsel.reducts.RsesSubtableConverter;
@@ -19,7 +20,7 @@ import java.util.*;
 /**
  * Input - ( no of subtable, subtable ), output - ( attribute, reduct ).
  */
-public final class AttrSelMapper extends Mapper<IntWritable, SubtableWritable, IntWritable, IntListWritable> {
+final class AttrSelMapper extends Mapper<IntWritable, SubtableWritable, IntWritable, IntListWritable> {
 
     public static final String INDISCERNIBILITY_FOR_MISSING = "mahout-extensions.attrsel.IndiscernibilityForMissing";
     public static final String INDISCERNIBILITY_FOR_MISSING_DEFAULT = "DiscernFromValue";

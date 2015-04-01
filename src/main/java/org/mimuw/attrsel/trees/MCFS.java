@@ -7,7 +7,8 @@ import gov.sandia.cognition.learning.algorithm.tree.CategorizationTree;
 import gov.sandia.cognition.learning.algorithm.tree.DecisionTreeNode;
 import gov.sandia.cognition.learning.data.DefaultInputOutputPair;
 import gov.sandia.cognition.learning.data.InputOutputPair;
-import gov.sandia.cognition.learning.experiment.CrossFoldCreator;
+import gov.sandia.cognition.learning.data.RandomDataPartitioner;
+import gov.sandia.cognition.learning.experiment.RandomFoldCreator;
 import gov.sandia.cognition.learning.performance.categorization.ConfusionMatrix;
 import gov.sandia.cognition.learning.performance.categorization.ConfusionMatrixPerformanceEvaluator;
 import gov.sandia.cognition.learning.performance.categorization.DefaultConfusionMatrix;
@@ -21,6 +22,8 @@ import java.util.*;
 import static com.google.common.base.Preconditions.checkState;
 
 public class MCFS {
+
+    private static final double TRAINING_PERCENT = 0.66; // as specified in the paper
 
     private final int numTrees;
     private final Random random;
@@ -46,8 +49,11 @@ public class MCFS {
         DefaultConfusionMatrix.CombineSummarizer<Integer> confMatSumm =
                 new DefaultConfusionMatrix.CombineSummarizer<>();
 
-        // TODO: change the fold creator; there is a randomised one - maybe that's what we want?
-        CrossFoldCreator<InputOutputPair<Vector, Integer>> foldCreator = new CrossFoldCreator<>(numTrees, random);
+        RandomFoldCreator<InputOutputPair<Vector, Integer>> foldCreator =
+                new RandomFoldCreator<>(
+                        numTrees,
+                        new RandomDataPartitioner<InputOutputPair<Vector, Integer>>(TRAINING_PERCENT, random)
+                );
         SupervisedLearnerValidationExperimentStoringModels
                 <Vector, Integer, ConfusionMatrix<Integer>, DefaultConfusionMatrix<Integer>>
                 experiment =

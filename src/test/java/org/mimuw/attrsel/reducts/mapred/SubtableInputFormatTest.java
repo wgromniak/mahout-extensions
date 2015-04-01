@@ -8,6 +8,7 @@ import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.mahout.math.DenseMatrix;
 import org.mimuw.attrsel.common.ObjectSubtable;
+import org.mimuw.attrsel.common.SubtableInputFormat;
 import org.mimuw.attrsel.common.api.Subtable;
 import org.testng.annotations.Test;
 

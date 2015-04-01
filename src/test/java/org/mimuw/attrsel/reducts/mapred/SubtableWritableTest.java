@@ -5,6 +5,7 @@ import org.apache.mahout.math.DenseMatrix;
 import org.apache.mahout.math.Matrix;
 import org.mimuw.attrsel.common.AttributeSubtable;
 import org.mimuw.attrsel.common.ObjectSubtable;
+import org.mimuw.attrsel.common.SubtableWritable;
 import org.mimuw.attrsel.common.api.Subtable;
 import org.testng.annotations.Test;
 

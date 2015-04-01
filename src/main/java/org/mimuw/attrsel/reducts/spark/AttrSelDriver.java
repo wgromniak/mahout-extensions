@@ -15,12 +15,11 @@ import org.apache.spark.broadcast.Broadcast;
 import org.mimuw.attrsel.common.CSVMatrixReader;
 import org.mimuw.attrsel.common.MatrixFixedSizeAttributeSubtableGenerator;
 import org.mimuw.attrsel.common.MemoryGauge;
+import org.mimuw.attrsel.common.SubtableWritable;
 import org.mimuw.attrsel.common.api.Subtable;
 import org.mimuw.attrsel.common.api.SubtableGenerator;
 import org.mimuw.attrsel.reducts.FrequencyScoreCalculator;
 import org.mimuw.attrsel.reducts.RsesSubtableConverter;
-import org.mimuw.attrsel.reducts.mapred.AttrSelMapper;
-import org.mimuw.attrsel.reducts.mapred.SubtableWritable;
 import org.slf4j.LoggerFactory;
 import rseslib.processing.reducts.JohnsonReductsProvider;
 import rseslib.processing.reducts.ReductsProvider;
@@ -55,10 +54,10 @@ public final class AttrSelDriver {
         final Properties properties = new Properties();
 
         // TODO: make configurable via commandline args
-        properties.setProperty("IndiscernibilityForMissing", AttrSelMapper.INDISCERNIBILITY_FOR_MISSING_DEFAULT);
-        properties.setProperty("DiscernibilityMethod", AttrSelMapper.DISCERNIBILITY_METHOD_DEFAULT);
-        properties.setProperty("GeneralizedDecisionTransitiveClosure", AttrSelMapper.GENERALIZED_DECISION_TRANSITIVE_CLOSURE_DEFAULT);
-        properties.setProperty("JohnsonReducts", AttrSelMapper.JOHNSON_REDUCTS_DEFAULT);
+        properties.setProperty("IndiscernibilityForMissing", "DiscernFromValue");
+        properties.setProperty("DiscernibilityMethod", "OrdinaryDecisionAndInconsistenciesOmitted");
+        properties.setProperty("GeneralizedDecisionTransitiveClosure", "TRUE");
+        properties.setProperty("JohnsonReducts", "All");
 
         SparkConf conf = new SparkConf();
         JavaSparkContext sc = new JavaSparkContext(conf);

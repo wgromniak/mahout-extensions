@@ -1,12 +1,10 @@
-package org.mimuw.attrsel.reducts.mapred;
+package org.mimuw.attrsel.common;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import org.apache.hadoop.io.Writable;
 import org.apache.mahout.math.Matrix;
 import org.apache.mahout.math.MatrixWritable;
-import org.mimuw.attrsel.common.AttributeSubtable;
-import org.mimuw.attrsel.common.ObjectSubtable;
 import org.mimuw.attrsel.common.api.Subtable;
 
 import java.io.*;

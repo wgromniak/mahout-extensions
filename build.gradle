@@ -46,13 +46,13 @@ dependencies {
 
 task jar4Spark(type: ShadowJar) {
 
-    group = "shadow"
+    group = 'shadow'
     classifier = 'spark'
     from(project.convention.getPlugin(JavaPluginConvention).sourceSets.main.output)
     configurations = [project.configurations.runtime]
     exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
 
-    manifest.attributes 'Main-Class': 'org.mimuw.mahoutattrsel.reducts.spark.AttrSelDriver'
+    manifest.attributes 'Main-Class': 'org.mimuw.attrsel.reducts.spark.AttrSelDriver'
 
     dependencies {
         include(dependency('com.google.guava:guava:18.0'))
@@ -64,15 +64,15 @@ task jar4Spark(type: ShadowJar) {
     }
 }
 
-task jar4MapRed(type: ShadowJar) {
+task jar4MapRedReducts(type: ShadowJar) {
 
-    group = "shadow"
-    classifier = 'mapred'
+    group = 'shadow'
+    classifier = 'mapred-reducts'
     from(project.convention.getPlugin(JavaPluginConvention).sourceSets.main.output)
     configurations = [project.configurations.runtime]
     exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
 
-    manifest.attributes 'Main-Class': 'org.mimuw.mahoutattrsel.reducts.mapred.AttrSelDriver'
+    manifest.attributes 'Main-Class': 'org.mimuw.attrsel.reducts.mapred.AttrSelDriver'
 
     dependencies {
         include(dependency('com.google.guava:guava:18.0'))
@@ -82,6 +82,30 @@ task jar4MapRed(type: ShadowJar) {
         include(dependency('org.apache.solr:solr-commons-csv:3.5.0'))
         include(dependency('org.apache.mahout.commons:commons-cli:2.0-mahout'))
         include(dependency('com.codahale.metrics:metrics-core:3.0.2'))
+    }
+}
+
+task jar4MapRedTrees(type: ShadowJar) {
+
+    group = 'shadow'
+    classifier = 'mapred-trees'
+    from(project.convention.getPlugin(JavaPluginConvention).sourceSets.main.output)
+    configurations = [project.configurations.runtime]
+    exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
+
+    manifest.attributes 'Main-Class': 'org.mimuw.attrsel.trees.mapred.TreeAttrSelDriver'
+
+    dependencies {
+        include(dependency('com.google.guava:guava:18.0'))
+        include(dependency('org.apache.mahout:mahout-core:0.9'))
+        include(dependency('org.apache.mahout:mahout-math:0.9'))
+        include(dependency('org.apache.mahout:mahout-integration:0.9'))
+        include(dependency('org.apache.solr:solr-commons-csv:3.5.0'))
+        include(dependency('org.apache.mahout.commons:commons-cli:2.0-mahout'))
+        include(dependency('com.codahale.metrics:metrics-core:3.0.2'))
+        include(dependency('gov.sandia.foundry:gov-sandia-cognition-learning-core:3.3.3'))
+        include(dependency('gov.sandia.foundry:gov-sandia-cognition-common-core:3.3.3'))
+        include(dependency('com.googlecode.matrix-toolkits-java:mtj:0.9.14'))
     }
 }
 

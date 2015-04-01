@@ -22,7 +22,7 @@ import java.util.List;
  */
 
 
-public final class AttrSelReducer extends Reducer<IntWritable, IntListWritable, IntWritable, DoubleWritable>  {
+final class AttrSelReducer extends Reducer<IntWritable, IntListWritable, IntWritable, DoubleWritable>  {
 
 
     private IntListWritable numberOfSubtablesPerAttribute;
