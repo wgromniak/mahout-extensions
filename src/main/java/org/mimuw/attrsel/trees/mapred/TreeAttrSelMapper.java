@@ -15,14 +15,19 @@ import java.util.Random;
  */
 public class TreeAttrSelMapper extends Mapper<IntWritable, SubtableWritable, IntWritable, DoubleWritable> {
 
+    private MCFS mcfs;
+
+    @Override
+    protected void setup(Context context) throws IOException, InterruptedException {
+        // TODO: values hardcoded temporarily
+        mcfs = new MCFS(10, new Random(1234), 2, 2);
+    }
+
     @Override
     protected void map(IntWritable key, SubtableWritable value, Context context)
             throws IOException, InterruptedException {
 
         Subtable subtable = value.get();
-
-        // TODO: values hardcoded temporarily
-        MCFS mcfs = new MCFS(10, new Random(1234), 2, 2);
 
         double[] scores = mcfs.getScores(subtable.getTable());
 

@@ -11,7 +11,7 @@ import gov.sandia.cognition.statistics.distribution.DefaultDataDistribution;
 import java.util.Collection;
 import java.util.Map;
 
-public class CategorizationTreeLearnerStoringCardinality<InputType, OutputType>
+class CategorizationTreeLearnerStoringCardinality<InputType, OutputType>
         extends CategorizationTreeLearner<InputType, OutputType> {
 
     public CategorizationTreeLearnerStoringCardinality() {

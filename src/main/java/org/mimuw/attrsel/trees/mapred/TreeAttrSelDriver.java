@@ -1,5 +1,6 @@
 package org.mimuw.attrsel.trees.mapred;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.IntWritable;
@@ -18,10 +19,13 @@ import org.mimuw.attrsel.common.MatrixFixedSizeObjectSubtableGenerator;
 import org.mimuw.attrsel.common.SubtableInputFormat;
 import org.mimuw.attrsel.common.api.Subtable;
 import org.mimuw.attrsel.common.api.SubtableGenerator;
+import org.mimuw.attrsel.reducts.FastCutoffPoint;
+import org.mimuw.attrsel.reducts.api.CutoffPointCalculator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -88,6 +92,11 @@ public final class TreeAttrSelDriver extends AbstractJob {
         for (int i = 0; i < scores.length; i++) {
             System.out.printf("%s: %s%n", i, scores[i]);
         }
+
+        CutoffPointCalculator cutoffCalculator = new FastCutoffPoint();
+        List<Integer> selected = cutoffCalculator.calculateCutoffPoint(Arrays.asList(ArrayUtils.toObject(scores)));
+
+        System.out.printf("Selected atts: %s%n", selected);
 
         return 0;
     }

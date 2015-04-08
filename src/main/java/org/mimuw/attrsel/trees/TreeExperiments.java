@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public final class TreeExperiments {
+final class TreeExperiments {
 
     public static void main(String... args) {
 

@@ -13,7 +13,7 @@ import gov.sandia.cognition.util.DefaultWeightedValue;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class VectorThresholdInformationGainLearnerStoringGain<OutputType>
+class VectorThresholdInformationGainLearnerStoringGain<OutputType>
         extends VectorThresholdInformationGainLearner<OutputType> {
 
     /**

@@ -2,7 +2,7 @@ package org.mimuw.attrsel.trees;
 
 import gov.sandia.cognition.learning.function.categorization.VectorElementThresholdCategorizer;
 
-public class VectorElementThresholdCategorizerWithGain extends VectorElementThresholdCategorizer {
+class VectorElementThresholdCategorizerWithGain extends VectorElementThresholdCategorizer {
 
     protected double gain;
 

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class SupervisedLearnerValidationExperimentStoringModels<InputType, OutputType, StatisticType, SummaryType>
+class SupervisedLearnerValidationExperimentStoringModels<InputType, OutputType, StatisticType, SummaryType>
         extends SupervisedLearnerValidationExperiment<InputType, OutputType, StatisticType, SummaryType> {
 
     protected List<Evaluator<? super InputType, OutputType>> learned = new ArrayList<>();

@@ -3,7 +3,7 @@ package org.mimuw.attrsel.trees;
 import gov.sandia.cognition.learning.algorithm.tree.CategorizationTreeNode;
 import gov.sandia.cognition.learning.algorithm.tree.DecisionTreeNode;
 
-public class CategorizationTreeNodeWithCardinality<InputType, OutputType, InteriorType>
+class CategorizationTreeNodeWithCardinality<InputType, OutputType, InteriorType>
         extends CategorizationTreeNode<InputType, OutputType, InteriorType> {
 
     protected int cardinality;
