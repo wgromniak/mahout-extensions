@@ -73,7 +73,7 @@ public final class TreeAttrSelDriver extends AbstractJob {
 
         // read from local fs
         Matrix inputDataTable = new CSVMatrixReader().read(Paths.get(getInputFile().getPath()));
-        setSubtablesAndWriteCache(job, inputDataTable);
+        setSubtables(job, inputDataTable);
 
         if (!job.waitForCompletion(true)) {
             return 1;
@@ -101,7 +101,7 @@ public final class TreeAttrSelDriver extends AbstractJob {
         return 0;
     }
 
-    private void setSubtablesAndWriteCache(Job job, Matrix fullMatrix) throws Exception {
+    private void setSubtables(Job job, Matrix fullMatrix) throws Exception {
 
         Configuration conf = job.getConfiguration();
 
