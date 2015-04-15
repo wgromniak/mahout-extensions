@@ -113,7 +113,7 @@ public final class AttrSelDriver extends AbstractJob {
         SequenceFileDirIterable<IntWritable, DoubleWritable> dirIterable
                 = new SequenceFileDirIterable<>(getOutputPath(), PathType.LIST, PathFilters.partFilter(), getConf());
 
-        double[] scores = new double[inputDataTable.columnSize()];
+        double[] scores = new double[inputDataTable.columnSize() - 1];
 
         for (Pair<IntWritable, DoubleWritable> attrScore : dirIterable) {
             scores[attrScore.getFirst().get()] = attrScore.getSecond().get();
@@ -127,7 +127,7 @@ public final class AttrSelDriver extends AbstractJob {
         CutoffPointCalculator cutoffCalculator = new FastCutoffPoint();
         List<Integer> selected = cutoffCalculator.calculateCutoffPoint(Arrays.asList(ArrayUtils.toObject(scores)));
 
-        System.out.printf("Selected atts: %s%n", selected);
+        System.out.printf("Selected attrs: %s%n", selected);
 
         return 0;
     }
