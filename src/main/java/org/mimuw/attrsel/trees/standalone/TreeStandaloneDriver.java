@@ -1,4 +1,4 @@
-package org.mimuw.attrsel.reducts.standalone;
+package org.mimuw.attrsel.trees.standalone;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.mahout.common.AbstractJob;
@@ -8,9 +8,8 @@ import org.mimuw.attrsel.common.CSVMatrixReader;
 import org.mimuw.attrsel.common.api.Subtable;
 import org.mimuw.attrsel.common.api.SubtableGenerator;
 import org.mimuw.attrsel.reducts.FastCutoffPoint;
-import org.mimuw.attrsel.reducts.RandomReducts;
 import org.mimuw.attrsel.reducts.api.CutoffPointCalculator;
-import rseslib.processing.reducts.JohnsonReductsProvider;
+import org.mimuw.attrsel.trees.MCFS;
 
 import java.nio.file.Paths;
 import java.util.*;
@@ -19,7 +18,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-final class ReductsStandaloneDriver extends AbstractJob {
+import static com.google.common.base.Preconditions.checkState;
+
+final class TreeStandaloneDriver extends AbstractJob {
 
     private final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
@@ -58,44 +59,35 @@ final class ReductsStandaloneDriver extends AbstractJob {
                 .newInstance(RandomUtils.getRandom(seed), numberOfSubtables, subtableSize, inputDataTable);
 
         List<Subtable> subtables = subtableGenerator.getSubtables();
-        List<Integer> numberOfSubtablesPerAttribute = subtableGenerator.getNumberOfSubtablesPerAttribute();
 
-        List<Callable<List<List<Integer>>>> map = new ArrayList<>(subtables.size());
+        final List<Callable<double[]>> map = new ArrayList<>(subtables.size());
+
+        // TODO: values hardcoded temporarily
+        // TODO: use ParallelMCFS?
+        final MCFS mcfs = new MCFS(10, new Random(1234), 2, 2);
 
         for (final Subtable subtable : subtables) {
-            map.add(new Callable<List<List<Integer>>>() {
+            map.add(new Callable<double[]>() {
                 @Override
-                public List<List<Integer>> call() throws Exception {
-                    RandomReducts randomReducts =
-                            new RandomReducts(
-                                    subtable,
-                                    JohnsonReductsProvider.class,
-                                    RandomReducts.IndiscernibilityForMissing.DiscernFromValue,
-                                    RandomReducts.DiscernibilityMethod.OrdinaryDecisionAndInconsistenciesOmitted,
-                                    RandomReducts.GeneralizedDecisionTransitiveClosure.TRUE,
-                                    RandomReducts.JohnsonReducts.All
-                            );
-                    return randomReducts.getReducts();
+                public double[] call() throws Exception {
+                    return mcfs.getScores(subtable.getTable());
                 }
             });
         }
 
-        List<Future<List<List<Integer>>>> mapResults = executor.invokeAll(map);
+        List<Future<double[]>> mapResult = executor.invokeAll(map);
 
-        int[] attrCounts = new int[inputDataTable.columnSize() - 1];
-
-        for (Future<List<List<Integer>>> result : mapResults) {
-            for (List<Integer> reduct : result.get()) {
-                for (int attr : reduct) {
-                    attrCounts[attr] += 1;
-                }
-            }
-        }
+        checkState(mapResult.size() == subtables.size());
 
         double[] scores = new double[inputDataTable.columnSize() - 1];
 
-        for (int i = 0; i < attrCounts.length; i++) {
-            scores[i] = (double) attrCounts[i] / numberOfSubtablesPerAttribute.get(i);
+        for (int i = 0, n = mapResult.size(); i < n; i++) {
+            double[] smallScores = mapResult.get(i).get();
+            Subtable subtable = subtables.get(i);
+
+            for (int j = 0; j < smallScores.length; j++) {
+                scores[subtable.getAttributeAtPosition(j)] = smallScores[j];
+            }
         }
 
         System.out.println("Scores are (<attr>: <score>):");
@@ -113,11 +105,11 @@ final class ReductsStandaloneDriver extends AbstractJob {
     }
 
     public static void main(String... args) throws Exception {
-        new ReductsStandaloneDriver()
+        new TreeStandaloneDriver()
                 .run(
                         "-i", "res/in/wekaGen.csv",
-                        "-numSub", "10000",
-                        "-subCard", "66",
+                        "-numSub", "1",
+                        "-subCard", "100",
                         "-subGen", "org.mimuw.attrsel.common.MatrixFixedSizeObjectSubtableGenerator"
                 );
     }

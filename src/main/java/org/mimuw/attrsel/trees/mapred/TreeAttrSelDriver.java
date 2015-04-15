@@ -82,7 +82,7 @@ public final class TreeAttrSelDriver extends AbstractJob {
         SequenceFileDirIterable<IntWritable, DoubleWritable> dirIterable
                 = new SequenceFileDirIterable<>(getOutputPath(), PathType.LIST, PathFilters.partFilter(), getConf());
 
-        double[] scores = new double[inputDataTable.columnSize()];
+        double[] scores = new double[inputDataTable.columnSize() - 1];
 
         for (Pair<IntWritable, DoubleWritable> attrScore : dirIterable) {
             scores[attrScore.getFirst().get()] = attrScore.getSecond().get();
