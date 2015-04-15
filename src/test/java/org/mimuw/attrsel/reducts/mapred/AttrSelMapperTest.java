@@ -36,10 +36,10 @@ public class AttrSelMapperTest {
         mapDriver = MapDriver.newMapDriver(mapper);
 
         conf = mapDriver.getConfiguration();
-        conf.setClass(AttrSelMapper.REDUCT_PROVIDER, GlobalReductsProvider.class, ReductsProvider.class);
-        conf.set(AttrSelMapper.INDISCERNIBILITY_FOR_MISSING, "DiscernFromValue");
-        conf.set(AttrSelMapper.DISCERNIBILITY_METHOD, "OrdinaryDecisionAndInconsistenciesOmitted");
-        conf.set(AttrSelMapper.GENERALIZED_DECISION_TRANSITIVE_CLOSURE, "TRUE");
+        conf.setClass(AttrSelMapper.REDUCTS_PROVIDER, GlobalReductsProvider.class, ReductsProvider.class);
+        conf.set("IndiscernibilityForMissing", "DiscernFromValue");
+        conf.set("DiscernibilityMethod", "OrdinaryDecisionAndInconsistenciesOmitted");
+        conf.set("GeneralizedDecisionTransitiveClosure", "TRUE");
     }
 
     @Test
@@ -178,10 +178,10 @@ public class AttrSelMapperTest {
     public void testOneReductLocal() throws Exception {
 
         conf = mapDriver.getConfiguration();
-        conf.setClass(AttrSelMapper.REDUCT_PROVIDER, LocalReductsProvider.class, ReductsProvider.class);
-        conf.set(AttrSelMapper.INDISCERNIBILITY_FOR_MISSING, "DiscernFromValue");
-        conf.set(AttrSelMapper.DISCERNIBILITY_METHOD, "OrdinaryDecisionAndInconsistenciesOmitted");
-        conf.set(AttrSelMapper.GENERALIZED_DECISION_TRANSITIVE_CLOSURE, "TRUE");
+        conf.setClass(AttrSelMapper.REDUCTS_PROVIDER, LocalReductsProvider.class, ReductsProvider.class);
+        conf.set("IndiscernibilityForMissing", "DiscernFromValue");
+        conf.set("DiscernibilityMethod", "OrdinaryDecisionAndInconsistenciesOmitted");
+        conf.set("GeneralizedDecisionTransitiveClosure", "TRUE");
 
         List<Integer> listOfAttributes = Arrays.asList(2, 3);
 
@@ -204,11 +204,11 @@ public class AttrSelMapperTest {
     public void testOneReductJohnson() throws Exception {
 
         conf = mapDriver.getConfiguration();
-        conf.setClass(AttrSelMapper.REDUCT_PROVIDER, JohnsonReductsProvider.class, ReductsProvider.class);
-        conf.set(AttrSelMapper.INDISCERNIBILITY_FOR_MISSING, "DiscernFromValue");
-        conf.set(AttrSelMapper.DISCERNIBILITY_METHOD, "OrdinaryDecisionAndInconsistenciesOmitted");
-        conf.set(AttrSelMapper.GENERALIZED_DECISION_TRANSITIVE_CLOSURE, "TRUE");
-        conf.set(AttrSelMapper.JOHNSON_REDUCTS, "One");
+        conf.setClass(AttrSelMapper.REDUCTS_PROVIDER, JohnsonReductsProvider.class, ReductsProvider.class);
+        conf.set("IndiscernibilityForMissing", "DiscernFromValue");
+        conf.set("DiscernibilityMethod", "OrdinaryDecisionAndInconsistenciesOmitted");
+        conf.set("GeneralizedDecisionTransitiveClosure", "TRUE");
+        conf.set("JohnsonReducts", "One");
 
         List<Integer> listOfAttributes = Arrays.asList(0, 1, 2, 3);
 
