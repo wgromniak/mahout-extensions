@@ -20,7 +20,7 @@ import org.apache.mahout.common.iterator.sequencefile.PathType;
 import org.apache.mahout.common.iterator.sequencefile.SequenceFileDirIterable;
 import org.apache.mahout.math.Matrix;
 import org.mimuw.attrsel.common.CSVMatrixReader;
-import org.mimuw.attrsel.common.MatrixFixedSizeAttributeSubtableGenerator;
+import org.mimuw.attrsel.common.MatrixFixedSizeObjectSubtableGenerator;
 import org.mimuw.attrsel.common.MemoryGauge;
 import org.mimuw.attrsel.common.SubtableInputFormat;
 import org.mimuw.attrsel.common.api.Subtable;
@@ -54,11 +54,6 @@ public final class AttrSelDriver extends AbstractJob {
                 .start(5, TimeUnit.SECONDS);
     }
 
-    public static final String SEED = "mahout-extensions.attrsel.random.seed";
-    public static final String SUBTABLE_GEN = "mahout-extensions.attrsel.subtable.generator";
-    public static final String NUM_SUBTABLES = "mahout-extensions.attrsel.number.of.subtables";
-    public static final String SUBTABLE_CARD = "mahout-extensions.attrsel.subtable.size";
-
     @Override
     public int run(String[] args) throws Exception {
         addInputOption(); // TODO: hack - input is treated as local-fs input, not hdfs
@@ -91,15 +86,6 @@ public final class AttrSelDriver extends AbstractJob {
         job.setInputFormatClass(SubtableInputFormat.class);
         job.setOutputFormatClass(SequenceFileOutputFormat.class);
 
-        job.getConfiguration().setInt(NUM_SUBTABLES, Integer.parseInt(getOption("numSubtables")));
-        job.getConfiguration().setInt(SUBTABLE_CARD, Integer.parseInt(getOption("subtableCardinality")));
-        if (hasOption("subtableGenerator")) {
-            job.getConfiguration().setClass(SUBTABLE_GEN, Class.forName(getOption("subtableGenerator")),
-                    SubtableGenerator.class);
-        }
-        if (hasOption("seed")) {
-            job.getConfiguration().setInt(SEED, Integer.parseInt(getOption(SEED)));
-        }
         // TODO: add conf options for Mapper
 
         // read from local fs
@@ -134,16 +120,14 @@ public final class AttrSelDriver extends AbstractJob {
 
     private void setSubtablesAndWriteCache(Job job, Matrix fullMatrix) throws Exception {
 
-        Configuration conf = job.getConfiguration();
-
         @SuppressWarnings("unchecked")
         Class<SubtableGenerator<Subtable>> generatorClass =
-                (Class<SubtableGenerator<Subtable>>) conf.getClass(SUBTABLE_GEN,
-                        MatrixFixedSizeAttributeSubtableGenerator.class);
+                (Class<SubtableGenerator<Subtable>>) Class.forName(
+                       getOption("subtableGenerator", MatrixFixedSizeObjectSubtableGenerator.class.getCanonicalName()));
 
-        int numberOfSubtables = conf.getInt(NUM_SUBTABLES, 1);
-        int subtableSize = conf.getInt(SUBTABLE_CARD, 1);
-        long seed = conf.getLong(SEED, 123456789L);
+        int numberOfSubtables = getInt("numSubtables", 10);
+        int subtableSize = getInt("subtableCardinality", 10);
+        long seed = Long.parseLong(getOption("seed", "123456789"));
 
         SubtableGenerator<Subtable> subtableGenerator;
 

@@ -34,11 +34,6 @@ public final class TreeAttrSelDriver extends AbstractJob {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TreeAttrSelDriver.class);
 
-    public static final String SEED = "mahout-extensions.attrsel.random.seed";
-    public static final String SUBTABLE_GEN = "mahout-extensions.attrsel.subtable.generator";
-    public static final String NUM_SUBTABLES = "mahout-extensions.attrsel.number.of.subtables";
-    public static final String SUBTABLE_CARD = "mahout-extensions.attrsel.subtable.size";
-
     @Override
     public int run(String[] args) throws Exception {
         addInputOption(); // TODO: hack - input is treated as local-fs input, not hdfs
@@ -73,7 +68,7 @@ public final class TreeAttrSelDriver extends AbstractJob {
 
         // read from local fs
         Matrix inputDataTable = new CSVMatrixReader().read(Paths.get(getInputFile().getPath()));
-        setSubtables(job, inputDataTable);
+        setSubtables(inputDataTable);
 
         if (!job.waitForCompletion(true)) {
             return 1;
@@ -101,18 +96,16 @@ public final class TreeAttrSelDriver extends AbstractJob {
         return 0;
     }
 
-    private void setSubtables(Job job, Matrix fullMatrix) throws Exception {
-
-        Configuration conf = job.getConfiguration();
+    private void setSubtables(Matrix fullMatrix) throws Exception {
 
         @SuppressWarnings("unchecked")
         Class<SubtableGenerator<Subtable>> generatorClass =
-                (Class<SubtableGenerator<Subtable>>) conf.getClass(SUBTABLE_GEN,
-                        MatrixFixedSizeObjectSubtableGenerator.class);
+                (Class<SubtableGenerator<Subtable>>) Class.forName(
+                       getOption("subtableGenerator", MatrixFixedSizeObjectSubtableGenerator.class.getCanonicalName()));
 
-        int numberOfSubtables = conf.getInt(NUM_SUBTABLES, 10);
-        int subtableSize = conf.getInt(SUBTABLE_CARD, 10);
-        long seed = conf.getLong(SEED, 123456789L);
+        int numberOfSubtables = getInt("numSubtables", 10);
+        int subtableSize = getInt("subtableCardinality", 10);
+        long seed = Long.parseLong(getOption("seed", "123456789"));
 
         SubtableGenerator<Subtable> subtableGenerator;
 
