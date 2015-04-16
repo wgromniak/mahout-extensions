@@ -22,6 +22,10 @@ public class MCFS extends AbstractMCFS {
         super(numTrees, random, u, v);
     }
 
+    public MCFS(int numTrees, Random random, double u, double v, double trainingPercent) {
+        super(numTrees, random, u, v, trainingPercent);
+    }
+
     public double[] getScores(final Matrix table) {
 
         SupervisedLearnerValidationExperimentStoringModels<Vector, Integer, ConfusionMatrix<Integer>, DefaultConfusionMatrix<Integer>>

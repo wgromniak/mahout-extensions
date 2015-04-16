@@ -36,13 +36,30 @@ public final class TreeAttrSelDriver extends AbstractJob {
 
     @Override
     public int run(String[] args) throws Exception {
+        // general options
         addInputOption(); // TODO: hack - input is treated as local-fs input, not hdfs
         addOutputOption();
         addOption("numSubtables", "numSub", "Number of subtables the original tables will be divided into", true);
         addOption("subtableCardinality", "subCard", "Cardinality of each of the subtables", true);
         addOption("subtableGenerator", "subGen", "Class of the subtable generator");
-        addOption("seed", "seed", "Random number generator seed");
+        addOption("seed", "seed", "Random number generator seed", "123456789");
+
+        // mcfs options
+        addOption("numberOfTrees", "numTrees", "Number of trees in each map task");
+        addOption("u", "u", "u param from the paper");
+        addOption("v", "v", "v param from the paper");
+
         Map<String, List<String>> parsedArgs = parseArguments(args, true, true);
+
+        // copy relevant options to Config
+        if (hasOption("seed"))
+            getConf().set("seed", getOption("seed"));
+        if (hasOption("numberOfTrees"))
+            getConf().set("numberOfTrees", getOption("numberOfTrees"));
+        if (hasOption("u"))
+            getConf().set("u", getOption("u"));
+        if (hasOption("v"))
+            getConf().set("v", getOption("v"));
 
         if (parsedArgs == null) {
             return 1;
@@ -52,7 +69,7 @@ public final class TreeAttrSelDriver extends AbstractJob {
 
         SequenceFileOutputFormat.setOutputPath(job, getOutputPath());
 
-        job.setJobName("mahout-extensions.attrsel");
+        job.setJobName("mahout-extensions.attrsel.trees");
         job.setJarByClass(TreeAttrSelDriver.class); // jar with this class
 
         job.setMapperClass(TreeAttrSelMapper.class);
@@ -91,7 +108,7 @@ public final class TreeAttrSelDriver extends AbstractJob {
         CutoffPointCalculator cutoffCalculator = new FastCutoffPoint();
         List<Integer> selected = cutoffCalculator.calculateCutoffPoint(Arrays.asList(ArrayUtils.toObject(scores)));
 
-        System.out.printf("Selected atts: %s%n", selected);
+        System.out.printf("Selected attrs: %s%n", selected);
 
         return 0;
     }
@@ -103,9 +120,9 @@ public final class TreeAttrSelDriver extends AbstractJob {
                 (Class<SubtableGenerator<Subtable>>) Class.forName(
                        getOption("subtableGenerator", MatrixFixedSizeObjectSubtableGenerator.class.getCanonicalName()));
 
-        int numberOfSubtables = getInt("numSubtables", 10);
-        int subtableSize = getInt("subtableCardinality", 10);
-        long seed = Long.parseLong(getOption("seed", "123456789"));
+        int numberOfSubtables = getInt("numSubtables");
+        int subtableSize = getInt("subtableCardinality");
+        long seed = Long.parseLong(getOption("seed"));
 
         SubtableGenerator<Subtable> subtableGenerator;
 

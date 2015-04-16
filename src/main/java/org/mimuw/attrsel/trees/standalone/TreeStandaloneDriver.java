@@ -26,16 +26,19 @@ final class TreeStandaloneDriver extends AbstractJob {
 
     @Override
     public int run(String... args) throws Exception {
+        // general options
         addInputOption(); // TODO: hack - input is treated as local-fs input, not hdfs
+        addOutputOption();
         addOption("numSubtables", "numSub", "Number of subtables the original tables will be divided into", true);
         addOption("subtableCardinality", "subCard", "Cardinality of each of the subtables", true);
-        addOption(
-                "subtableGenerator",
-                "subGen",
-                "Class of the subtable generator",
-                "org.mimuw.attrsel.common.MatrixFixedSizeAttributeSubtableGenerator"
-        );
+        addOption("subtableGenerator", "subGen", "Class of the subtable generator");
         addOption("seed", "seed", "Random number generator seed", "123456789");
+
+        // mcfs options
+        addOption("numberOfTrees", "numTrees", "Number of trees in each map task");
+        addOption("u", "u", "u param from the paper");
+        addOption("v", "v", "v param from the paper");
+
         Map<String, List<String>> parsedArgs = parseArguments(args, true, true);
 
         if (parsedArgs == null) {
@@ -46,7 +49,13 @@ final class TreeStandaloneDriver extends AbstractJob {
 
         @SuppressWarnings("unchecked")
         Class<SubtableGenerator<Subtable>> generatorClass =
-                (Class<SubtableGenerator<Subtable>>) Class.forName(getOption("subtableGenerator"));
+                (Class<SubtableGenerator<Subtable>>)
+                        Class.forName(
+                                getOption(
+                                        "subtableGenerator",
+                                        "org.mimuw.attrsel.common.MatrixFixedSizeAttributeSubtableGenerator"
+                                )
+                        );
 
         int numberOfSubtables = getInt("numSubtables");
         int subtableSize = getInt("subtableCardinality");
@@ -62,9 +71,13 @@ final class TreeStandaloneDriver extends AbstractJob {
 
         final List<Callable<double[]>> map = new ArrayList<>(subtables.size());
 
-        // TODO: values hardcoded temporarily
         // TODO: use ParallelMCFS?
-        final MCFS mcfs = new MCFS(10, new Random(1234), 2, 2);
+        final MCFS mcfs = new MCFS(
+                getInt("numTrees", 100),
+                RandomUtils.getRandom(Long.valueOf(getOption("seed"))),
+                Double.valueOf(getOption("u", "2")),
+                Double.valueOf(getOption("u", "2"))
+        );
 
         for (final Subtable subtable : subtables) {
             map.add(new Callable<double[]>() {
@@ -107,10 +120,10 @@ final class TreeStandaloneDriver extends AbstractJob {
     public static void main(String... args) throws Exception {
         new TreeStandaloneDriver()
                 .run(
-                        "-i", "res/in/wekaGen.csv",
-                        "-numSub", "1",
-                        "-subCard", "100",
-                        "-subGen", "org.mimuw.attrsel.common.MatrixFixedSizeObjectSubtableGenerator"
+                    "-i", "res/in/wekaGen.csv",
+                    "-numSub", "1",
+                    "-subCard", "100",
+                    "-subGen", "org.mimuw.attrsel.common.MatrixFixedSizeObjectSubtableGenerator"
                 );
     }
 }

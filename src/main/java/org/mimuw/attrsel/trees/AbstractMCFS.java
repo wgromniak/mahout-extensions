@@ -23,11 +23,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 abstract class AbstractMCFS {
 
-    private static final double TRAINING_PERCENT = 0.66; // as specified in the paper TODO: make mutable and setable
-
     private final int numTrees;
     private final Random random;
     private final double v;
+    private final double trainingPercent;
 
     protected final double u;
 
@@ -40,6 +39,20 @@ abstract class AbstractMCFS {
         this.random = checkNotNull(random, "Expected random not to be null");
         this.u = u;
         this.v = v;
+        this.trainingPercent = 0.66;
+    }
+
+    public AbstractMCFS(int numTrees, Random random, double u, double v, double trainingPercent) {
+        checkArgument(numTrees > 0, "Expected positive numTrees, but got: %s", numTrees);
+        checkArgument(u > 0); // TODO: correct?
+        checkArgument(v > 0); // TODO: correct?
+        checkArgument(0 < trainingPercent && trainingPercent < 1);
+
+        this.numTrees = numTrees;
+        this.random = checkNotNull(random, "Expected random not to be null");
+        this.u = u;
+        this.v = v;
+        this.trainingPercent = trainingPercent;
     }
 
     public abstract double[] getScores(final Matrix table);
@@ -59,7 +72,7 @@ abstract class AbstractMCFS {
         RandomFoldCreator<InputOutputPair<Vector, Integer>> foldCreator =
                 new RandomFoldCreator<>(
                         numTrees,
-                        new RandomDataPartitioner<InputOutputPair<Vector, Integer>>(TRAINING_PERCENT, random)
+                        new RandomDataPartitioner<InputOutputPair<Vector, Integer>>(trainingPercent, random)
                 );
         SupervisedLearnerValidationExperimentStoringModels<Vector, Integer, ConfusionMatrix<Integer>, DefaultConfusionMatrix<Integer>>
                 experiment =

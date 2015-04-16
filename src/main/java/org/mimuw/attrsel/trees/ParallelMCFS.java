@@ -28,6 +28,18 @@ public class ParallelMCFS extends AbstractMCFS {
         this.executor = checkNotNull(executor, "Expected executor not to be null");
     }
 
+    public ParallelMCFS(
+            int numTrees,
+            Random random,
+            double u,
+            double v,
+            double trainingPercent,
+            ExecutorService executor) {
+        super(numTrees, random, u, v, trainingPercent);
+
+        this.executor = checkNotNull(executor, "Expected executor not to be null");
+    }
+
     public double[] getScores(final Matrix table) {
 
         CompletionService<double[]> completionService = new ExecutorCompletionService<>(executor);

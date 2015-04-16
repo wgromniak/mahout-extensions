@@ -1,14 +1,15 @@
 package org.mimuw.attrsel.trees.mapred;
 
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.mahout.common.RandomUtils;
 import org.mimuw.attrsel.common.SubtableWritable;
 import org.mimuw.attrsel.common.api.Subtable;
 import org.mimuw.attrsel.trees.MCFS;
 
 import java.io.IOException;
-import java.util.Random;
 
 /**
  * Input - ( no of subtable, subtable ), output - ( attribute, score ).
@@ -19,8 +20,15 @@ public class TreeAttrSelMapper extends Mapper<IntWritable, SubtableWritable, Int
 
     @Override
     protected void setup(Context context) throws IOException, InterruptedException {
-        // TODO: values hardcoded temporarily
-        mcfs = new MCFS(10, new Random(1234), 2, 2);
+
+        Configuration conf = context.getConfiguration();
+
+        mcfs = new MCFS(
+                conf.getInt("numberOfTrees", 100),
+                RandomUtils.getRandom(conf.getLong("seed", 123456789)),
+                conf.getDouble("u", 2),
+                conf.getDouble("v", 2)
+        );
     }
 
     @Override

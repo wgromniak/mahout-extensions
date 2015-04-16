@@ -142,8 +142,8 @@ public final class AttrSelDriver extends AbstractJob {
                 (Class<SubtableGenerator<Subtable>>) Class.forName(
                        getOption("subtableGenerator", MatrixFixedSizeObjectSubtableGenerator.class.getCanonicalName()));
 
-        int numberOfSubtables = getInt("numSubtables", 10);
-        int subtableSize = getInt("subtableCardinality", 10);
+        int numberOfSubtables = getInt("numSubtables");
+        int subtableSize = getInt("subtableCardinality");
         long seed = Long.parseLong(getOption("seed"));
 
         SubtableGenerator<Subtable> subtableGenerator;
