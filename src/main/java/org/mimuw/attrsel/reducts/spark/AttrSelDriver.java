@@ -5,6 +5,7 @@ import com.codahale.metrics.Slf4jReporter;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import org.apache.mahout.common.AbstractJob;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
@@ -36,7 +37,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 /**
  * TODO: Dirty and ugly.
  */
-public final class AttrSelDriver {
+public final class AttrSelDriver extends AbstractJob {
 
     public static final MetricRegistry METRICS = new MetricRegistry();
     static {
@@ -49,8 +50,8 @@ public final class AttrSelDriver {
                 .start(5, TimeUnit.SECONDS);
     }
 
-    public static void main(String... args) throws Exception {
-
+    @Override
+    public int run(String[] args) throws Exception {
         final Properties properties = new Properties();
 
         // TODO: make configurable via commandline args
@@ -141,6 +142,13 @@ public final class AttrSelDriver {
         List<Tuple2<Integer, Double>> collected = scores.collect();
 
         System.out.println(collected);
+
+        return 0;
+
+    }
+
+    public static void main(String... args) throws Exception {
+        new AttrSelDriver().run(args);
     }
 
     private static final class Reduct {

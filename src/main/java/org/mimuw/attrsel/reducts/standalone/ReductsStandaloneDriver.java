@@ -25,16 +25,20 @@ final class ReductsStandaloneDriver extends AbstractJob {
 
     @Override
     public int run(String... args) throws Exception {
+        // general options
         addInputOption(); // TODO: hack - input is treated as local-fs input, not hdfs
+        addOutputOption();
         addOption("numSubtables", "numSub", "Number of subtables the original tables will be divided into", true);
         addOption("subtableCardinality", "subCard", "Cardinality of each of the subtables", true);
-        addOption(
-                "subtableGenerator",
-                "subGen",
-                "Class of the subtable generator",
-                "org.mimuw.attrsel.common.MatrixFixedSizeAttributeSubtableGenerator"
-        );
+        addOption("subtableGenerator", "subGen", "Class of the subtable generator");
         addOption("seed", "seed", "Random number generator seed", "123456789");
+
+        // reducts options
+        addOption("IndiscernibilityForMissing", "indisc", "Indiscernibility for missing values");
+        addOption("DiscernibilityMethod", "discMeth", "Discernibility method");
+        addOption("GeneralizedDecisionTransitiveClosure", "genDec", "Generalized decision transitive closure");
+        addOption("JohnsonReducts", "johnson", "Johnson reducts");
+
         Map<String, List<String>> parsedArgs = parseArguments(args, true, true);
 
         if (parsedArgs == null) {
@@ -45,7 +49,13 @@ final class ReductsStandaloneDriver extends AbstractJob {
 
         @SuppressWarnings("unchecked")
         Class<SubtableGenerator<Subtable>> generatorClass =
-                (Class<SubtableGenerator<Subtable>>) Class.forName(getOption("subtableGenerator"));
+                (Class<SubtableGenerator<Subtable>>)
+                        Class.forName(
+                                getOption(
+                                        "subtableGenerator",
+                                        "org.mimuw.attrsel.common.MatrixFixedSizeAttributeSubtableGenerator"
+                                )
+                        );
 
         int numberOfSubtables = getInt("numSubtables");
         int subtableSize = getInt("subtableCardinality");
@@ -70,10 +80,10 @@ final class ReductsStandaloneDriver extends AbstractJob {
                             new RandomReducts(
                                     subtable,
                                     JohnsonReductsProvider.class,
-                                    RandomReducts.IndiscernibilityForMissing.DiscernFromValue,
-                                    RandomReducts.DiscernibilityMethod.OrdinaryDecisionAndInconsistenciesOmitted,
-                                    RandomReducts.GeneralizedDecisionTransitiveClosure.TRUE,
-                                    RandomReducts.JohnsonReducts.All
+                                    getIndiscernibilityForMissing(),
+                                    getDiscernibilityMethod(),
+                                    getGeneralizedDecisionTransitiveClosure(),
+                                    getJohnsonReducts()
                             );
                     return randomReducts.getReducts();
                 }
@@ -112,11 +122,36 @@ final class ReductsStandaloneDriver extends AbstractJob {
         return 0;
     }
 
+    private RandomReducts.IndiscernibilityForMissing getIndiscernibilityForMissing() {
+        return hasOption("IndiscernibilityForMissing") ?
+                RandomReducts.IndiscernibilityForMissing.valueOf(getOption("IndiscernibilityForMissing")) :
+                RandomReducts.IndiscernibilityForMissing.DiscernFromValue;
+    }
+
+    private RandomReducts.DiscernibilityMethod getDiscernibilityMethod() {
+        return hasOption("DiscernibilityMethod") ?
+                RandomReducts.DiscernibilityMethod.valueOf(getOption("DiscernibilityMethod")) :
+                RandomReducts.DiscernibilityMethod.OrdinaryDecisionAndInconsistenciesOmitted;
+    }
+
+    private RandomReducts.GeneralizedDecisionTransitiveClosure getGeneralizedDecisionTransitiveClosure() {
+        return hasOption("GeneralizedDecisionTransitiveClosure") ?
+                RandomReducts.GeneralizedDecisionTransitiveClosure
+                        .valueOf(getOption("GeneralizedDecisionTransitiveClosure")) :
+                RandomReducts.GeneralizedDecisionTransitiveClosure.TRUE;
+    }
+
+    private RandomReducts.JohnsonReducts getJohnsonReducts() {
+        return hasOption("JohnsonReducts") ?
+                RandomReducts.JohnsonReducts.valueOf(getOption("JohnsonReducts")) :
+                RandomReducts.JohnsonReducts.All;
+    }
+
     public static void main(String... args) throws Exception {
         new ReductsStandaloneDriver()
                 .run(
                         "-i", "res/in/wekaGen.csv",
-                        "-numSub", "10000",
+                        "-numSub", "100",
                         "-subCard", "66",
                         "-subGen", "org.mimuw.attrsel.common.MatrixFixedSizeObjectSubtableGenerator"
                 );

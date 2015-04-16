@@ -56,13 +56,32 @@ public final class AttrSelDriver extends AbstractJob {
 
     @Override
     public int run(String[] args) throws Exception {
+        // general options
         addInputOption(); // TODO: hack - input is treated as local-fs input, not hdfs
         addOutputOption();
         addOption("numSubtables", "numSub", "Number of subtables the original tables will be divided into", true);
         addOption("subtableCardinality", "subCard", "Cardinality of each of the subtables", true);
         addOption("subtableGenerator", "subGen", "Class of the subtable generator");
-        addOption("seed", "seed", "Random number generator seed");
+        addOption("seed", "seed", "Random number generator seed", "123456789");
+
+        // reducts options
+        addOption("IndiscernibilityForMissing", "indisc", "Indiscernibility for missing values");
+        addOption("DiscernibilityMethod", "discMeth", "Discernibility method");
+        addOption("GeneralizedDecisionTransitiveClosure", "genDec", "Generalized decision transitive closure");
+        addOption("JohnsonReducts", "johnson", "Johnson reducts");
+
         Map<String, List<String>> parsedArgs = parseArguments(args, true, true);
+
+        // copy relevant options to Config
+        if (hasOption("IndiscernibilityForMissing"))
+            getConf().set("IndiscernibilityForMissing", getOption("IndiscernibilityForMissing"));
+        if (hasOption("DiscernibilityMethod"))
+            getConf().set("DiscernibilityMethod", getOption("DiscernibilityMethod"));
+        if (hasOption("GeneralizedDecisionTransitiveClosure"))
+            getConf().set("GeneralizedDecisionTransitiveClosure", getOption("GeneralizedDecisionTransitiveClosure"));
+        if (hasOption("JohnsonReducts"))
+            getConf().set("JohnsonReducts", getOption("JohnsonReducts"));
+
 
         if (parsedArgs == null) {
             return 1;
@@ -72,7 +91,7 @@ public final class AttrSelDriver extends AbstractJob {
 
         SequenceFileOutputFormat.setOutputPath(job, getOutputPath());
 
-        job.setJobName("mahout-extensions.attrsel");
+        job.setJobName("mahout-extensions.attrsel.reducts");
         job.setJarByClass(AttrSelDriver.class); // jar with this class
 
         job.setMapperClass(AttrSelMapper.class);
@@ -85,8 +104,6 @@ public final class AttrSelDriver extends AbstractJob {
 
         job.setInputFormatClass(SubtableInputFormat.class);
         job.setOutputFormatClass(SequenceFileOutputFormat.class);
-
-        // TODO: add conf options for Mapper
 
         // read from local fs
         Matrix inputDataTable = new CSVMatrixReader().read(Paths.get(getInputFile().getPath()));
@@ -127,7 +144,7 @@ public final class AttrSelDriver extends AbstractJob {
 
         int numberOfSubtables = getInt("numSubtables", 10);
         int subtableSize = getInt("subtableCardinality", 10);
-        long seed = Long.parseLong(getOption("seed", "123456789"));
+        long seed = Long.parseLong(getOption("seed"));
 
         SubtableGenerator<Subtable> subtableGenerator;
 
