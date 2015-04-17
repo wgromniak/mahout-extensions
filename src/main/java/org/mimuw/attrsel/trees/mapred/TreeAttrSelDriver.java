@@ -51,6 +51,10 @@ public final class TreeAttrSelDriver extends AbstractJob {
 
         Map<String, List<String>> parsedArgs = parseArguments(args, true, true);
 
+        if (parsedArgs == null) {
+            return 1;
+        }
+
         // copy relevant options to Config
         if (hasOption("seed"))
             getConf().set("seed", getOption("seed"));
@@ -61,9 +65,6 @@ public final class TreeAttrSelDriver extends AbstractJob {
         if (hasOption("v"))
             getConf().set("v", getOption("v"));
 
-        if (parsedArgs == null) {
-            return 1;
-        }
 
         Job job = Job.getInstance(getConf());
 
@@ -124,9 +125,7 @@ public final class TreeAttrSelDriver extends AbstractJob {
         int subtableSize = getInt("subtableCardinality");
         long seed = Long.parseLong(getOption("seed"));
 
-        SubtableGenerator<Subtable> subtableGenerator;
-
-        subtableGenerator = generatorClass
+        SubtableGenerator<Subtable> subtableGenerator = generatorClass
                 .getConstructor(Random.class, int.class, int.class, Matrix.class)
                 .newInstance(RandomUtils.getRandom(seed), numberOfSubtables, subtableSize, fullMatrix);
 

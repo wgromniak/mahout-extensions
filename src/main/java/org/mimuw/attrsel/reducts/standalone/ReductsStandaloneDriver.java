@@ -61,9 +61,7 @@ final class ReductsStandaloneDriver extends AbstractJob {
         int subtableSize = getInt("subtableCardinality");
         long seed = Long.parseLong(getOption("seed"));
 
-        SubtableGenerator<Subtable> subtableGenerator;
-
-        subtableGenerator = generatorClass
+        SubtableGenerator<Subtable> subtableGenerator = generatorClass
                 .getConstructor(Random.class, int.class, int.class, Matrix.class)
                 .newInstance(RandomUtils.getRandom(seed), numberOfSubtables, subtableSize, inputDataTable);
 
@@ -79,7 +77,7 @@ final class ReductsStandaloneDriver extends AbstractJob {
                     RandomReducts randomReducts =
                             new RandomReducts(
                                     subtable,
-                                    JohnsonReductsProvider.class,
+                                    JohnsonReductsProvider.class, // TODO: make configurable
                                     getIndiscernibilityForMissing(),
                                     getDiscernibilityMethod(),
                                     getGeneralizedDecisionTransitiveClosure(),

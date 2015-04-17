@@ -72,6 +72,11 @@ public final class AttrSelDriver extends AbstractJob {
 
         Map<String, List<String>> parsedArgs = parseArguments(args, true, true);
 
+        if (parsedArgs == null) {
+            return 1;
+        }
+
+
         // copy relevant options to Config
         if (hasOption("IndiscernibilityForMissing"))
             getConf().set("IndiscernibilityForMissing", getOption("IndiscernibilityForMissing"));
@@ -82,10 +87,6 @@ public final class AttrSelDriver extends AbstractJob {
         if (hasOption("JohnsonReducts"))
             getConf().set("JohnsonReducts", getOption("JohnsonReducts"));
 
-
-        if (parsedArgs == null) {
-            return 1;
-        }
 
         Job job = Job.getInstance(getConf());
 
@@ -146,9 +147,7 @@ public final class AttrSelDriver extends AbstractJob {
         int subtableSize = getInt("subtableCardinality");
         long seed = Long.parseLong(getOption("seed"));
 
-        SubtableGenerator<Subtable> subtableGenerator;
-
-        subtableGenerator = generatorClass
+        SubtableGenerator<Subtable> subtableGenerator = generatorClass
                 .getConstructor(Random.class, int.class, int.class, Matrix.class)
                 .newInstance(RandomUtils.getRandom(seed), numberOfSubtables, subtableSize, fullMatrix);
 

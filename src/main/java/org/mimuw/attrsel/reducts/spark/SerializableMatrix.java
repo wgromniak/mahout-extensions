@@ -8,6 +8,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
+/**
+ * A {@link Matrix} that is Serializable. Uses {@link MatrixWritable}.
+ */
 public final class SerializableMatrix implements Serializable {
 
     transient private Matrix matrix;

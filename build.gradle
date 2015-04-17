@@ -61,6 +61,7 @@ task jar4Spark(type: ShadowJar) {
         include(dependency('org.apache.mahout:mahout-integration:0.9'))
         include(dependency('org.apache.solr:solr-commons-csv:3.5.0'))
         include(dependency('com.codahale.metrics:metrics-core:3.0.2'))
+        include(dependency('org.apache.mahout.commons:commons-cli:2.0-mahout'))
     }
 }
 

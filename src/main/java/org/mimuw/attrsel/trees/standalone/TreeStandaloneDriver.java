@@ -61,9 +61,7 @@ final class TreeStandaloneDriver extends AbstractJob {
         int subtableSize = getInt("subtableCardinality");
         long seed = Long.parseLong(getOption("seed"));
 
-        SubtableGenerator<Subtable> subtableGenerator;
-
-        subtableGenerator = generatorClass
+        SubtableGenerator<Subtable> subtableGenerator = generatorClass
                 .getConstructor(Random.class, int.class, int.class, Matrix.class)
                 .newInstance(RandomUtils.getRandom(seed), numberOfSubtables, subtableSize, inputDataTable);
 
