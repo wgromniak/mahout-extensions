@@ -6,6 +6,9 @@ import org.apache.hadoop.mapreduce.Reducer;
 
 import java.io.IOException;
 
+/**
+ * TODO: add tests
+ */
 public class TreeAttrSelReducer extends Reducer<IntWritable, DoubleWritable, IntWritable, DoubleWritable> {
 
     @Override

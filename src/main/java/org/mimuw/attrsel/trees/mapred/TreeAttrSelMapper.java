@@ -13,6 +13,8 @@ import java.io.IOException;
 
 /**
  * Input - ( no of subtable, subtable ), output - ( attribute, score ).
+ *
+ * TODO: add tests
  */
 public class TreeAttrSelMapper extends Mapper<IntWritable, SubtableWritable, IntWritable, DoubleWritable> {
 

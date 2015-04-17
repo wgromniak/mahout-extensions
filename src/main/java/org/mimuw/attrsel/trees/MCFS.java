@@ -16,6 +16,9 @@ import java.util.Random;
 
 import static com.google.common.base.Preconditions.checkState;
 
+/**
+ * TODO: add comments, tests
+ */
 public class MCFS extends AbstractMCFS {
 
     public MCFS(int numTrees, Random random, double u, double v) {

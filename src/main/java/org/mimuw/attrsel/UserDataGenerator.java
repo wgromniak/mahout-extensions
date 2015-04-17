@@ -3,10 +3,9 @@ package org.mimuw.attrsel;
 import java.io.IOException;
 
 /**
- * Created by kris on 11.02.15.
+ * TODO: this does not work and does not have any tests
  */
 // file located in "user.dir"/Data/csv
-
 public class UserDataGenerator {
     public static void main(String[] args) throws IOException {
         if (args.length != 3)

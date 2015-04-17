@@ -14,7 +14,7 @@ import java.util.Random;
 import static com.google.common.base.Preconditions.checkArgument;
 
 /**
- * Created by kris on 09.02.15.
+ * TODO: this does not work and does not have any tests
  */
 public class DataGenerator {
 
