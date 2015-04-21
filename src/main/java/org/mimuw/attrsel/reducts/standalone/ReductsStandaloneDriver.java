@@ -5,11 +5,11 @@ import org.apache.mahout.common.AbstractJob;
 import org.apache.mahout.common.RandomUtils;
 import org.apache.mahout.math.Matrix;
 import org.mimuw.attrsel.common.CSVMatrixReader;
+import org.mimuw.attrsel.common.FastCutoffPoint;
+import org.mimuw.attrsel.common.api.CutoffPointCalculator;
 import org.mimuw.attrsel.common.api.Subtable;
 import org.mimuw.attrsel.common.api.SubtableGenerator;
-import org.mimuw.attrsel.reducts.FastCutoffPoint;
 import org.mimuw.attrsel.reducts.RandomReducts;
-import org.mimuw.attrsel.reducts.api.CutoffPointCalculator;
 import rseslib.processing.reducts.JohnsonReductsProvider;
 
 import java.nio.file.Paths;

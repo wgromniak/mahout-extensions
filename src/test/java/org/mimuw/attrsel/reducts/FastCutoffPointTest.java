@@ -1,6 +1,7 @@
 package org.mimuw.attrsel.reducts;
 
 import com.google.common.collect.ImmutableList;
+import org.mimuw.attrsel.common.FastCutoffPoint;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;

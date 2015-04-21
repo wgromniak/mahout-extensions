@@ -19,14 +19,10 @@ import org.apache.mahout.common.iterator.sequencefile.PathFilters;
 import org.apache.mahout.common.iterator.sequencefile.PathType;
 import org.apache.mahout.common.iterator.sequencefile.SequenceFileDirIterable;
 import org.apache.mahout.math.Matrix;
-import org.mimuw.attrsel.common.CSVMatrixReader;
-import org.mimuw.attrsel.common.MatrixFixedSizeObjectSubtableGenerator;
-import org.mimuw.attrsel.common.MemoryGauge;
-import org.mimuw.attrsel.common.SubtableInputFormat;
+import org.mimuw.attrsel.common.*;
+import org.mimuw.attrsel.common.api.CutoffPointCalculator;
 import org.mimuw.attrsel.common.api.Subtable;
 import org.mimuw.attrsel.common.api.SubtableGenerator;
-import org.mimuw.attrsel.reducts.FastCutoffPoint;
-import org.mimuw.attrsel.reducts.api.CutoffPointCalculator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

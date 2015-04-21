@@ -1,4 +1,4 @@
-package org.mimuw.attrsel.reducts.api;
+package org.mimuw.attrsel.common.api;
 
 import java.util.List;
 

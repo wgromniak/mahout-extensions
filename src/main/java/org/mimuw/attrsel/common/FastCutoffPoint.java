@@ -1,7 +1,7 @@
-package org.mimuw.attrsel.reducts;
+package org.mimuw.attrsel.common;
 
 import org.apache.mahout.common.Pair;
-import org.mimuw.attrsel.reducts.api.CutoffPointCalculator;
+import org.mimuw.attrsel.common.api.CutoffPointCalculator;
 
 import java.util.ArrayList;
 import java.util.Collections;
