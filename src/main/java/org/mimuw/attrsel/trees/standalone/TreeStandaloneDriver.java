@@ -121,12 +121,6 @@ final class TreeStandaloneDriver extends AbstractJob {
     }
 
     public static void main(String... args) throws Exception {
-        new TreeStandaloneDriver()
-                .run(
-                    "-i", "res/in/wekaGen.csv",
-                    "-numSub", "100",
-                    "-subCard", "40",
-                    "-subGen", "org.mimuw.attrsel.common.MatrixFixedSizeObjectSubtableGenerator"
-                );
+        new TreeStandaloneDriver().run(args);
     }
 }

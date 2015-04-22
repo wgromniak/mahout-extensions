@@ -154,12 +154,6 @@ final class ReductsStandaloneDriver extends AbstractJob {
     }
 
     public static void main(String... args) throws Exception {
-        new ReductsStandaloneDriver()
-                .run(
-                        "-i", "res/in/wekaGen.csv",
-                        "-numSub", "100",
-                        "-subCard", "66",
-                        "-subGen", "org.mimuw.attrsel.common.MatrixFixedSizeObjectSubtableGenerator"
-                );
+        new ReductsStandaloneDriver().run(args);
     }
 }

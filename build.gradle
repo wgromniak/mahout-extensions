@@ -86,6 +86,17 @@ task jar4MapRedReducts(type: ShadowJar) {
     }
 }
 
+task jar4StandaloneReducts(type: ShadowJar) {
+
+    group = 'shadow'
+    classifier = 'standalone-reducts'
+    from(project.convention.getPlugin(JavaPluginConvention).sourceSets.main.output)
+    configurations = [project.configurations.runtime]
+    exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
+
+    manifest.attributes 'Main-Class': 'org.mimuw.attrsel.reducts.standalone.ReductsStandaloneDriver'
+}
+
 task jar4MapRedTrees(type: ShadowJar) {
 
     group = 'shadow'
@@ -108,6 +119,17 @@ task jar4MapRedTrees(type: ShadowJar) {
         include(dependency('gov.sandia.foundry:gov-sandia-cognition-common-core:3.4.0'))
         include(dependency('com.googlecode.matrix-toolkits-java:mtj:0.9.14'))
     }
+}
+
+task jar4StandaloneTrees(type: ShadowJar) {
+
+    group = 'shadow'
+    classifier = 'standalone-trees'
+    from(project.convention.getPlugin(JavaPluginConvention).sourceSets.main.output)
+    configurations = [project.configurations.runtime]
+    exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
+
+    manifest.attributes 'Main-Class': 'org.mimuw.attrsel.trees.standalone.TreeStandaloneDriver'
 }
 
 test {
