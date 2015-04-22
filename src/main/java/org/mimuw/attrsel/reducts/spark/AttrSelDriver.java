@@ -24,7 +24,9 @@ import org.mimuw.attrsel.common.api.Subtable;
 import org.mimuw.attrsel.common.api.SubtableGenerator;
 import org.mimuw.attrsel.reducts.FrequencyScoreCalculator;
 import org.mimuw.attrsel.reducts.RandomReducts;
+import org.mimuw.attrsel.reducts.RsesDiscretizer;
 import org.slf4j.LoggerFactory;
+import rseslib.processing.discretization.ChiMergeDiscretizationProvider;
 import rseslib.processing.reducts.JohnsonReductsProvider;
 import scala.Tuple2;
 
@@ -100,6 +102,7 @@ public final class AttrSelDriver extends AbstractJob implements Serializable {
                         new RandomReducts(
                                 subtable.get(),
                                 JohnsonReductsProvider.class,
+                                new RsesDiscretizer(new ChiMergeDiscretizationProvider(4, 0.2)),
                                 RandomReducts.IndiscernibilityForMissing.DiscernFromValue,
                                 RandomReducts.DiscernibilityMethod.OrdinaryDecisionAndInconsistenciesOmitted,
                                 RandomReducts.GeneralizedDecisionTransitiveClosure.TRUE,

@@ -11,6 +11,8 @@ import org.mimuw.attrsel.common.api.CutoffPointCalculator;
 import org.mimuw.attrsel.common.api.Subtable;
 import org.mimuw.attrsel.common.api.SubtableGenerator;
 import org.mimuw.attrsel.reducts.RandomReducts;
+import org.mimuw.attrsel.reducts.RsesDiscretizer;
+import rseslib.processing.discretization.ChiMergeDiscretizationProvider;
 import rseslib.processing.reducts.JohnsonReductsProvider;
 
 import java.nio.file.Paths;
@@ -79,6 +81,7 @@ final class ReductsStandaloneDriver extends AbstractJob {
                             new RandomReducts(
                                     subtable,
                                     JohnsonReductsProvider.class, // TODO: make configurable
+                                    new RsesDiscretizer(new ChiMergeDiscretizationProvider(4, 0.2)), // TODO: make configurable
                                     getIndiscernibilityForMissing(),
                                     getDiscernibilityMethod(),
                                     getGeneralizedDecisionTransitiveClosure(),

@@ -65,6 +65,9 @@ public final class AttrSelDriver extends AbstractJob {
         addOption("DiscernibilityMethod", "discMeth", "Discernibility method");
         addOption("GeneralizedDecisionTransitiveClosure", "genDec", "Generalized decision transitive closure");
         addOption("JohnsonReducts", "johnson", "Johnson reducts");
+        addFlag("discretize", "disc", "Whether the data should be discretized");
+        addOption("numDiscIntervals", "numDicsInt", "Number of discretization intervals");
+        addOption("discSignificance", "discSig", "Chi merge discretization significance");
 
         Map<String, List<String>> parsedArgs = parseArguments(args, true, true);
 
@@ -73,7 +76,7 @@ public final class AttrSelDriver extends AbstractJob {
         }
 
 
-        // copy relevant options to Config
+        // copy relevant options to Config TODO: create an Utils class with a method performing this
         if (hasOption("IndiscernibilityForMissing"))
             getConf().set("IndiscernibilityForMissing", getOption("IndiscernibilityForMissing"));
         if (hasOption("DiscernibilityMethod"))
@@ -82,6 +85,12 @@ public final class AttrSelDriver extends AbstractJob {
             getConf().set("GeneralizedDecisionTransitiveClosure", getOption("GeneralizedDecisionTransitiveClosure"));
         if (hasOption("JohnsonReducts"))
             getConf().set("JohnsonReducts", getOption("JohnsonReducts"));
+        if (hasOption("discretize"))
+            getConf().setBoolean("discretize", true);
+        if (hasOption("numDiscIntervals"))
+            getConf().set("numDiscIntervals", getOption("numDiscIntervals"));
+        if (hasOption("discSignificance"))
+            getConf().set("discSignificance", getOption("discSignificance"));
 
 
         Job job = Job.getInstance(getConf());
