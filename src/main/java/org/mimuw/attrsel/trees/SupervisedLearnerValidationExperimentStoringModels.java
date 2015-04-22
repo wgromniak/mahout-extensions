@@ -23,7 +23,7 @@ class SupervisedLearnerValidationExperimentStoringModels<InputType, OutputType, 
 
     public SupervisedLearnerValidationExperimentStoringModels(
             ValidationFoldCreator<InputOutputPair<InputType, OutputType>, InputOutputPair<InputType, OutputType>> foldCreator,
-            PerformanceEvaluator<? super Evaluator<? super InputType, ? extends OutputType>, Collection<? extends InputOutputPair<InputType, OutputType>>, ? extends StatisticType> performanceEvaluator,
+            PerformanceEvaluator<? super Evaluator<? super InputType, ? extends OutputType>, ? super Collection<? extends InputOutputPair<InputType, OutputType>>, ? extends StatisticType> performanceEvaluator,
             Summarizer<? super StatisticType, ? extends SummaryType> summarizer) {
         super(foldCreator, performanceEvaluator, summarizer);
     }

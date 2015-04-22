@@ -3,6 +3,7 @@ package org.mimuw.attrsel.trees;
 import gov.sandia.cognition.collection.CollectionUtil;
 import gov.sandia.cognition.learning.algorithm.tree.CategorizationTreeLearner;
 import gov.sandia.cognition.learning.algorithm.tree.VectorThresholdInformationGainLearner;
+import gov.sandia.cognition.learning.data.DatasetUtil;
 import gov.sandia.cognition.learning.data.InputOutputPair;
 import gov.sandia.cognition.learning.function.categorization.VectorElementThresholdCategorizer;
 import gov.sandia.cognition.math.matrix.Vectorizable;
@@ -40,7 +41,7 @@ class VectorThresholdInformationGainLearnerStoringGain<OutputType>
         }
 
         // Figure out the dimensionality of the data.
-        final int dimensionality = getDimensionality(data);
+        final int dimensionality = DatasetUtil.getInputDimensionality(data);
 
         // Go through all the dimensions to find the one with the best gain
         // and the best threshold.
