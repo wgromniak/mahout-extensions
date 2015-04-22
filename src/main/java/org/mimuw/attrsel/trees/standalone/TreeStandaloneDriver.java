@@ -6,6 +6,7 @@ import org.apache.mahout.common.RandomUtils;
 import org.apache.mahout.math.Matrix;
 import org.mimuw.attrsel.common.CSVMatrixReader;
 import org.mimuw.attrsel.common.FastCutoffPoint;
+import org.mimuw.attrsel.common.TreeAccuracyValidator;
 import org.mimuw.attrsel.common.api.CutoffPointCalculator;
 import org.mimuw.attrsel.common.api.Subtable;
 import org.mimuw.attrsel.common.api.SubtableGenerator;
@@ -111,6 +112,10 @@ final class TreeStandaloneDriver extends AbstractJob {
 
         System.out.printf("Selected attrs: %s%n", selected);
 
+        double acc = new TreeAccuracyValidator().validate(inputDataTable, selected);
+
+        System.out.printf("Accuracy: %s%n", acc);
+
         executor.shutdown();
         return 0;
     }
@@ -119,8 +124,8 @@ final class TreeStandaloneDriver extends AbstractJob {
         new TreeStandaloneDriver()
                 .run(
                     "-i", "res/in/wekaGen.csv",
-                    "-numSub", "1",
-                    "-subCard", "100",
+                    "-numSub", "100",
+                    "-subCard", "40",
                     "-subGen", "org.mimuw.attrsel.common.MatrixFixedSizeObjectSubtableGenerator"
                 );
     }

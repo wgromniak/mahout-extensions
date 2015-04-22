@@ -129,6 +129,10 @@ public final class AttrSelDriver extends AbstractJob {
 
         System.out.printf("Selected attrs: %s%n", selected);
 
+        double acc = new TreeAccuracyValidator().validate(inputDataTable, selected);
+
+        System.out.printf("Accuracy: %s%n", acc);
+
         return 0;
     }
 

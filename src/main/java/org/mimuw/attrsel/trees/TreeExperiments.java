@@ -20,7 +20,7 @@ import java.util.Random;
 /**
  * TODO: nuke
  */
-final class TreeExperiments {
+public final class TreeExperiments {
 
     public static void main(String... args) {
 
@@ -62,6 +62,7 @@ final class TreeExperiments {
         System.out.println(clz);
     }
 
+    // TODO: move to some Util class
     public static List<Vector> extractObjects(Matrix mat) {
 
         List<Vector> vecs = new ArrayList<>(mat.columnSize());

@@ -14,10 +14,7 @@ import org.apache.mahout.common.iterator.sequencefile.PathFilters;
 import org.apache.mahout.common.iterator.sequencefile.PathType;
 import org.apache.mahout.common.iterator.sequencefile.SequenceFileDirIterable;
 import org.apache.mahout.math.Matrix;
-import org.mimuw.attrsel.common.CSVMatrixReader;
-import org.mimuw.attrsel.common.FastCutoffPoint;
-import org.mimuw.attrsel.common.MatrixFixedSizeObjectSubtableGenerator;
-import org.mimuw.attrsel.common.SubtableInputFormat;
+import org.mimuw.attrsel.common.*;
 import org.mimuw.attrsel.common.api.CutoffPointCalculator;
 import org.mimuw.attrsel.common.api.Subtable;
 import org.mimuw.attrsel.common.api.SubtableGenerator;
@@ -110,6 +107,10 @@ public final class TreeAttrSelDriver extends AbstractJob {
         List<Integer> selected = cutoffCalculator.calculateCutoffPoint(Arrays.asList(ArrayUtils.toObject(scores)));
 
         System.out.printf("Selected attrs: %s%n", selected);
+
+        double acc = new TreeAccuracyValidator().validate(inputDataTable, selected);
+
+        System.out.printf("Accuracy: %s%n", acc);
 
         return 0;
     }

@@ -6,6 +6,7 @@ import org.apache.mahout.common.RandomUtils;
 import org.apache.mahout.math.Matrix;
 import org.mimuw.attrsel.common.CSVMatrixReader;
 import org.mimuw.attrsel.common.FastCutoffPoint;
+import org.mimuw.attrsel.common.TreeAccuracyValidator;
 import org.mimuw.attrsel.common.api.CutoffPointCalculator;
 import org.mimuw.attrsel.common.api.Subtable;
 import org.mimuw.attrsel.common.api.SubtableGenerator;
@@ -115,6 +116,10 @@ final class ReductsStandaloneDriver extends AbstractJob {
         List<Integer> selected = cutoffCalculator.calculateCutoffPoint(Arrays.asList(ArrayUtils.toObject(scores)));
 
         System.out.printf("Selected attrs: %s%n", selected);
+
+        double acc = new TreeAccuracyValidator().validate(inputDataTable, selected);
+
+        System.out.printf("Accuracy: %s%n", acc);
 
         executor.shutdown();
         return 0;
