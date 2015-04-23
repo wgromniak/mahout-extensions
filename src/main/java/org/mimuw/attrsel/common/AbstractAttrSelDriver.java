@@ -85,6 +85,7 @@ public abstract class AbstractAttrSelDriver extends AbstractJob {
         List<Integer> selected = cutoffCalculator.calculateCutoffPoint(Arrays.asList(ArrayUtils.toObject(scores)));
 
         System.out.printf("Selected attrs: %s%n", selected);
+        System.out.printf("Num selected attrs: %s%n", selected.size());
 
         double acc = new TreeAccuracyValidator().validate(inputDataTable, selected);
 

@@ -1,21 +1,23 @@
 package org.mimuw.attrsel.trees;
 
-import gov.sandia.cognition.learning.algorithm.tree.CategorizationTree;
+import gov.sandia.cognition.learning.algorithm.tree.CategorizationTreeLearner;
+import gov.sandia.cognition.learning.algorithm.tree.VectorThresholdInformationGainLearner;
 import gov.sandia.cognition.learning.data.DefaultInputOutputPair;
 import gov.sandia.cognition.learning.data.InputOutputPair;
 import gov.sandia.cognition.learning.experiment.CrossFoldCreator;
+import gov.sandia.cognition.learning.experiment.SupervisedLearnerValidationExperiment;
 import gov.sandia.cognition.learning.performance.categorization.ConfusionMatrix;
 import gov.sandia.cognition.learning.performance.categorization.ConfusionMatrixPerformanceEvaluator;
 import gov.sandia.cognition.learning.performance.categorization.DefaultConfusionMatrix;
 import gov.sandia.cognition.math.matrix.Vector;
 import gov.sandia.cognition.math.matrix.mtj.DenseVectorFactoryMTJ;
+import org.apache.mahout.common.RandomUtils;
 import org.apache.mahout.math.Matrix;
 import org.mimuw.attrsel.common.CSVMatrixReader;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * TODO: nuke
@@ -24,42 +26,36 @@ public final class TreeExperiments {
 
     public static void main(String... args) {
 
+        long start = System.currentTimeMillis();
+
+        Matrix mat = new CSVMatrixReader().read(Paths.get("../data/marrData.csv")); // enter your data here
+
         ConfusionMatrixPerformanceEvaluator<Vector, Integer> confMatEval = new ConfusionMatrixPerformanceEvaluator<>();
         DefaultConfusionMatrix.CombineSummarizer<Integer> confMatSumm =
                 new DefaultConfusionMatrix.CombineSummarizer<>();
 
-        Matrix mat = new CSVMatrixReader().read(Paths.get("res", "in", "wekaGen.csv")); // enter your data here
-
-        List<Vector> objects = extractObjects(mat);
-        List<Integer> targets = extractTargets(mat);
+        List<Vector> objects = TreeExperiments.extractObjects(mat);
+        List<Integer> targets = TreeExperiments.extractTargets(mat);
 
         List<DefaultInputOutputPair<Vector, Integer>> labeledDataset =
                 DefaultInputOutputPair.mergeCollections(objects, targets);
 
-        CrossFoldCreator<InputOutputPair<Vector, Integer>> foldCreator = new CrossFoldCreator<>(10, new Random(123));
-        SupervisedLearnerValidationExperimentStoringModels
-                <Vector, Integer, ConfusionMatrix<Integer>, DefaultConfusionMatrix<Integer>>
+        CrossFoldCreator<InputOutputPair<Vector, Integer>> foldCreator = new CrossFoldCreator<>(10, RandomUtils.getRandom(0xBEEF));
+        SupervisedLearnerValidationExperiment<Vector, Integer, ConfusionMatrix<Integer>, DefaultConfusionMatrix<Integer>>
                 experiment =
-                new SupervisedLearnerValidationExperimentStoringModels<>(foldCreator, confMatEval, confMatSumm);
+                new SupervisedLearnerValidationExperiment<>(foldCreator, confMatEval, confMatSumm);
 
-        VectorThresholdInformationGainLearnerStoringGain<Integer> deciderLearner =
-                new VectorThresholdInformationGainLearnerStoringGain<>();
-        CategorizationTreeLearnerStoringCardinality<Vector, Integer> treeLearner =
-                new CategorizationTreeLearnerStoringCardinality<>(deciderLearner);
+        VectorThresholdInformationGainLearner<Integer> deciderLearner =
+                new VectorThresholdInformationGainLearner<>();
+        CategorizationTreeLearner<Vector, Integer> treeLearner =
+                new CategorizationTreeLearner<>(deciderLearner);
 
         // this will run a cross validation experiment with the tree
         DefaultConfusionMatrix<Integer> confMat = experiment.evaluatePerformance(treeLearner, labeledDataset);
-        System.out.println(confMat);
 
+        System.out.println("Accuracy: " + confMat.getAccuracy());
 
-        // this will learn the tree on whole data for further classification
-        CategorizationTree<Vector, Integer> tree = treeLearner.learn(labeledDataset);
-        System.out.println(
-                ((VectorElementThresholdCategorizerWithGain)
-                        ((CategorizationTreeNodeWithCardinality) tree.getRootNode().getChildren().iterator().next()).getDecider()
-                                ).getCategories());
-        Integer clz = tree.evaluate(DenseVectorFactoryMTJ.INSTANCE.copyValues(1, 1, 0, 1, 1, 0, 0, 1, 1, 0));
-        System.out.println(clz);
+        System.out.println("Took: " + (System.currentTimeMillis() - start) / 1000 + " seconds");
     }
 
     // TODO: move to some Util class
