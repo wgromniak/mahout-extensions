@@ -62,6 +62,9 @@ task jar4Spark(type: ShadowJar) {
         include(dependency('org.apache.solr:solr-commons-csv:3.5.0'))
         include(dependency('com.codahale.metrics:metrics-core:3.0.2'))
         include(dependency('org.apache.mahout.commons:commons-cli:2.0-mahout'))
+        include(dependency('gov.sandia.foundry:gov-sandia-cognition-learning-core:3.4.0'))
+        include(dependency('gov.sandia.foundry:gov-sandia-cognition-common-core:3.4.0'))
+        include(dependency('com.googlecode.matrix-toolkits-java:mtj:0.9.14'))
     }
 }
 
@@ -83,6 +86,9 @@ task jar4MapRedReducts(type: ShadowJar) {
         include(dependency('org.apache.solr:solr-commons-csv:3.5.0'))
         include(dependency('org.apache.mahout.commons:commons-cli:2.0-mahout'))
         include(dependency('com.codahale.metrics:metrics-core:3.0.2'))
+        include(dependency('gov.sandia.foundry:gov-sandia-cognition-learning-core:3.4.0'))
+        include(dependency('gov.sandia.foundry:gov-sandia-cognition-common-core:3.4.0'))
+        include(dependency('com.googlecode.matrix-toolkits-java:mtj:0.9.14'))
     }
 }
 

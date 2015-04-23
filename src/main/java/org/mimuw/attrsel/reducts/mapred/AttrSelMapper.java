@@ -19,8 +19,6 @@ import java.util.List;
  */
 final class AttrSelMapper extends Mapper<IntWritable, SubtableWritable, IntWritable, IntListWritable> {
 
-    public static final String REDUCTS_PROVIDER = "ReductsProvider";
-
     @Override
     protected void map(IntWritable key, SubtableWritable value, Context context)
             throws IOException, InterruptedException {
@@ -29,11 +27,11 @@ final class AttrSelMapper extends Mapper<IntWritable, SubtableWritable, IntWrita
 
         @SuppressWarnings("unchecked")
         Class<ReductsProvider> reductsProviderClass = (Class<ReductsProvider>)
-                conf.getClass(REDUCTS_PROVIDER, JohnsonReductsProvider.class, ReductsProvider.class);
+                conf.getClass("ReductsProvider", JohnsonReductsProvider.class, ReductsProvider.class);
 
         RandomReducts randomReducts;
 
-        if (conf.getBoolean("discretize", true)) {
+        if (!conf.getBoolean("dontDiscretize", false)) {
             try {
                 randomReducts =
                         new RandomReducts(

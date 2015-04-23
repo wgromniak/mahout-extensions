@@ -36,7 +36,7 @@ public class AttrSelMapperTest {
         mapDriver = MapDriver.newMapDriver(mapper);
 
         conf = mapDriver.getConfiguration();
-        conf.setClass(AttrSelMapper.REDUCTS_PROVIDER, GlobalReductsProvider.class, ReductsProvider.class);
+        conf.setClass("ReductsProvider", GlobalReductsProvider.class, ReductsProvider.class);
         conf.set("IndiscernibilityForMissing", "DiscernFromValue");
         conf.set("DiscernibilityMethod", "OrdinaryDecisionAndInconsistenciesOmitted");
         conf.set("GeneralizedDecisionTransitiveClosure", "TRUE");
@@ -178,7 +178,7 @@ public class AttrSelMapperTest {
     public void testOneReductLocal() throws Exception {
 
         conf = mapDriver.getConfiguration();
-        conf.setClass(AttrSelMapper.REDUCTS_PROVIDER, LocalReductsProvider.class, ReductsProvider.class);
+        conf.setClass("ReductsProvider", LocalReductsProvider.class, ReductsProvider.class);
         conf.set("IndiscernibilityForMissing", "DiscernFromValue");
         conf.set("DiscernibilityMethod", "OrdinaryDecisionAndInconsistenciesOmitted");
         conf.set("GeneralizedDecisionTransitiveClosure", "TRUE");
@@ -204,7 +204,7 @@ public class AttrSelMapperTest {
     public void testOneReductJohnson() throws Exception {
 
         conf = mapDriver.getConfiguration();
-        conf.setClass(AttrSelMapper.REDUCTS_PROVIDER, JohnsonReductsProvider.class, ReductsProvider.class);
+        conf.setClass("ReductsProvider", JohnsonReductsProvider.class, ReductsProvider.class);
         conf.set("IndiscernibilityForMissing", "DiscernFromValue");
         conf.set("DiscernibilityMethod", "OrdinaryDecisionAndInconsistenciesOmitted");
         conf.set("GeneralizedDecisionTransitiveClosure", "TRUE");

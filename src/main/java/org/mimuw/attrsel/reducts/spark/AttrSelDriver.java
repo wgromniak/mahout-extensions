@@ -1,13 +1,8 @@
 package org.mimuw.attrsel.reducts.spark;
 
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.Slf4jReporter;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import org.apache.mahout.common.AbstractJob;
-import org.apache.mahout.common.RandomUtils;
-import org.apache.mahout.math.Matrix;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
@@ -17,17 +12,15 @@ import org.apache.spark.api.java.function.PairFlatMapFunction;
 import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.broadcast.Broadcast;
 import org.mimuw.attrsel.common.CSVMatrixReader;
-import org.mimuw.attrsel.common.MatrixFixedSizeObjectSubtableGenerator;
-import org.mimuw.attrsel.common.MemoryGauge;
 import org.mimuw.attrsel.common.SubtableWritable;
 import org.mimuw.attrsel.common.api.Subtable;
 import org.mimuw.attrsel.common.api.SubtableGenerator;
+import org.mimuw.attrsel.reducts.AbstractAttrSelReductsDriver;
 import org.mimuw.attrsel.reducts.FrequencyScoreCalculator;
 import org.mimuw.attrsel.reducts.RandomReducts;
 import org.mimuw.attrsel.reducts.RsesDiscretizer;
-import org.slf4j.LoggerFactory;
 import rseslib.processing.discretization.ChiMergeDiscretizationProvider;
-import rseslib.processing.reducts.JohnsonReductsProvider;
+import rseslib.processing.reducts.ReductsProvider;
 import scala.Tuple2;
 
 import javax.annotation.Nullable;
@@ -35,55 +28,40 @@ import java.io.ByteArrayInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
-import static com.codahale.metrics.MetricRegistry.name;
 import static com.google.common.base.Preconditions.checkArgument;
 
-public final class AttrSelDriver extends AbstractJob implements Serializable {
-
-    public static final MetricRegistry METRICS = new MetricRegistry();
-    static {
-        METRICS.register("MemoryGauge", new MemoryGauge());
-        Slf4jReporter.forRegistry(METRICS)
-                .outputTo(LoggerFactory.getLogger(name(AttrSelDriver.class, "Metrics")))
-                .convertRatesTo(TimeUnit.SECONDS)
-                .convertDurationsTo(TimeUnit.MILLISECONDS)
-                .build()
-                .start(5, TimeUnit.SECONDS);
-    }
+public final class AttrSelDriver extends AbstractAttrSelReductsDriver implements Serializable {
 
     @Override
     public int run(String[] args) throws Exception {
-        // general options
-        addInputOption(); // TODO: hack - input is treated as local-fs input, not hdfs
-        addOption("numSubtables", "numSub", "Number of subtables the original tables will be divided into", true);
-        addOption("subtableCardinality", "subCard", "Cardinality of each of the subtables", true);
-        addOption("subtableGenerator", "subGen", "Class of the subtable generator");
-        addOption("seed", "seed", "Random number generator seed", "123456789");
+        setUpAttrSelOptions();
+        setUpReductsOptions();
 
-        // reducts options
-        addOption("IndiscernibilityForMissing", "indisc", "Indiscernibility for missing values");
-        addOption("DiscernibilityMethod", "discMeth", "Discernibility method");
-        addOption("GeneralizedDecisionTransitiveClosure", "genDec", "Generalized decision transitive closure");
-        addOption("JohnsonReducts", "johnson", "Johnson reducts");
-
-        Map<String, List<String>> parsedArgs = parseArguments(args, true, true);
-
-        if (parsedArgs == null) {
+        if (parseArguments(args, false, true) == null) {
             return 1;
         }
+
+        // have to get options here not to serialize this
+        final boolean dontDiscretize = hasOption("dontDiscretize");
+        final Class<? extends ReductsProvider> reductsProviderClass = getReductsProviderClass();
+        final RandomReducts.IndiscernibilityForMissing indiscernibilityForMissing = getIndiscernibilityForMissing();
+        final RandomReducts.DiscernibilityMethod discernibilityMethod = getDiscernibilityMethod();
+        final RandomReducts.GeneralizedDecisionTransitiveClosure generalizedDecisionTransitiveClosure =
+                getGeneralizedDecisionTransitiveClosure();
+        final RandomReducts.JohnsonReducts johnsonReducts = getJohnsonReducts();
+        final int numDiscIntervals = getInt("numDiscIntervals", 4);
+        final Double discSignificance = Double.valueOf(getOption("discSignificance", "0.25"));
 
 
         SparkConf conf = new SparkConf();
         JavaSparkContext sc = new JavaSparkContext(conf);
 
         SerializableMatrix inputDataTable = readInputMatrix(sc);
-        SubtableGenerator<Subtable> subtableGenerator = getSubtableGenerator(inputDataTable);
 
+        SubtableGenerator<Subtable> subtableGenerator = getSubtableGenerator(inputDataTable.get());
         List<SubtableWritable> subtablesWritable = getWritableSubtables(subtableGenerator);
+
 
         // broadcast number of sub per attr
         List<Integer> tmpNumSubPerAttr = subtableGenerator.getNumberOfSubtablesPerAttribute();
@@ -96,17 +74,26 @@ public final class AttrSelDriver extends AbstractJob implements Serializable {
         JavaRDD<List<Integer>> reducts = distSubtables.flatMap(new FlatMapFunction<SubtableWritable, List<Integer>>() {
             @Override
             public Iterable<List<Integer>> call(SubtableWritable subtable) throws Exception {
-                RandomReducts randomReducts =
-                        // TODO: make all params configurable
-                        // there are some problems with serialization of the whole AttrSelDriver
+                RandomReducts randomReducts = dontDiscretize ?
+                        // cannot use getRandomReducts, because there are problems serializing AttrSelDriver
                         new RandomReducts(
                                 subtable.get(),
-                                JohnsonReductsProvider.class,
-                                new RsesDiscretizer(new ChiMergeDiscretizationProvider(4, 0.2)),
-                                RandomReducts.IndiscernibilityForMissing.DiscernFromValue,
-                                RandomReducts.DiscernibilityMethod.OrdinaryDecisionAndInconsistenciesOmitted,
-                                RandomReducts.GeneralizedDecisionTransitiveClosure.TRUE,
-                                RandomReducts.JohnsonReducts.All
+                                reductsProviderClass,
+                                indiscernibilityForMissing,
+                                discernibilityMethod,
+                                generalizedDecisionTransitiveClosure,
+                                johnsonReducts
+                        ) :
+                        new RandomReducts(
+                                subtable.get(),
+                                reductsProviderClass,
+                                new RsesDiscretizer(
+                                        new ChiMergeDiscretizationProvider(numDiscIntervals, discSignificance)
+                                ),
+                                indiscernibilityForMissing,
+                                discernibilityMethod,
+                                generalizedDecisionTransitiveClosure,
+                                johnsonReducts
                         );
                 return randomReducts.getReducts();
             }
@@ -143,9 +130,13 @@ public final class AttrSelDriver extends AbstractJob implements Serializable {
 
         List<Tuple2<Integer, Double>> result = scores.collect();
 
-        System.out.println(result);
+        double[] scoresArr = new double[inputDataTable.get().columnSize() - 1];
 
-        // TODO: add the actual selection of the attributes and formated printing
+        for (Tuple2<Integer, Double> tup : result) {
+            scoresArr[tup._1()] = tup._2();
+        }
+
+        printScoresAssessResults(scoresArr, inputDataTable.get());
 
         return 0;
     }
@@ -172,21 +163,6 @@ public final class AttrSelDriver extends AbstractJob implements Serializable {
         return matrices.get(0);
     }
 
-    private SubtableGenerator<Subtable> getSubtableGenerator(SerializableMatrix inputDataTable) throws Exception {
-        @SuppressWarnings("unchecked")
-        Class<SubtableGenerator<Subtable>> generatorClass =
-                (Class<SubtableGenerator<Subtable>>) Class.forName(
-                       getOption("subtableGenerator", MatrixFixedSizeObjectSubtableGenerator.class.getCanonicalName()));
-
-        int numberOfSubtables = getInt("numSubtables");
-        int subtableSize = getInt("subtableCardinality");
-        long seed = Long.parseLong(getOption("seed"));
-
-        return generatorClass
-                .getConstructor(Random.class, int.class, int.class, Matrix.class)
-                .newInstance(RandomUtils.getRandom(seed), numberOfSubtables, subtableSize, inputDataTable.get());
-    }
-
     private List<SubtableWritable> getWritableSubtables(SubtableGenerator<Subtable> subtableGenerator) {
         List<Subtable> subtables = subtableGenerator.getSubtables();
         return Lists.transform(subtables,
@@ -198,31 +174,6 @@ public final class AttrSelDriver extends AbstractJob implements Serializable {
                     }
                 }
         );
-    }
-
-    private RandomReducts.IndiscernibilityForMissing getIndiscernibilityForMissing() {
-        return hasOption("IndiscernibilityForMissing") ?
-                RandomReducts.IndiscernibilityForMissing.valueOf(getOption("IndiscernibilityForMissing")) :
-                RandomReducts.IndiscernibilityForMissing.DiscernFromValue;
-    }
-
-    private RandomReducts.DiscernibilityMethod getDiscernibilityMethod() {
-        return hasOption("DiscernibilityMethod") ?
-                RandomReducts.DiscernibilityMethod.valueOf(getOption("DiscernibilityMethod")) :
-                RandomReducts.DiscernibilityMethod.OrdinaryDecisionAndInconsistenciesOmitted;
-    }
-
-    private RandomReducts.GeneralizedDecisionTransitiveClosure getGeneralizedDecisionTransitiveClosure() {
-        return hasOption("GeneralizedDecisionTransitiveClosure") ?
-                RandomReducts.GeneralizedDecisionTransitiveClosure
-                        .valueOf(getOption("GeneralizedDecisionTransitiveClosure")) :
-                RandomReducts.GeneralizedDecisionTransitiveClosure.TRUE;
-    }
-
-    private RandomReducts.JohnsonReducts getJohnsonReducts() {
-        return hasOption("JohnsonReducts") ?
-                RandomReducts.JohnsonReducts.valueOf(getOption("JohnsonReducts")) :
-                RandomReducts.JohnsonReducts.All;
     }
 
     public static void main(String... args) throws Exception {
