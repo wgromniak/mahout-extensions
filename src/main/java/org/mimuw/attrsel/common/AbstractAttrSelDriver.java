@@ -39,6 +39,7 @@ public abstract class AbstractAttrSelDriver extends AbstractJob {
         addOption("subtableCardinality", "subCard", "Cardinality of each of the subtables", true);
         addOption("subtableGenerator", "subGen", "Class of the subtable generator");
         addOption("seed", "seed", "Random number generator seed", "123456789");
+        addOption("numCutoffIterations", "numCutIter", "Number of iterations of the cutoff procedure");
     }
 
     protected void copyOptionsToConf() {
@@ -81,7 +82,7 @@ public abstract class AbstractAttrSelDriver extends AbstractJob {
             System.out.printf("%s: %s%n", i, scores[i]);
         }
 
-        CutoffPointCalculator cutoffCalculator = new FastCutoffPoint();
+        CutoffPointCalculator cutoffCalculator = new FastCutoffPoint(getInt("numCutoffIterations", 1));
         List<Integer> selected = cutoffCalculator.calculateCutoffPoint(Arrays.asList(ArrayUtils.toObject(scores)));
 
         System.out.printf("Selected attrs: %s%n", selected);

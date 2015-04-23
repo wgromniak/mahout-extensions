@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 /**
  * This implementations calculate number of significant attributes.
  * The model which is implemented  was published in a paper "Random Reducts: A Monte Carlo Rough Set-based Method
@@ -15,13 +17,19 @@ import java.util.List;
  */
 public class FastCutoffPoint implements CutoffPointCalculator {
 
+    private final int numberOfIterations;
+
+    public FastCutoffPoint(int numberOfIterations) {
+        checkArgument(numberOfIterations > 0, "Expected positive numberOfIterations");
+        this.numberOfIterations = numberOfIterations;
+    }
+
+    public FastCutoffPoint() {
+        this.numberOfIterations = 1;
+    }
+
     @Override
     public List<Integer> calculateCutoffPoint(List<Double> scores) {
-
-        int numberOfSignificantAttributes = 0;
-        double valueOfModel = Double.POSITIVE_INFINITY;
-        int numberOfAllAttributes = scores.size();
-        List<Integer> listOfSignificantAttributes = new ArrayList<>();
 
         List<Pair<Integer, Double>> scoresWithNumbersOfAttributes = new ArrayList<>();
         buildScoresWithNumbersOfAttributes(scores, scoresWithNumbersOfAttributes);
@@ -33,6 +41,26 @@ public class FastCutoffPoint implements CutoffPointCalculator {
                 return -o1.getSecond().compareTo(o2.getSecond());
             }
         });
+
+        List<Pair<Integer, Double>> filtered = cutOff(scoresWithNumbersOfAttributes);
+
+        for (int i = 0; i < (numberOfIterations - 1); i++) {
+            filtered = cutOff(filtered);
+        }
+
+        List<Integer> listOfSignificantAttributes = new ArrayList<>(filtered.size());
+
+        for (Pair<Integer, Double> attrScore : filtered) {
+            listOfSignificantAttributes.add(attrScore.getFirst());
+        }
+
+        return listOfSignificantAttributes;
+    }
+
+    private List<Pair<Integer, Double>> cutOff(List<Pair<Integer, Double>> scoresWithNumbersOfAttributes) {
+        int numberOfSignificantAttributes = 0;
+        double valueOfModel = Double.POSITIVE_INFINITY;
+        int numberOfAllAttributes = scoresWithNumbersOfAttributes.size();
 
         double scoreOfAllAttributes = sumScore(scoresWithNumbersOfAttributes, numberOfAllAttributes);
 
@@ -48,11 +76,13 @@ public class FastCutoffPoint implements CutoffPointCalculator {
             }
         }
 
+        List<Pair<Integer, Double>> filtered = new ArrayList<>(numberOfSignificantAttributes);
+
         for (int i = 0; i < numberOfSignificantAttributes; i++) {
-            listOfSignificantAttributes.add(scoresWithNumbersOfAttributes.get(i).getFirst());
+            filtered.add(scoresWithNumbersOfAttributes.get(i));
         }
 
-        return listOfSignificantAttributes;
+        return filtered;
     }
 
     private void buildScoresWithNumbersOfAttributes(List<Double> scores,
