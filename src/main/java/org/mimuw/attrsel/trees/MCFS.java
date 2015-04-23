@@ -6,13 +6,9 @@ import gov.sandia.cognition.learning.performance.categorization.ConfusionMatrix;
 import gov.sandia.cognition.learning.performance.categorization.DefaultConfusionMatrix;
 import gov.sandia.cognition.math.matrix.Vector;
 import org.apache.mahout.math.Matrix;
-import org.mimuw.attrsel.common.CSVMatrixReader;
 
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 import static com.google.common.base.Preconditions.checkState;
 
@@ -21,12 +17,12 @@ import static com.google.common.base.Preconditions.checkState;
  */
 public class MCFS extends AbstractMCFS {
 
-    public MCFS(int numTrees, Random random, double u, double v) {
-        super(numTrees, random, u, v);
+    public MCFS(int numTrees, long seed, double u, double v) {
+        super(numTrees, seed, u, v);
     }
 
-    public MCFS(int numTrees, Random random, double u, double v, double trainingPercent) {
-        super(numTrees, random, u, v, trainingPercent);
+    public MCFS(int numTrees, long seed, double u, double v, double trainingPercent) {
+        super(numTrees, seed, u, v, trainingPercent);
     }
 
     public double[] getScores(final Matrix table) {
@@ -63,16 +59,5 @@ public class MCFS extends AbstractMCFS {
         }
 
         return totalScores;
-    }
-
-    public static void main(String... args) {
-
-        Matrix mat = new CSVMatrixReader().read(Paths.get("res", "in", "wekaGen.csv"));
-
-        MCFS mcfs = new MCFS(10, new Random(1234), 2, 2);
-
-        double[] scores = mcfs.getScores(mat);
-
-        System.out.println("scores = " + Arrays.toString(scores));
     }
 }

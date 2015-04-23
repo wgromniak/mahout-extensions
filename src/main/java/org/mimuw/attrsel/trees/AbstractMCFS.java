@@ -12,6 +12,7 @@ import gov.sandia.cognition.learning.performance.categorization.ConfusionMatrix;
 import gov.sandia.cognition.learning.performance.categorization.ConfusionMatrixPerformanceEvaluator;
 import gov.sandia.cognition.learning.performance.categorization.DefaultConfusionMatrix;
 import gov.sandia.cognition.math.matrix.Vector;
+import org.apache.mahout.common.RandomUtils;
 import org.apache.mahout.math.Matrix;
 
 import java.util.Collection;
@@ -19,37 +20,36 @@ import java.util.List;
 import java.util.Random;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 abstract class AbstractMCFS {
 
     private final int numTrees;
-    private final Random random;
+    private final long seed;
     private final double v;
     private final double trainingPercent;
 
     protected final double u;
 
-    public AbstractMCFS(int numTrees, Random random, double u, double v) {
+    public AbstractMCFS(int numTrees, long seed, double u, double v) {
         checkArgument(numTrees > 0, "Expected positive numTrees, but got: %s", numTrees);
         checkArgument(u > 0); // TODO: correct?
         checkArgument(v > 0); // TODO: correct?
 
         this.numTrees = numTrees;
-        this.random = checkNotNull(random, "Expected random not to be null");
+        this.seed = seed;
         this.u = u;
         this.v = v;
         this.trainingPercent = 0.66;
     }
 
-    public AbstractMCFS(int numTrees, Random random, double u, double v, double trainingPercent) {
+    public AbstractMCFS(int numTrees, long seed, double u, double v, double trainingPercent) {
         checkArgument(numTrees > 0, "Expected positive numTrees, but got: %s", numTrees);
         checkArgument(u > 0); // TODO: correct?
         checkArgument(v > 0); // TODO: correct?
         checkArgument(0 < trainingPercent && trainingPercent < 1);
 
         this.numTrees = numTrees;
-        this.random = checkNotNull(random, "Expected random not to be null");
+        this.seed = seed;
         this.u = u;
         this.v = v;
         this.trainingPercent = trainingPercent;
@@ -59,6 +59,10 @@ abstract class AbstractMCFS {
 
     protected SupervisedLearnerValidationExperimentStoringModels<Vector, Integer, ConfusionMatrix<Integer>, DefaultConfusionMatrix<Integer>>
             createAndRunExperiment(Matrix table) {
+
+        // to make experiments predictable
+        Random random = RandomUtils.getRandom(seed);
+
         List<Vector> objects = TreeExperiments.extractObjects(table);
         List<Integer> targets = TreeExperiments.extractTargets(table);
 

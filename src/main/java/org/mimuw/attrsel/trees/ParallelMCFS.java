@@ -6,13 +6,9 @@ import gov.sandia.cognition.learning.performance.categorization.ConfusionMatrix;
 import gov.sandia.cognition.learning.performance.categorization.DefaultConfusionMatrix;
 import gov.sandia.cognition.math.matrix.Vector;
 import org.apache.mahout.math.Matrix;
-import org.mimuw.attrsel.common.CSVMatrixReader;
 
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.*;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -22,20 +18,20 @@ public class ParallelMCFS extends AbstractMCFS {
 
     private final ExecutorService executor;
 
-    public ParallelMCFS(int numTrees, Random random, double u, double v, ExecutorService executor) {
-        super(numTrees, random, u, v);
+    public ParallelMCFS(int numTrees, long seed, double u, double v, ExecutorService executor) {
+        super(numTrees, seed, u, v);
 
         this.executor = checkNotNull(executor, "Expected executor not to be null");
     }
 
     public ParallelMCFS(
             int numTrees,
-            Random random,
+            long seed,
             double u,
             double v,
             double trainingPercent,
             ExecutorService executor) {
-        super(numTrees, random, u, v, trainingPercent);
+        super(numTrees, seed, u, v, trainingPercent);
 
         this.executor = checkNotNull(executor, "Expected executor not to be null");
     }
@@ -121,20 +117,5 @@ public class ParallelMCFS extends AbstractMCFS {
         } else {
             throw new IllegalStateException("Not unchecked", t);
         }
-    }
-
-    public static void main(String... args) {
-
-        Matrix mat = new CSVMatrixReader().read(Paths.get("res", "in", "wekaGen.csv"));
-
-        ExecutorService exec = Executors.newFixedThreadPool(4);
-
-        ParallelMCFS mcfs = new ParallelMCFS(10, new Random(1234), 2, 2, exec);
-
-        double[] scores = mcfs.getScores(mat);
-
-        System.out.println("scores = " + Arrays.toString(scores));
-
-        exec.shutdown();
     }
 }

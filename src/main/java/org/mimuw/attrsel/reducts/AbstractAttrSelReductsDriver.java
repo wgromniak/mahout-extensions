@@ -1,7 +1,7 @@
 package org.mimuw.attrsel.reducts;
 
+import org.mimuw.attrsel.common.AbstractAttrSelDriver;
 import org.mimuw.attrsel.common.api.Subtable;
-import org.mimuw.attrsel.common.mapred.AbstractAttrSelDriver;
 import rseslib.processing.discretization.ChiMergeDiscretizationProvider;
 import rseslib.processing.reducts.ReductsProvider;
 import rseslib.system.PropertyConfigurationException;

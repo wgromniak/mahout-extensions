@@ -1,4 +1,4 @@
-package org.mimuw.attrsel.common.mapred;
+package org.mimuw.attrsel.common;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Slf4jReporter;
@@ -6,10 +6,6 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.mahout.common.AbstractJob;
 import org.apache.mahout.common.RandomUtils;
 import org.apache.mahout.math.Matrix;
-import org.mimuw.attrsel.common.FastCutoffPoint;
-import org.mimuw.attrsel.common.MatrixFixedSizeObjectSubtableGenerator;
-import org.mimuw.attrsel.common.MemoryGauge;
-import org.mimuw.attrsel.common.TreeAccuracyValidator;
 import org.mimuw.attrsel.common.api.CutoffPointCalculator;
 import org.mimuw.attrsel.common.api.Subtable;
 import org.mimuw.attrsel.common.api.SubtableGenerator;

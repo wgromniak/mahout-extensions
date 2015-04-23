@@ -4,7 +4,6 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapreduce.Mapper;
-import org.apache.mahout.common.RandomUtils;
 import org.mimuw.attrsel.common.SubtableWritable;
 import org.mimuw.attrsel.common.api.Subtable;
 import org.mimuw.attrsel.trees.MCFS;
@@ -27,7 +26,7 @@ public class TreeAttrSelMapper extends Mapper<IntWritable, SubtableWritable, Int
 
         mcfs = new MCFS(
                 conf.getInt("numberOfTrees", 100),
-                RandomUtils.getRandom(conf.getLong("seed", 123456789)),
+                conf.getLong("seed", 123456789),
                 conf.getDouble("u", 2),
                 conf.getDouble("v", 2)
         );
