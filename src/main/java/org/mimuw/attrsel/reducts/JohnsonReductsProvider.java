@@ -62,9 +62,13 @@ public class JohnsonReductsProvider extends Configuration implements ReductsProv
      */
     private Collection<BitSet> getAllCountedReducts(Vector<BitSet> discern_attrs) {
 
+        if (discern_attrs.isEmpty()) {
+            return ImmutableList.of();
+        }
+
         List<BitSet> results = new ArrayList<>();
 
-        int[] counts = new int[m_Header.noOfAttr()];
+        int[] counts = new int[m_Header.noOfAttr() - 1];
 
         for (BitSet cell : discern_attrs) {
             for (int i = cell.nextSetBit(0); i >= 0; i = cell.nextSetBit(i + 1)) {
@@ -85,7 +89,7 @@ public class JohnsonReductsProvider extends Configuration implements ReductsProv
 
             while (!discMatCopy.isEmpty()) {
 
-                counts = new int[m_Header.noOfAttr()];
+                counts = new int[m_Header.noOfAttr() - 1];
 
                 for (BitSet cell : discMatCopy) {
                     for (int i = cell.nextSetBit(0); i >= 0; i = cell.nextSetBit(i + 1)) {
@@ -133,11 +137,15 @@ public class JohnsonReductsProvider extends Configuration implements ReductsProv
      */
     private Collection<BitSet> getOneCountedReducts(Vector<BitSet> discern_attrs) {
 
+        if (discern_attrs.isEmpty()) {
+            return ImmutableList.of();
+        }
+
         BitSet result = new BitSet();
 
         while (!discern_attrs.isEmpty()) {
 
-            int[] counts = new int[m_Header.noOfAttr()];
+            int[] counts = new int[m_Header.noOfAttr() - 1];
 
             for (BitSet cell : discern_attrs) {
                 for (int i = cell.nextSetBit(0); i >= 0; i = cell.nextSetBit(i + 1)) {
@@ -158,8 +166,7 @@ public class JohnsonReductsProvider extends Configuration implements ReductsProv
     private static int maxIndex(int[] counts) {
         int maxIndex = 0;
         for (int i = 1; i < counts.length; i++) {
-            int newnumber = counts[i];
-            if ((newnumber > counts[maxIndex])) {
+            if (counts[i] > counts[maxIndex]) {
                 maxIndex = i;
             }
         }

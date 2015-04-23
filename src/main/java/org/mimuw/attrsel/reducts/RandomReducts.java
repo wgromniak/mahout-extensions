@@ -99,7 +99,7 @@ public class RandomReducts {
 
             for (int i = actualReduct.nextSetBit(0); i >= 0; i = actualReduct.nextSetBit(i + 1)) {
 
-                listReduct.add(subtable.getAttributeAtPosition(i)); // TODO: this throws when decision is in the reduct - investigate
+                listReduct.add(subtable.getAttributeAtPosition(i));
             }
 
             result.add(listReduct);
