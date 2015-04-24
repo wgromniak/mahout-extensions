@@ -24,6 +24,7 @@ public class DataGen {
         final int numPartitions = Integer.parseInt(args[1]);
         final int numObjPerPartition = Integer.parseInt(args[2]);
 
+        // this will create the data only in the executors
         sc.parallelize(ImmutableList.of(), numPartitions).mapPartitions(new FlatMapFunction<Iterator<Object>, String>() {
             @Override
             public Iterable<String> call(Iterator<Object> objectIterator) throws Exception {

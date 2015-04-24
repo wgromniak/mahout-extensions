@@ -45,10 +45,10 @@ dependencies {
     testCompile 'org.apache.hadoop:hadoop-minicluster:2.6.0'
 }
 
-task jar4Spark(type: ShadowJar) {
+task jar4SparkReducts(type: ShadowJar) {
 
     group = 'shadow'
-    classifier = 'spark'
+    classifier = 'spark-reducts'
     from(project.convention.getPlugin(JavaPluginConvention).sourceSets.main.output)
     configurations = [project.configurations.runtime]
     exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
@@ -123,6 +123,30 @@ task jar4MapRedTrees(type: ShadowJar) {
         include(dependency('org.apache.solr:solr-commons-csv:3.5.0'))
         include(dependency('org.apache.mahout.commons:commons-cli:2.0-mahout'))
         include(dependency('com.codahale.metrics:metrics-core:3.0.2'))
+        include(dependency('gov.sandia.foundry:gov-sandia-cognition-learning-core:3.4.0'))
+        include(dependency('gov.sandia.foundry:gov-sandia-cognition-common-core:3.4.0'))
+        include(dependency('com.googlecode.matrix-toolkits-java:mtj:0.9.14'))
+    }
+}
+
+task jar4SparkTrees(type: ShadowJar) {
+
+    group = 'shadow'
+    classifier = 'spark-trees'
+    from(project.convention.getPlugin(JavaPluginConvention).sourceSets.main.output)
+    configurations = [project.configurations.runtime]
+    exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
+
+    manifest.attributes 'Main-Class': 'org.mimuw.attrsel.trees.spark.TreeAttrSelDriver'
+
+    dependencies {
+        include(dependency('com.google.guava:guava:18.0'))
+        include(dependency('org.apache.mahout:mahout-core:0.9'))
+        include(dependency('org.apache.mahout:mahout-math:0.9'))
+        include(dependency('org.apache.mahout:mahout-integration:0.9'))
+        include(dependency('org.apache.solr:solr-commons-csv:3.5.0'))
+        include(dependency('com.codahale.metrics:metrics-core:3.0.2'))
+        include(dependency('org.apache.mahout.commons:commons-cli:2.0-mahout'))
         include(dependency('gov.sandia.foundry:gov-sandia-cognition-learning-core:3.4.0'))
         include(dependency('gov.sandia.foundry:gov-sandia-cognition-common-core:3.4.0'))
         include(dependency('com.googlecode.matrix-toolkits-java:mtj:0.9.14'))

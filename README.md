@@ -29,7 +29,7 @@ _big data_.
 Currently there exist the following modes of computation:
 
 * For reducts-based framework: standalone (on a single computer), MapReduce, Spark
-* For trees-based framework: standalone, MapReduce
+* For trees-based framework: standalone, MapReduce, Spark
 
 References:
 

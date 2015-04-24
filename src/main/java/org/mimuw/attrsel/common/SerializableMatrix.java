@@ -1,4 +1,4 @@
-package org.mimuw.attrsel.reducts.spark;
+package org.mimuw.attrsel.common;
 
 import org.apache.mahout.math.Matrix;
 import org.apache.mahout.math.MatrixWritable;

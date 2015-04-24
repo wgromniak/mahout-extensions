@@ -68,7 +68,7 @@ public class JohnsonReductsProvider extends Configuration implements ReductsProv
 
         List<BitSet> results = new ArrayList<>();
 
-        int[] counts = new int[m_Header.noOfAttr() - 1];
+        int[] counts = new int[m_Header.noOfAttr() - 1]; // TODO: this may contain decision, if we decide so
 
         for (BitSet cell : discern_attrs) {
             for (int i = cell.nextSetBit(0); i >= 0; i = cell.nextSetBit(i + 1)) {

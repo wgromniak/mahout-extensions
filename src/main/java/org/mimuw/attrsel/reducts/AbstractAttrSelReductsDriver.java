@@ -9,7 +9,7 @@ import rseslib.system.PropertyConfigurationException;
 public abstract class AbstractAttrSelReductsDriver extends AbstractAttrSelDriver {
 
     protected void setUpReductsOptions() {
-        addOption("ReductsProvider", "redprov", "Reducts provider class", "org.mimuw.attrsel.reducts.JohnsonReductsProvider");
+        addOption("ReductsProvider", "redprov", "Reducts provider class", JohnsonReductsProvider.class.getName());
         addOption("IndiscernibilityForMissing", "indisc", "Indiscernibility for missing values");
         addOption("DiscernibilityMethod", "discMeth", "Discernibility method");
         addOption("GeneralizedDecisionTransitiveClosure", "genDec", "Generalized decision transitive closure");

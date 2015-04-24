@@ -42,7 +42,7 @@ final class TreeStandaloneDriver extends AbstractAttrSelTreesDriver {
                 getInt("numTrees", 100),
                 Long.valueOf(getOption("seed")),
                 Double.valueOf(getOption("u", "2")),
-                Double.valueOf(getOption("u", "2"))
+                Double.valueOf(getOption("v", "2"))
         );
 
         for (final Subtable subtable : subtables) {
