@@ -43,7 +43,7 @@ public final class AttrSelDriver extends AbstractAttrSelReductsDriver implements
         }
 
         // have to get options here not to serialize this
-        final boolean dontDiscretize = hasOption("dontDiscretize");
+        final boolean dontDiscretize = hasOption("noDiscretize");
         final Class<? extends ReductsProvider> reductsProviderClass = getReductsProviderClass();
         final RandomReducts.IndiscernibilityForMissing indiscernibilityForMissing = getIndiscernibilityForMissing();
         final RandomReducts.DiscernibilityMethod discernibilityMethod = getDiscernibilityMethod();

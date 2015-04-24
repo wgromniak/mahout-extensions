@@ -29,7 +29,7 @@ public abstract class AbstractAttrSelReductsDriver extends AbstractAttrSelDriver
     }
 
     protected RandomReducts getRandomReducts(Subtable subtable) throws PropertyConfigurationException {
-        return hasOption("dontDiscretize") ?
+        return hasOption("noDiscretize") ?
                 new RandomReducts(
                         subtable,
                         getReductsProviderClass(),

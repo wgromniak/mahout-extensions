@@ -31,7 +31,7 @@ final class AttrSelMapper extends Mapper<IntWritable, SubtableWritable, IntWrita
 
         RandomReducts randomReducts;
 
-        if (!conf.getBoolean("dontDiscretize", false)) {
+        if (!conf.getBoolean("noDiscretize", false)) {
             try {
                 randomReducts =
                         new RandomReducts(
