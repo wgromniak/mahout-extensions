@@ -21,14 +21,15 @@ The library uses, among others, the following two machine learning libraries:
 * [Cognitive Foundry](http://www.cognitivefoundry.org/) - a great, general-purpose, well-coded, well-documented library
   of machine learning algorithms
 
-The library is currently not designed to handle _big data_, it requires the data to fit into a single machine's memory.
-It takes advantage of MapReduce's and Spark's capabilities to parallelize computationally intensive algorithms on a
-number of machines. Although, it should be easy to extend the library to operate fully on HDFS storage and handle true
-_big data_.
+The library is currently only partially designed to handle _big data_, most of the algorithms' implementations require
+the data to fit  into a single machine's memory. Although, work on _big data_ support is in progress and there is
+already one implementation (reducts on Spark, see below) that handles any size of data your cluster can handle (tested
+with data up to 1TB in size). The former algorithms take advantage of MapReduce's and Spark's capabilities to
+parallelize computationally intensive algorithms on a number of machines.
 
 Currently there exist the following modes of computation:
 
-* For reducts-based framework: standalone (on a single computer), MapReduce, Spark
+* For reducts-based framework: standalone (on a single computer), MapReduce, Spark, Spark Big Data
 * For trees-based framework: standalone, MapReduce, Spark
 
 References:
