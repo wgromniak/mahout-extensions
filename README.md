@@ -70,7 +70,7 @@ To run the project:
   This will create a JAR in ```mahout-extensions/build/libs/```.
 
 4. Run the JAR
-  * on Spark, e.g. (your command will depend on your cluser configuration, [read more](https://spark.apache.org/docs/latest/running-on-yarn.html))
+  * on Spark, e.g. (your command will depend on your cluser configuration, [read more](https://spark.apache.org/docs/latest/submitting-applications.html))
   
       ```
       spark-submit --class org.mimuw.attrsel.trees.spark.TreeAttrSelDriver --master yarn-cluster mahout-extensions-spark-trees.jar -i myData.csv -numSub 5000 -subCard 150 -numCutIter 2 -subGen org.mimuw.attrsel.common.MatrixFixedSizeAttributeSubtableGenerator
