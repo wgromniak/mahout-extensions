@@ -101,6 +101,7 @@ public final class AttrSelDriver extends AbstractAttrSelReductsDriver implements
         });
 
         // this gives pairs (attr, reduct) for all attr in each reduct
+        // TODO: this could be merged with the former
         JavaPairRDD<Integer, List<Integer>> attrReduct = reducts.flatMapToPair(
                 new PairFlatMapFunction<List<Integer>, Integer, List<Integer>>() {
                     @Override
@@ -114,6 +115,7 @@ public final class AttrSelDriver extends AbstractAttrSelReductsDriver implements
                 }
         );
 
+        // TODO: this and the next one could be .aggregateByKey
         JavaPairRDD<Integer, Iterable<List<Integer>>> attrReducts = attrReduct.groupByKey();
 
         // gives scores for each attribute

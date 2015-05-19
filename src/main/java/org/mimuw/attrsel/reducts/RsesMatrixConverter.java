@@ -115,7 +115,10 @@ public final class RsesMatrixConverter implements RsesConverter<Matrix> {
 
         for (int i = 0; i <= maxDecision; i++) {
 
-            decision.globalValueCode(String.valueOf(i)); // yes it's ugly
+            // TODO: temporary workaround for thread-safety issues of NominalAttribute
+            synchronized (RsesMatrixConverter.class) {
+                decision.globalValueCode(String.valueOf(i)); // yes it's ugly
+            }
         }
 
         attributes[numberOfAttributes - 1] = decision;

@@ -93,7 +93,7 @@ public final class AttrSelDriver extends AbstractAttrSelReductsDriver {
 
         SubtableInputFormat.setSubtables(subtables);
 
-        Path path = new Path("/tmp/attrsel/numSubtables");
+        Path path = new Path("/tmp/attrsel/numSubtables"); // with tmp works locally
 
         try (FSDataOutputStream os = FileSystem.get(job.getConfiguration()).create(path, true)) {
 
