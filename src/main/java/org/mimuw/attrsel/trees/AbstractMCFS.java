@@ -32,8 +32,8 @@ abstract class AbstractMCFS {
 
     public AbstractMCFS(int numTrees, long seed, double u, double v) {
         checkArgument(numTrees > 0, "Expected positive numTrees, but got: %s", numTrees);
-        checkArgument(u > 0); // TODO: correct?
-        checkArgument(v > 0); // TODO: correct?
+        checkArgument(u > 0);
+        checkArgument(v > 0);
 
         this.numTrees = numTrees;
         this.seed = seed;
@@ -44,8 +44,8 @@ abstract class AbstractMCFS {
 
     public AbstractMCFS(int numTrees, long seed, double u, double v, double trainingPercent) {
         checkArgument(numTrees > 0, "Expected positive numTrees, but got: %s", numTrees);
-        checkArgument(u > 0); // TODO: correct?
-        checkArgument(v > 0); // TODO: correct?
+        checkArgument(u > 0);
+        checkArgument(v > 0);
         checkArgument(0 < trainingPercent && trainingPercent < 1);
 
         this.numTrees = numTrees;
@@ -93,11 +93,7 @@ abstract class AbstractMCFS {
     }
 
     protected double calculateWAcc(ConfusionMatrix<Integer> confMat) {
-
-        double zeros = confMat.getCount(0, 0) / (confMat.getCount(0, 0) + confMat.getCount(0, 1));
-        double ones = confMat.getCount(1, 1) / (confMat.getCount(1, 0) + confMat.getCount(1, 1));
-
-        return 0.5 * (zeros + ones);
+        return confMat.getAccuracy() / confMat.getCategories().size();
     }
 
     protected void traverseTree(CategorizationTree<Vector, Integer> tree, double[] scores) {
