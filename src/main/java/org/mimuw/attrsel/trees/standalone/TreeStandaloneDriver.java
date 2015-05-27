@@ -1,13 +1,10 @@
 package org.mimuw.attrsel.trees.standalone;
 
-import org.apache.mahout.math.Matrix;
-import org.mimuw.attrsel.common.CSVMatrixReader;
 import org.mimuw.attrsel.common.api.Subtable;
 import org.mimuw.attrsel.common.api.SubtableGenerator;
 import org.mimuw.attrsel.trees.AbstractAttrSelTreesDriver;
 import org.mimuw.attrsel.trees.MCFS;
 
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -30,9 +27,9 @@ final class TreeStandaloneDriver extends AbstractAttrSelTreesDriver {
             return 1;
         }
 
-        Matrix inputDataTable = new CSVMatrixReader().read(Paths.get(getInputFile().getPath()));
+        loadInputData();
 
-        SubtableGenerator<Subtable> subtableGenerator = getSubtableGenerator(inputDataTable);
+        SubtableGenerator<Subtable> subtableGenerator = getSubtableGenerator();
 
         List<Subtable> subtables = subtableGenerator.getSubtables();
 
@@ -58,7 +55,7 @@ final class TreeStandaloneDriver extends AbstractAttrSelTreesDriver {
 
         checkState(mapResult.size() == subtables.size());
 
-        double[] scores = new double[inputDataTable.columnSize() - 1];
+        double[] scores = new double[fullInputTable.columnSize() - 1];
 
         for (int i = 0, n = mapResult.size(); i < n; i++) {
             double[] smallScores = mapResult.get(i).get();
@@ -69,7 +66,7 @@ final class TreeStandaloneDriver extends AbstractAttrSelTreesDriver {
             }
         }
 
-        printScoresAssessResults(scores, inputDataTable);
+        printScoresAssessResults(scores);
 
         executor.shutdown();
         return 0;

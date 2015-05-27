@@ -1,13 +1,10 @@
 package org.mimuw.attrsel.reducts.standalone;
 
-import org.apache.mahout.math.Matrix;
-import org.mimuw.attrsel.common.CSVMatrixReader;
 import org.mimuw.attrsel.common.api.Subtable;
 import org.mimuw.attrsel.common.api.SubtableGenerator;
 import org.mimuw.attrsel.reducts.AbstractAttrSelReductsDriver;
 import org.mimuw.attrsel.reducts.RandomReducts;
 
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -29,9 +26,9 @@ final class ReductsStandaloneDriver extends AbstractAttrSelReductsDriver {
             return 1;
         }
 
-        Matrix inputDataTable = new CSVMatrixReader().read(Paths.get(getInputFile().getPath()));
+        loadInputData();
 
-        SubtableGenerator<Subtable> subtableGenerator = getSubtableGenerator(inputDataTable);
+        SubtableGenerator<Subtable> subtableGenerator = getSubtableGenerator();
 
         List<Subtable> subtables = subtableGenerator.getSubtables();
         List<Integer> numberOfSubtablesPerAttribute = subtableGenerator.getNumberOfSubtablesPerAttribute();
@@ -50,7 +47,7 @@ final class ReductsStandaloneDriver extends AbstractAttrSelReductsDriver {
 
         List<Future<List<List<Integer>>>> mapResults = executor.invokeAll(map);
 
-        int[] attrCounts = new int[inputDataTable.columnSize() - 1];
+        int[] attrCounts = new int[trainTable.columnSize() - 1];
 
         for (Future<List<List<Integer>>> result : mapResults) {
             for (List<Integer> reduct : result.get()) {
@@ -60,13 +57,13 @@ final class ReductsStandaloneDriver extends AbstractAttrSelReductsDriver {
             }
         }
 
-        double[] scores = new double[inputDataTable.columnSize() - 1];
+        double[] scores = new double[trainTable.columnSize() - 1];
 
         for (int i = 0; i < attrCounts.length; i++) {
             scores[i] = (double) attrCounts[i] / numberOfSubtablesPerAttribute.get(i);
         }
 
-        printScoresAssessResults(scores, inputDataTable);
+        printScoresAssessResults(scores);
 
         executor.shutdown();
         return 0;

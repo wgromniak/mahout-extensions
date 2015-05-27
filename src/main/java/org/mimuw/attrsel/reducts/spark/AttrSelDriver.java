@@ -58,9 +58,11 @@ public final class AttrSelDriver extends AbstractAttrSelReductsDriver implements
         SparkConf conf = new SparkConf();
         JavaSparkContext sc = new JavaSparkContext(conf);
 
-        SerializableMatrix inputDataTable = readInputMatrix(sc);
+        // TODO: hack
+        readInputMatrix(sc);
+        loadInputData();
 
-        SubtableGenerator<Subtable> subtableGenerator = getSubtableGenerator(inputDataTable.get());
+        SubtableGenerator<Subtable> subtableGenerator = getSubtableGenerator();
         List<SubtableWritable> subtablesWritable = getWritableSubtables(subtableGenerator);
 
 
@@ -133,18 +135,18 @@ public final class AttrSelDriver extends AbstractAttrSelReductsDriver implements
 
         List<Tuple2<Integer, Double>> result = scores.collect();
 
-        double[] scoresArr = new double[inputDataTable.get().columnSize() - 1];
+        double[] scoresArr = new double[fullInputTable.columnSize() - 1];
 
         for (Tuple2<Integer, Double> tup : result) {
             scoresArr[tup._1()] = tup._2();
         }
 
-        printScoresAssessResults(scoresArr, inputDataTable.get());
+        printScoresAssessResults(scoresArr);
 
         return 0;
     }
 
-    private SerializableMatrix readInputMatrix(JavaSparkContext sc) {
+    private void readInputMatrix(JavaSparkContext sc) {
         JavaPairRDD<String, String> inputData = sc.wholeTextFiles(getInputPath().toString());
         // read each whole file into a matrix
         JavaRDD<SerializableMatrix> inputMatrix = inputData.flatMap(
@@ -163,7 +165,7 @@ public final class AttrSelDriver extends AbstractAttrSelReductsDriver implements
         // make a local Matrix out of the only file
         List<SerializableMatrix> matrices = inputMatrix.collect();
         checkArgument(matrices.size() == 1, "Expected one input file, but got: %s", matrices.size());
-        return matrices.get(0);
+        fullInputTable = matrices.get(0).get();
     }
 
     private List<SubtableWritable> getWritableSubtables(SubtableGenerator<Subtable> subtableGenerator) {
