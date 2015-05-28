@@ -1,6 +1,7 @@
 package org.mimuw.attrsel.common.spark;
 
 import com.google.common.collect.ImmutableList;
+import org.apache.mahout.math.Arrays;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.FlatMapFunction;
@@ -11,7 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * To generate a TB of data run with args: 512 32 32768.
+ * To generate a GB of data run with args: 512 32 32768.
  */
 public class DataGen {
 
@@ -33,6 +34,15 @@ public class DataGen {
                 dg.setNumAttributes(numAttrs);
                 dg.defineDataFormat();
                 dg.setNumIrrelevant(numAttrs - 10);
+
+                int[] relevant = new int[10];
+                for (int i = 0, j = 0; i < dg.getAttList_Irr().length; i++) {
+                    if (!dg.getAttList_Irr()[i]) {
+                        relevant[j++] = i;
+                    }
+                }
+
+                System.out.println("Relevant attribute numbers: " + Arrays.toString(relevant));
 
                 List<String> toBeSaved = new ArrayList<>(numObjPerPartition);
 
