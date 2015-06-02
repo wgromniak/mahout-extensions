@@ -2,13 +2,9 @@ package org.mimuw.attrsel.common;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Slf4jReporter;
-import com.google.common.collect.ContiguousSet;
-import com.google.common.collect.DiscreteDomain;
-import com.google.common.collect.Range;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.mahout.common.AbstractJob;
 import org.apache.mahout.common.RandomUtils;
-import org.apache.mahout.math.DenseMatrix;
 import org.apache.mahout.math.Matrix;
 import org.mimuw.attrsel.common.api.CutoffPointCalculator;
 import org.mimuw.attrsel.common.api.Subtable;
@@ -16,19 +12,14 @@ import org.mimuw.attrsel.common.api.SubtableGenerator;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
-import java.nio.file.Paths;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import static com.codahale.metrics.MetricRegistry.name;
 
 public abstract class AbstractAttrSelDriver extends AbstractJob {
-
-    private final Random random = RandomUtils.getRandom(0xFEEL);
-
-    protected Matrix fullInputTable;
-    protected Matrix trainTable;
-    private Matrix testTable;
 
     public static final MetricRegistry METRICS = new MetricRegistry();
     static { // set-up driver memory monitoring
@@ -49,7 +40,6 @@ public abstract class AbstractAttrSelDriver extends AbstractJob {
         addOption("subtableGenerator", "subGen", "Class of the subtable generator");
         addOption("seed", "seed", "Random number generator seed", "123456789");
         addOption("numCutoffIterations", "numCutIter", "Number of iterations of the cutoff procedure");
-        addOption("split", "sp", "Train/test data split percent, e.g. 0.2 for 20% test data and 80% train");
     }
 
     protected void copyOptionsToConf() {
@@ -65,34 +55,7 @@ public abstract class AbstractAttrSelDriver extends AbstractJob {
         }
     }
 
-    protected void loadInputData() {
-
-        if (fullInputTable == null) { // TODO: fix (hack required by spark)
-            fullInputTable = new CSVMatrixReader().read(Paths.get(getInputFile().getPath()));
-        }
-
-        int testSize = (int) (fullInputTable.rowSize() * Double.valueOf(getOption("split", "0.2")));
-
-        testTable = new DenseMatrix(testSize, fullInputTable.columnSize());
-        trainTable = new DenseMatrix(fullInputTable.rowSize() - testSize, fullInputTable.columnSize());
-
-        List<Integer> nbrs = ContiguousSet
-                .create(Range.closedOpen(0, fullInputTable.rowSize()), DiscreteDomain.integers())
-                .asList();
-        nbrs = new ArrayList<>(nbrs);
-        Collections.shuffle(nbrs, random);
-        nbrs = nbrs.subList(0, testSize);
-
-        for (int i = 0, test = 0, train = 0; i < fullInputTable.rowSize(); i++) {
-            if (nbrs.contains(i)) {
-                testTable.assignRow(test++, fullInputTable.viewRow(i));
-            } else {
-                trainTable.assignRow(train++, fullInputTable.viewRow(i));
-            }
-        }
-    }
-
-    protected SubtableGenerator<Subtable> getSubtableGenerator() {
+    protected SubtableGenerator<Subtable> getSubtableGenerator(Matrix fullMatrix) {
         try {
             @SuppressWarnings("unchecked")
             Class<SubtableGenerator<Subtable>> generatorClass =
@@ -105,14 +68,14 @@ public abstract class AbstractAttrSelDriver extends AbstractJob {
 
             return generatorClass
                     .getConstructor(Random.class, int.class, int.class, org.apache.mahout.math.Matrix.class)
-                    .newInstance(RandomUtils.getRandom(seed), numberOfSubtables, subtableSize, trainTable);
+                    .newInstance(RandomUtils.getRandom(seed), numberOfSubtables, subtableSize, fullMatrix);
         } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | InstantiationException |
                 IllegalAccessException e) {
             throw new IllegalStateException("Error instantiating subtable generator", e);
         }
     }
 
-    protected void printScoresAssessResults(double[] scores) {
+    protected void printScoresAssessResults(double[] scores, Matrix inputDataTable) {
 
         System.out.println("Scores are (<attr>: <score>):");
         for (int i = 0; i < scores.length; i++) {
@@ -125,7 +88,7 @@ public abstract class AbstractAttrSelDriver extends AbstractJob {
         System.out.printf("Selected attrs: %s%n", selected);
         System.out.printf("Num selected attrs: %s%n", selected.size());
 
-        double acc = new TreeAccuracyValidator().validate(testTable, selected);
+        double acc = new TreeAccuracyValidator().validate(inputDataTable, selected);
 
         System.out.printf("Accuracy: %s%n", acc);
     }

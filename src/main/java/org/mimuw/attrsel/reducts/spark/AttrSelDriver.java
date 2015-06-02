@@ -51,18 +51,16 @@ public final class AttrSelDriver extends AbstractAttrSelReductsDriver implements
         final RandomReducts.GeneralizedDecisionTransitiveClosure generalizedDecisionTransitiveClosure =
                 getGeneralizedDecisionTransitiveClosure();
         final RandomReducts.JohnsonReducts johnsonReducts = getJohnsonReducts();
-        final int numDiscIntervals = getInt("numDiscIntervals", 4);
-        final Double discSignificance = Double.valueOf(getOption("discSignificance", "0.25"));
+        final int numDiscIntervals = getInt("numDiscIntervals", 6);
+        final Double discSignificance = Double.valueOf(getOption("discSignificance", "0.9"));
 
 
         SparkConf conf = new SparkConf();
         JavaSparkContext sc = new JavaSparkContext(conf);
 
-        // TODO: hack
-        readInputMatrix(sc);
-        loadInputData();
+        SerializableMatrix inputDataTable = readInputMatrix(sc);
 
-        SubtableGenerator<Subtable> subtableGenerator = getSubtableGenerator();
+        SubtableGenerator<Subtable> subtableGenerator = getSubtableGenerator(inputDataTable.get());
         List<SubtableWritable> subtablesWritable = getWritableSubtables(subtableGenerator);
 
 
@@ -135,18 +133,18 @@ public final class AttrSelDriver extends AbstractAttrSelReductsDriver implements
 
         List<Tuple2<Integer, Double>> result = scores.collect();
 
-        double[] scoresArr = new double[fullInputTable.columnSize() - 1];
+        double[] scoresArr = new double[inputDataTable.get().columnSize() - 1];
 
         for (Tuple2<Integer, Double> tup : result) {
             scoresArr[tup._1()] = tup._2();
         }
 
-        printScoresAssessResults(scoresArr);
+        printScoresAssessResults(scoresArr, inputDataTable.get());
 
         return 0;
     }
 
-    private void readInputMatrix(JavaSparkContext sc) {
+    private SerializableMatrix readInputMatrix(JavaSparkContext sc) {
         JavaPairRDD<String, String> inputData = sc.wholeTextFiles(getInputPath().toString());
         // read each whole file into a matrix
         JavaRDD<SerializableMatrix> inputMatrix = inputData.flatMap(
@@ -165,7 +163,7 @@ public final class AttrSelDriver extends AbstractAttrSelReductsDriver implements
         // make a local Matrix out of the only file
         List<SerializableMatrix> matrices = inputMatrix.collect();
         checkArgument(matrices.size() == 1, "Expected one input file, but got: %s", matrices.size());
-        fullInputTable = matrices.get(0).get();
+        return matrices.get(0);
     }
 
     private List<SubtableWritable> getWritableSubtables(SubtableGenerator<Subtable> subtableGenerator) {

@@ -34,6 +34,7 @@ public class DataGen {
                 dg.setNumAttributes(numAttrs);
                 dg.defineDataFormat();
                 dg.setNumIrrelevant(numAttrs - 10);
+                dg.defineDataFormat();
 
                 int[] relevant = new int[10];
                 for (int i = 0, j = 0; i < dg.getAttList_Irr().length; i++) {

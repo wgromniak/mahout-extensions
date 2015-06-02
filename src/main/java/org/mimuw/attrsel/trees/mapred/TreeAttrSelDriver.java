@@ -10,6 +10,8 @@ import org.apache.mahout.common.Pair;
 import org.apache.mahout.common.iterator.sequencefile.PathFilters;
 import org.apache.mahout.common.iterator.sequencefile.PathType;
 import org.apache.mahout.common.iterator.sequencefile.SequenceFileDirIterable;
+import org.apache.mahout.math.Matrix;
+import org.mimuw.attrsel.common.CSVMatrixReader;
 import org.mimuw.attrsel.common.SubtableInputFormat;
 import org.mimuw.attrsel.common.api.Subtable;
 import org.mimuw.attrsel.common.api.SubtableGenerator;
@@ -17,6 +19,7 @@ import org.mimuw.attrsel.trees.AbstractAttrSelTreesDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.file.Paths;
 import java.util.List;
 
 public final class TreeAttrSelDriver extends AbstractAttrSelTreesDriver {
@@ -32,7 +35,6 @@ public final class TreeAttrSelDriver extends AbstractAttrSelTreesDriver {
             return 1;
         }
 
-        loadInputData();
 
         Job job = Job.getInstance(getConf());
 
@@ -53,7 +55,8 @@ public final class TreeAttrSelDriver extends AbstractAttrSelTreesDriver {
         job.setOutputFormatClass(SequenceFileOutputFormat.class);
 
         // read from local fs
-        SubtableGenerator<Subtable> subtableGenerator = getSubtableGenerator();
+        Matrix inputDataTable = new CSVMatrixReader().read(Paths.get(getInputFile().getPath()));
+        SubtableGenerator<Subtable> subtableGenerator = getSubtableGenerator(inputDataTable);
         List<Subtable> subtables = subtableGenerator.getSubtables();
         SubtableInputFormat.setSubtables(subtables);
 
@@ -64,13 +67,13 @@ public final class TreeAttrSelDriver extends AbstractAttrSelTreesDriver {
         SequenceFileDirIterable<IntWritable, DoubleWritable> dirIterable
                 = new SequenceFileDirIterable<>(getOutputPath(), PathType.LIST, PathFilters.partFilter(), getConf());
 
-        double[] scores = new double[fullInputTable.columnSize() - 1];
+        double[] scores = new double[inputDataTable.columnSize() - 1];
 
         for (Pair<IntWritable, DoubleWritable> attrScore : dirIterable) {
             scores[attrScore.getFirst().get()] = attrScore.getSecond().get();
         }
 
-        printScoresAssessResults(scores);
+        printScoresAssessResults(scores, inputDataTable);
 
         return 0;
     }
