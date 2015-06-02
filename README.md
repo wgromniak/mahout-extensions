@@ -90,6 +90,6 @@ To run the project:
 
 * To get all available configuration options run the JARs with ```--help``` option.
 * Spark needs the data in HDFS, MapReduce in a local directory (this will be made consistent in the near future).
-* Input data should be in CSV format. Objects are in rows, attributes are in columns, last column is always the decision attribute - currently only binary (0/1) decision is allowed. Absent values are not possible.
+* Input data should be in CSV format. Objects are in rows, attributes are in columns, last column is always the decision attribute (only integer decision is allowed). Absent values are not possible.
 * If you want to run the Reducts Spark Big Data version run the ```mahout-extensions-spark-reducts.jar``` with ```--class org.mimuw.attrsel.reducts.spark.BigDataAttrSelDriver```.
 * You might need to run Spark with options such as ```--driver-memory 8g --executor-memory 2g --driver-java-options "-Dspark.akka.frameSize=1000" --num-executors 50``` to make it work. Running spark is tricky, cf. [_Spark should be better than MapReduce (if only it worked)_](http://blog.explainmydata.com/2014/05/spark-should-be-better-than-mapreduce.html). If you need help running the project, please contact us, we've probably already seen all the weired exceptions you get.
