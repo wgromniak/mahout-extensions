@@ -9,7 +9,6 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.PairFlatMapFunction;
 import org.apache.spark.api.java.function.PairFunction;
@@ -66,6 +65,13 @@ public class BigDataAttrSelDriver extends AbstractAttrSelReductsDriver implement
 
         JavaRDD<String> txtRows = sc.textFile(getInputPath().toString());
 
+        if (conf.contains("spark.executor.instances")) {
+            int numExec = Integer.parseInt(conf.get("spark.executor.instances"));
+            if (txtRows.partitions().size() < numExec) {
+                txtRows = txtRows.repartition(numExec);
+            }
+        }
+
         // matrix rows as RDD
         JavaRDD<double[]> rows = txtRows.map(new Function<String, double[]>() {
             @Override
@@ -81,10 +87,9 @@ public class BigDataAttrSelDriver extends AbstractAttrSelReductsDriver implement
 
         int numAttrs = rows.first().length - 1;
 
-
         final int numSub = getInt("numSubtables");
-        int subCard = getInt("subtableCardinality");
-        long card = rows.count();
+        long subCard = Long.parseLong(getOption("subtableCardinality"));
+        long card = txtRows.count();
 
         // this will be the actual number of subtables each row ends in
         final int meanNumberOfSubtablesPerAttribute = (int) (numSub * subCard / card);
@@ -113,10 +118,11 @@ public class BigDataAttrSelDriver extends AbstractAttrSelReductsDriver implement
         // gathers all rows associated with each subtable number
         JavaPairRDD<Integer, Iterable<double[]>> subtables = subRow.groupByKey();
 
-        JavaRDD<List<Integer>> reducts = subtables.flatMap(
-                new FlatMapFunction<Tuple2<Integer, Iterable<double[]>>, List<Integer>>() {
+        JavaPairRDD<Integer, List<Integer>> attrReduct = subtables.flatMapToPair(
+                new PairFlatMapFunction<Tuple2<Integer, Iterable<double[]>>, Integer, List<Integer>>() {
                     @Override
-                    public Iterable<List<Integer>> call(Tuple2<Integer, Iterable<double[]>> subtableIter) throws Exception {
+                    public Iterable<Tuple2<Integer, List<Integer>>> call(Tuple2<Integer, Iterable<double[]>> subtableIter)
+                            throws Exception {
 
                         Matrix data =
                                 new DenseMatrix(
@@ -153,24 +159,18 @@ public class BigDataAttrSelDriver extends AbstractAttrSelReductsDriver implement
                                         generalizedDecisionTransitiveClosure,
                                         johnsonReducts
                                 );
-                        return randomReducts.getReducts();
-                    }
-                }
-        );
+                        List<List<Integer>> reducts = randomReducts.getReducts();
 
-        // this gives pairs (attr, reduct) for all attr in each reduct
-        JavaPairRDD<Integer, List<Integer>> attrReduct = reducts.flatMapToPair(
-                new PairFlatMapFunction<List<Integer>, Integer, List<Integer>>() {
-                    @Override
-                    public Iterable<Tuple2<Integer, List<Integer>>> call(List<Integer> reduct) throws Exception {
-                        List<Tuple2<Integer, List<Integer>>> result = new ArrayList<>(reduct.size());
-                        for (int attr : reduct) {
-                            result.add(new Tuple2<>(attr, reduct));
+                        List<Tuple2<Integer, List<Integer>>> result = new ArrayList<>();
+                        for (List<Integer> reduct : reducts) {
+                            for (int attr : reduct) {
+                                result.add(new Tuple2<>(attr, reduct));
+                            }
                         }
+
                         return result;
                     }
-                }
-        );
+                });
 
         JavaPairRDD<Integer, Iterable<List<Integer>>> attrReducts = attrReduct.groupByKey();
 

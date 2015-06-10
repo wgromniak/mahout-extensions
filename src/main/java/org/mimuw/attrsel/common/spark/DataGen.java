@@ -32,6 +32,7 @@ public class DataGen {
 
                 RDG1 dg = new RDG1();
                 dg.setNumAttributes(numAttrs);
+                dg.setNumNumeric(numAttrs);
                 dg.defineDataFormat();
                 dg.setNumIrrelevant(numAttrs - 10);
                 dg.defineDataFormat();
