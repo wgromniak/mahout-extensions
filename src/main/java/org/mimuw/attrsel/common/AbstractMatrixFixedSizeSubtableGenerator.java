@@ -4,9 +4,7 @@ import org.apache.mahout.math.Matrix;
 import org.mimuw.attrsel.common.api.Subtable;
 import org.mimuw.attrsel.common.api.SubtableGenerator;
 
-import java.util.BitSet;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -60,7 +58,8 @@ abstract class AbstractMatrixFixedSizeSubtableGenerator implements SubtableGener
 
     final BitSet draw(int numberOfSamples, int subtableSize) {
 
-        BitSet selected = new BitSet(subtableSize);
+          BitSet selected = new BitSet(subtableSize);
+
 
         int numberOfIteration = numberOfSamples - subtableSize;
 
@@ -97,5 +96,4 @@ abstract class AbstractMatrixFixedSizeSubtableGenerator implements SubtableGener
             return selected;
         }
     }
-
 }
