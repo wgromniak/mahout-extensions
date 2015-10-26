@@ -5,36 +5,41 @@ import org.apache.mahout.math.MatrixSlice;
 
 import java.util.*;
 
-import static com.google.gson.internal.$Gson$Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 
 public class DistinguishMatrixGenerator {
 
-    Matrix inputDataMatirx;
+    private final Matrix inputDataMatrix;
+    private Set<Integer>[][] distinguishTable;
+    private final int numberOfObjects;
 
+    @SuppressWarnings("unchecked")
     public DistinguishMatrixGenerator(Matrix inputDataMatirx) {
 
         checkNotNull(inputDataMatirx);
-        this.inputDataMatirx = inputDataMatirx;
+        checkArgument(inputDataMatirx.rowSize() > 0);
+        checkArgument(inputDataMatirx.columnSize() > 0);
+        this.inputDataMatrix = inputDataMatirx;
+        this.numberOfObjects = this.inputDataMatrix.rowSize();
+        this.distinguishTable = new Set[numberOfObjects][numberOfObjects];
     }
-
 
     /*
      1) Computing distinguish matrix for all table
      2) Get one column of this distinguish matrix
      */
-    @SuppressWarnings("unchecked")
+
     public Set<Integer>[][] computeDistinguishMatrix() {
-        int sizie = this.inputDataMatirx.rowSize();
-        Set[][] costam = new Set[sizie][sizie];
-        for (int i = 0; i < sizie; i++) {
-            for (int j = 0; j < sizie; j++) {
-                costam[i][j] = new HashSet<>();
+        for (int i = 0; i < numberOfObjects; i++) {
+            for (int j = 0; j < numberOfObjects; j++) {
+                distinguishTable[i][j] = new HashSet<>();
             }
         }
 
-        for (MatrixSlice firstObject : this.inputDataMatirx) {
-            for (MatrixSlice secondObject : this.inputDataMatirx)
+        for (MatrixSlice firstObject : this.inputDataMatrix) {
+            for (MatrixSlice secondObject : this.inputDataMatrix)
                 if ((firstObject.get(firstObject.size() - 1)) != (secondObject.get(secondObject.size() - 1))) {
                     int count = firstObject.size() - 2;//I don't want decision
                     ArrayList<Integer> put = new ArrayList<>();
@@ -46,11 +51,19 @@ public class DistinguishMatrixGenerator {
                     }
                     if (!put.isEmpty()) {
                         Collections.reverse(put);
-                        costam[secondObject.index()][firstObject.index()].add(put);
-                        costam[firstObject.index()][secondObject.index()].add(put);
+                        this.distinguishTable[secondObject.index()][firstObject.index()].addAll(put);
+                        this.distinguishTable[firstObject.index()][secondObject.index()].addAll(put);
                     }
                 }
         }
-        return costam;
+        return distinguishTable;
+    }
+
+    public ArrayList<Set> getColumn(int numberOfColumn) {
+        ArrayList<Set> expectedColumn  = new ArrayList<>();
+        for (int i = 0; i < this.numberOfObjects; i++) {
+                expectedColumn.add(this.distinguishTable[i][numberOfColumn]);
+        }
+        return expectedColumn;
     }
 }

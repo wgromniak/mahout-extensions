@@ -5,12 +5,10 @@ import org.apache.mahout.math.DenseMatrix;
 import org.apache.mahout.math.Matrix;
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 
 public class DistinguishMatrixGeneratorTest {
@@ -20,65 +18,96 @@ public class DistinguishMatrixGeneratorTest {
     public void testTwoObjectInTable() {
 
         Matrix inputData = new DenseMatrix(new double[][]{{0, 1, 0, 1}, {1, 1, 0, 0}});
-        DistinguishMatrixGenerator outpuData = new DistinguishMatrixGenerator(inputData);
+        DistinguishMatrixGenerator outputData = new DistinguishMatrixGenerator(inputData);
 
-        Set[][] costam = new Set[2][2];
+        Set<Integer>[][] distinguishMatrix = new Set[2][2];
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 2; j++) {
-                costam[i][j] = new HashSet<>();
+                distinguishMatrix[i][j] = new HashSet<>();
             }
         }
 
-        costam[0][1].add(Collections.singletonList(0));
-        costam[1][0].add(Collections.singletonList(0));
-        for (Set[] element : costam) {
-            for (Set element2 : element)
-                System.out.print(element2);
-            System.out.println();
-        }
-        assertArrayEquals(costam, outpuData.computeDistinguishMatrix());
+        distinguishMatrix[0][1].addAll(Collections.singletonList(0));
+        distinguishMatrix[1][0].addAll(Collections.singletonList(0));
+        assertArrayEquals(distinguishMatrix, outputData.computeDistinguishMatrix());
 
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void testGetFirstColumn() {
-        Matrix inputData = new DenseMatrix(new double[][]{{1, 1, 0, 1, 1}, {0, 1, 0, 1, 0}, {1, 1, 1, 0, 1}, {1, 0, 0, 1, 0}});
+        Matrix inputData = new DenseMatrix(new double[][]{{1, 1, 0, 1, 1}, {0, 1, 0, 1, 0},
+                {1, 1, 1, 0, 1}, {1, 0, 0, 1, 0}});
+        DistinguishMatrixGenerator output = new DistinguishMatrixGenerator(inputData);
 
-        DistinguishMatrixGenerator outpuData = new DistinguishMatrixGenerator(inputData);
-
-        Set[][] costam = new Set[4][4];
+        Set<Integer>[][] distinguishTable = new Set[4][4];
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                costam[i][j] = new HashSet<>();
+                distinguishTable[i][j] = new HashSet<>();
             }
         }
 
-        costam[0][1].add(Collections.singletonList(0));
-        costam[1][0].add(Collections.singletonList(0));
-        costam[0][3].add(Collections.singletonList(1));
-        costam[3][0].add(Collections.singletonList(1));
-        costam[1][2].add(Arrays.asList(0, 2, 3));
-        costam[2][1].add(Arrays.asList(0, 2, 3));
-        costam[3][2].add(Arrays.asList(1, 2, 3));
-        costam[2][3].add(Arrays.asList(1, 2, 3));
+        distinguishTable[0][1].addAll(Collections.singletonList(0));
+        distinguishTable[1][0].addAll(Collections.singletonList(0));
+        distinguishTable[0][3].addAll(Collections.singletonList(1));
+        distinguishTable[3][0].addAll(Collections.singletonList(1));
+        distinguishTable[1][2].addAll(Arrays.asList(0, 2, 3));
+        distinguishTable[2][1].addAll(Arrays.asList(0, 2, 3));
+        distinguishTable[3][2].addAll(Arrays.asList(1, 2, 3));
+        distinguishTable[2][3].addAll(Arrays.asList(1, 2, 3));
 
-        assertArrayEquals(costam, outpuData.computeDistinguishMatrix());
+        assertArrayEquals(distinguishTable, output.computeDistinguishMatrix());
+    }
+
+    @Test(expectedExceptions=IllegalArgumentException.class)
+    public void testEmptyInput() {
+        Matrix inputData =  new DenseMatrix(new double[][]{{}});
+        DistinguishMatrixGenerator distinguishMatrix = new DistinguishMatrixGenerator(inputData);
+        Set[][] expectedDistinguishMatrix = new Set[inputData.rowSize()][inputData.rowSize()];
+        for (int i = 0; i < inputData.rowSize(); ++i) {
+            for (int j = 0; j < inputData.rowSize(); ++j) {
+                expectedDistinguishMatrix[i][j] = new HashSet<>();
+            }
+        }
+        assertArrayEquals(distinguishMatrix.computeDistinguishMatrix(), expectedDistinguishMatrix);
+    }
+
+    @Test
+    public void oneObjectInput() {
+        Matrix inputData =  new DenseMatrix(new double[][]{{1,2,3,1,0}});
+        DistinguishMatrixGenerator distinguishMatrix = new DistinguishMatrixGenerator(inputData);
+        Set[][] expectedDistinguishMatrix = new Set[inputData.rowSize()][inputData.rowSize()];
+        for (int i = 0; i < inputData.rowSize(); ++i) {
+            for (int j = 0; j < inputData.rowSize(); ++j) {
+                expectedDistinguishMatrix[i][j] = new HashSet<>();
+            }
+        }
+
+        assertArrayEquals(distinguishMatrix.computeDistinguishMatrix(), expectedDistinguishMatrix);
+//        Set[][] a =expectedDistinguishMatrix;
+//        for (Set[] element : a) {
+//            for (Set element2 : element)
+//                System.out.print(element2);
+//            System.out.println();
+//        }
+
     }
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testEmptyInput() {
-        //TODO
-        /*Matrix inputData = new DenseMatrix(new double[][]{{}});
-
+    public void twoObjectsFirstGetColumn(){
+        Matrix inputData = new DenseMatrix(new double[][]{{1,2,3,4,0},{5,6,7,8,1}, {1,2,1,4,1}});
         DistinguishMatrixGenerator distinguishMatrix = new DistinguishMatrixGenerator(inputData);
-        Set[][] costam = new Set[0][0];
-        for (int i = 0; i < 1; i++) {
-            for (int j = 0; j < 1; j++) {
-                costam[i][j] = new HashSet<>();
-            }
-        }*/
-        // assertArrayEquals(distinguishMatrix.computeDistinguishMatrix(), costam);
+        distinguishMatrix.computeDistinguishMatrix();
+        ArrayList<Set> firstColumn =  distinguishMatrix.getColumn(0);
+        ArrayList<Set> expectedOutput = new ArrayList<>();
+
+        expectedOutput.add(new HashSet());
+        expectedOutput.add(new HashSet(Arrays.asList(0, 1, 2, 3)));
+        expectedOutput.add(new HashSet(Collections.singletonList(2)));
+        assertEquals(expectedOutput, firstColumn);
     }
+
+
+
 }
