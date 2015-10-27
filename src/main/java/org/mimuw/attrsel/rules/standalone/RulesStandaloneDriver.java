@@ -18,15 +18,15 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-// TODO: configure logging in standalone mode
-final class     RulesStandaloneDriver extends AbstractAttrSelReductsDriver {
+
+final class RulesStandaloneDriver extends AbstractAttrSelReductsDriver {
 
     private final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
     @Override
     public int run(String... args) throws Exception {
         setUpAttrSelOptions();
-
+        setUpReductsOptions();
         if (parseArguments(args, false, true) == null) {
             return 1;
         }
@@ -37,6 +37,7 @@ final class     RulesStandaloneDriver extends AbstractAttrSelReductsDriver {
 
         List<Subtable> subtables = subtableGenerator.getSubtables();
 
+
         List<Callable<List<Integer>>> map = new ArrayList<>(subtables.size());
 
         for (final Subtable subtable : subtables) {
@@ -44,7 +45,7 @@ final class     RulesStandaloneDriver extends AbstractAttrSelReductsDriver {
                 @Override
                 public List<Integer> call() throws Exception {
                     RulesGenerator rules = new RulesGenerator();
-                    return rules.calculateNumberOfAttributes(rules.generateRules(subtable), subtable.getNumberOfAttributes());
+                    return rules.calculateScoresOfAttributes(rules.generateRules(subtable), subtable.getNumberOfAttributes());
 
                 }
             });
@@ -63,7 +64,7 @@ final class     RulesStandaloneDriver extends AbstractAttrSelReductsDriver {
             }
         }
 
-        TreeMap<Integer,Integer> mapa = new TreeMap<>(new Comparator<Integer>() {
+        TreeMap<Integer,Integer> mapScoreAttribute = new TreeMap<>(new Comparator<Integer>() {
             @Override
             public int compare(Integer o1, Integer o2) {
                 return o2-o1;
@@ -71,13 +72,10 @@ final class     RulesStandaloneDriver extends AbstractAttrSelReductsDriver {
         });
 
         for(int i  = 0; i < attrCounts.length; i++) {
-            mapa.put( attrCounts[i], i );
+            mapScoreAttribute.put(attrCounts[i], i);
         }
 
-        System.out.println(mapa);
-
-
-        List<Integer> selected = cutAttributes(mapa);
+        List<Integer> selected = cutAttributes(mapScoreAttribute);
 
         System.out.printf("Selected attrs: %s%n", selected);
         System.out.printf("Num selected attrs: %s%n", selected.size());
@@ -105,10 +103,11 @@ final class     RulesStandaloneDriver extends AbstractAttrSelReductsDriver {
 
     public static void main(String... args) throws Exception {
 
-        long startTime = System.nanoTime();
-        new RulesStandaloneDriver().run("-i", "input/marrData.csv", "-numSub", "50", "-subCard", "50");
-        long endTime = System.nanoTime();
-        System.out.println((double)((endTime-startTime)/1000000));
+      //  long startTime = System.nanoTime();
+        //new RulesStandaloneDriver().run(args);
+        new RulesStandaloneDriver().run("-i", "input/train.csv", "-numSub", "1", "-subCard", "1");
+        //long endTime = System.nanoTime();
+        //System.out.println((double)((endTime-startTime)/1000000));
 
     }
 }
