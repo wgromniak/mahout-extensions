@@ -2,3 +2,8 @@
 *.iml
 .gradle
 build
+_tmp/
+latex/
+input/
+out/
+*crc
