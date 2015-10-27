@@ -1,7 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 apply plugin: 'java'
-apply plugin: 'findbugs'
+//apply plugin: 'findbugs'
 
 // This plugin is used to build a jar with all the dependencies. It exposes shadowJar task.
 apply plugin: 'com.github.johnrengelman.shadow'
@@ -102,8 +102,18 @@ task jar4StandaloneReducts(type: ShadowJar) {
     configurations = [project.configurations.runtime]
     exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
     zip64 true
-
     manifest.attributes 'Main-Class': 'org.mimuw.attrsel.reducts.standalone.ReductsStandaloneDriver'
+}
+
+task jar4StandaloneRules(type: ShadowJar) {
+
+    group = 'shadow'
+    classifier = 'standalone-rules'
+    from(project.convention.getPlugin(JavaPluginConvention).sourceSets.main.output)
+    configurations = [project.configurations.runtime]
+    exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
+    zip64 true
+    manifest.attributes 'Main-Class': 'org.mimuw.attrsel.rules.standalone.RulesStandaloneDriver'
 }
 
 task jar4MapRedTrees(type: ShadowJar) {
@@ -172,7 +182,7 @@ test {
     testLogging.showStandardStreams = true
 }
 
-findbugsMain {
+/*findbugsMain {
     reports {
         xml.enabled = false
         html.enabled = true
@@ -185,7 +195,7 @@ findbugsTest {
         html.enabled = true
     }
 }
-
+*/
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
