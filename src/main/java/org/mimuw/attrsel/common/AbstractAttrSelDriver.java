@@ -12,9 +12,7 @@ import org.mimuw.attrsel.common.api.SubtableGenerator;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static com.codahale.metrics.MetricRegistry.name;
@@ -92,4 +90,5 @@ public abstract class AbstractAttrSelDriver extends AbstractJob {
 
         System.out.printf("Accuracy: %s%n", acc);
     }
+
 }
