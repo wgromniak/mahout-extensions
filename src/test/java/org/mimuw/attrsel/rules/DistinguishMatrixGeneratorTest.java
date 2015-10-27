@@ -108,6 +108,4 @@ public class DistinguishMatrixGeneratorTest {
         assertEquals(expectedOutput, firstColumn);
     }
 
-
-
 }
