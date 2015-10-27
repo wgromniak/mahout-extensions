@@ -1,4 +1,4 @@
-package org.mimuw.attrsel.rules.spark;
+/*package org.mimuw.attrsel.rules.spark;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
@@ -45,16 +45,6 @@ public final class AttrSellDriver extends AbstractAttrSelReductsDriver implement
         }
 
         // have to get options here not to serialize this
-        final boolean dontDiscretize = hasOption("noDiscretize");
-        final Class<? extends ReductsProvider> reductsProviderClass = getReductsProviderClass();
-        final RandomReducts.IndiscernibilityForMissing indiscernibilityForMissing = getIndiscernibilityForMissing();
-        final RandomReducts.DiscernibilityMethod discernibilityMethod = getDiscernibilityMethod();
-        final RandomReducts.GeneralizedDecisionTransitiveClosure generalizedDecisionTransitiveClosure =
-                getGeneralizedDecisionTransitiveClosure();
-        final RandomReducts.JohnsonReducts johnsonReducts = getJohnsonReducts();
-        final int numDiscIntervals = getInt("numDiscIntervals", 4);
-        final Double discSignificance = Double.valueOf(getOption("discSignificance", "0.25"));
-
 
         SparkConf conf = new SparkConf();
         JavaSparkContext sc = new JavaSparkContext(conf);
@@ -64,121 +54,53 @@ public final class AttrSellDriver extends AbstractAttrSelReductsDriver implement
         SubtableGenerator<Subtable> subtableGenerator = getSubtableGenerator(inputDataTable.get());
         List<SubtableWritable> subtablesWritable = getWritableSubtables(subtableGenerator);
 
-
-        // broadcast number of sub per attr
-        List<Integer> tmpNumSubPerAttr = subtableGenerator.getNumberOfSubtablesPerAttribute();
-        tmpNumSubPerAttr = new ArrayList<>(tmpNumSubPerAttr); // tmpNumSubPerAttr is not Serializable
-        final Broadcast<List<Integer>> numSubPerAttr = sc.broadcast(tmpNumSubPerAttr);
-
         JavaRDD<SubtableWritable> distSubtables = sc.parallelize(subtablesWritable);
 
         // this gives reducts for each subtable
+
         JavaRDD<List<Integer>> reducts = distSubtables.flatMap(new FlatMapFunction<SubtableWritable, List<Integer>>() {
             @Override
             public Iterable<List<Integer>> call(SubtableWritable subtable) throws Exception {
-                RandomReducts randomReducts = dontDiscretize ?
-                        // cannot use getRandomReducts, because there are problems serializing AttrSelDriver
-                        new RandomReducts(
-                                subtable.get(),
-                                reductsProviderClass,
-                                indiscernibilityForMissing,
-                                discernibilityMethod,
-                                generalizedDecisionTransitiveClosure,
-                                johnsonReducts
-                        ) :
-                        new RandomReducts(
-                                subtable.get(),
-                                reductsProviderClass,
-                                new RsesDiscretizer(
-                                        new ChiMergeDiscretizationProvider(numDiscIntervals, discSignificance)
-                                ),
-                                indiscernibilityForMissing,
-                                discernibilityMethod,
-                                generalizedDecisionTransitiveClosure,
-                                johnsonReducts
-                        );
-                return randomReducts.getReducts();
-            }
-        });
 
-        // this gives pairs (attr, reduct) for all attr in each reduct
-        JavaPairRDD<Integer, List<Integer>> attrReduct = reducts.flatMapToPair(
-                new PairFlatMapFunction<List<Integer>, Integer, List<Integer>>() {
-                    @Override
-                    public Iterable<Tuple2<Integer, List<Integer>>> call(List<Integer> reduct) throws Exception {
-                        List<Tuple2<Integer, List<Integer>>> result = new ArrayList<>(reduct.size());
-                        for (int attr : reduct) {
-                            result.add(new Tuple2<>(attr, reduct));
-                        }
-                        return result;
-                    }
-                }
-        );
 
-        JavaPairRDD<Integer, Iterable<List<Integer>>> attrReducts = attrReduct.groupByKey();
+            });
+              private SerializableMatrix readInputMatrix(JavaSparkContext sc) {
+                  JavaPairRDD<String, String> inputData = sc.wholeTextFiles(getInputPath().toString());
+                  // read each whole file into a matrix
+                  JavaRDD<SerializableMatrix> inputMatrix = inputData.flatMap(
+                          new FlatMapFunction<Tuple2<String, String>, SerializableMatrix>() {
+                              @Override
+                              public Iterable<SerializableMatrix> call(Tuple2<String, String> in) throws Exception {
+                                  return ImmutableList.of(
+                                          SerializableMatrix.of(
+                                                  new CSVMatrixReader().read(new ByteArrayInputStream(in._2().getBytes()))
+                                          )
+                                  );
+                              }
+                          }
+                  );
 
-        // gives scores for each attribute
-        JavaPairRDD<Integer, Double> scores = attrReducts.mapToPair(
-                new PairFunction<Tuple2<Integer, Iterable<List<Integer>>>, Integer, Double>() {
-                    @Override
-                    public Tuple2<Integer, Double> call(Tuple2<Integer, Iterable<List<Integer>>> val) throws Exception {
-                        return new Tuple2<>(
-                                val._1(),
-                                new FrequencyScoreCalculator(val._2(), numSubPerAttr.value().get(val._1())).getScore()
-                        );
-                    }
-                }
-        );
+                  // make a local Matrix out of the only file
+                  List<SerializableMatrix> matrices = inputMatrix.collect();
+                  checkArgument(matrices.size() == 1, "Expected one input file, but got: %s", matrices.size());
+                  return matrices.get(0);
+              }
 
-        List<Tuple2<Integer, Double>> result = scores.collect();
+              private List<SubtableWritable> getWritableSubtables(SubtableGenerator<Subtable> subtableGenerator) {
+                  List<Subtable> subtables = subtableGenerator.getSubtables();
+                  return Lists.transform(subtables,
+                          new Function<Subtable, SubtableWritable>() {
+                              @Nullable
+                              @Override
+                              public SubtableWritable apply(@Nullable Subtable input) {
+                                  return new SubtableWritable(input);
+                              }
+                          }
+                  );
+              }
 
-        double[] scoresArr = new double[inputDataTable.get().columnSize() - 1];
-
-        for (Tuple2<Integer, Double> tup : result) {
-            scoresArr[tup._1()] = tup._2();
-        }
-
-        printScoresAssessResults(scoresArr, inputDataTable.get());
-
-        return 0;
-    }
-
-    private SerializableMatrix readInputMatrix(JavaSparkContext sc) {
-        JavaPairRDD<String, String> inputData = sc.wholeTextFiles(getInputPath().toString());
-        // read each whole file into a matrix
-        JavaRDD<SerializableMatrix> inputMatrix = inputData.flatMap(
-                new FlatMapFunction<Tuple2<String, String>, SerializableMatrix>() {
-                    @Override
-                    public Iterable<SerializableMatrix> call(Tuple2<String, String> in) throws Exception {
-                        return ImmutableList.of(
-                                SerializableMatrix.of(
-                                        new CSVMatrixReader().read(new ByteArrayInputStream(in._2().getBytes()))
-                                )
-                        );
-                    }
-                }
-        );
-
-        // make a local Matrix out of the only file
-        List<SerializableMatrix> matrices = inputMatrix.collect();
-        checkArgument(matrices.size() == 1, "Expected one input file, but got: %s", matrices.size());
-        return matrices.get(0);
-    }
-
-    private List<SubtableWritable> getWritableSubtables(SubtableGenerator<Subtable> subtableGenerator) {
-        List<Subtable> subtables = subtableGenerator.getSubtables();
-        return Lists.transform(subtables,
-                new Function<Subtable, SubtableWritable>() {
-                    @Nullable
-                    @Override
-                    public SubtableWritable apply(@Nullable Subtable input) {
-                        return new SubtableWritable(input);
-                    }
-                }
-        );
-    }
-
-    public static void main(String... args) throws Exception {
-        new AttrSelDriver().run(args);
-    }
-}
+              public static void main(String... args) throws Exception {
+                  new AttrSelDriver().run(args);
+              }
+          }
+          */
