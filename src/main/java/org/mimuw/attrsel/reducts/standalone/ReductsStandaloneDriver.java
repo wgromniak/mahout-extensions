@@ -18,62 +18,68 @@ import java.util.concurrent.Future;
 // TODO: configure logging in standalone mode
 final class ReductsStandaloneDriver extends AbstractAttrSelReductsDriver {
 
-    private final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        private final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
-    @Override
-    public int run(String... args) throws Exception {
-        setUpAttrSelOptions();
-        setUpReductsOptions();
+        @Override
+        public int run(String... args) throws Exception {
+            setUpAttrSelOptions();
+            setUpReductsOptions();
 
-        if (parseArguments(args, false, true) == null) {
-            return 1;
-        }
+            if (parseArguments(args, false, true) == null) {
+                return 1;
+            }
 
-        Matrix inputDataTable = new CSVMatrixReader().read(Paths.get(getInputFile().getPath()));
+            Matrix inputDataTable = new CSVMatrixReader().read(Paths.get(getInputFile().getPath()));
+            SubtableGenerator<Subtable> subtableGenerator = getSubtableGenerator(inputDataTable);
 
-        SubtableGenerator<Subtable> subtableGenerator = getSubtableGenerator(inputDataTable);
+            List<Subtable> subtables = subtableGenerator.getSubtables();
+            List<Integer> numberOfSubtablesPerAttribute = subtableGenerator.getNumberOfSubtablesPerAttribute();
 
-        List<Subtable> subtables = subtableGenerator.getSubtables();
-        List<Integer> numberOfSubtablesPerAttribute = subtableGenerator.getNumberOfSubtablesPerAttribute();
 
-        List<Callable<List<List<Integer>>>> map = new ArrayList<>(subtables.size());
+            List<Callable<List<List<Integer>>>> map = new ArrayList<>(subtables.size());
 
-        for (final Subtable subtable : subtables) {
-            map.add(new Callable<List<List<Integer>>>() {
-                @Override
-                public List<List<Integer>> call() throws Exception {
-                    RandomReducts randomReducts = getRandomReducts(subtable);
-                    return randomReducts.getReducts();
-                }
-            });
-        }
+            for (final Subtable subtable : subtables) {
+                map.add(new Callable<List<List<Integer>>>() {
+                    @Override
+                    public List<List<Integer>> call() throws Exception {
+                        RandomReducts randomReducts = getRandomReducts(subtable);
+                        return randomReducts.getReducts();
+                    }
+                });
+            }
 
-        List<Future<List<List<Integer>>>> mapResults = executor.invokeAll(map);
+            List<Future<List<List<Integer>>>> mapResults = executor.invokeAll(map);
 
-        int[] attrCounts = new int[inputDataTable.columnSize() - 1];
+            int[] attrCounts = new int[inputDataTable.columnSize() - 1];
 
-        for (Future<List<List<Integer>>> result : mapResults) {
-            for (List<Integer> reduct : result.get()) {
-                for (int attr : reduct) {
-                    attrCounts[attr] += 1;
+            for (Future<List<List<Integer>>> result : mapResults) {
+                for (List<Integer> reduct : result.get()) {
+                    for (int attr : reduct) {
+                        attrCounts[attr] += 1;
+                    }
                 }
             }
+
+            double[] scores = new double[inputDataTable.columnSize() - 1];
+
+            for (int i = 0; i < attrCounts.length; i++) {
+                scores[i] = (double) attrCounts[i] / numberOfSubtablesPerAttribute.get(i);
+            }
+
+            printScoresAssessResults(scores, inputDataTable);
+
+            executor.shutdown();
+            return 0;
         }
 
-        double[] scores = new double[inputDataTable.columnSize() - 1];
 
-        for (int i = 0; i < attrCounts.length; i++) {
-            scores[i] = (double) attrCounts[i] / numberOfSubtablesPerAttribute.get(i);
+
+
+        public static void main(String... args) throws Exception {
+            long startTime = System.nanoTime();
+            new ReductsStandaloneDriver().run("-i", "/home/pawols/Develop/Mgr/mahout-extensions/input/train.csv", "-numSub", "50", "-subCard", "100");
+            new ReductsStandaloneDriver().run(args);
+            long endTime = System.nanoTime();
+            System.out.println((double)((endTime-startTime)/1000000));
         }
-
-        printScoresAssessResults(scores, inputDataTable);
-
-        executor.shutdown();
-        return 0;
     }
-
-
-    public static void main(String... args) throws Exception {
-        new ReductsStandaloneDriver().run(args);
-    }
-}
