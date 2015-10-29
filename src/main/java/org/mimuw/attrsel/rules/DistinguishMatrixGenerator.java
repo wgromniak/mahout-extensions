@@ -14,16 +14,20 @@ public class DistinguishMatrixGenerator {
     private final Matrix inputDataMatrix;
     private Set<Integer>[][] distinguishTable;
     private final int numberOfObjects;
+    private ArrayList<Integer> listOfAttributes;
+    //private ArrayList<Boolean> coveredObject;
 
     @SuppressWarnings("unchecked")
-    public DistinguishMatrixGenerator(Matrix inputDataMatirx) {
+    public DistinguishMatrixGenerator(Matrix inputDataMatrix) {
 
-        checkNotNull(inputDataMatirx);
-        checkArgument(inputDataMatirx.rowSize() > 0);
-        checkArgument(inputDataMatirx.columnSize() > 0);
-        this.inputDataMatrix = inputDataMatirx;
+        checkNotNull(inputDataMatrix);
+        checkArgument(inputDataMatrix.rowSize() > 0);
+        checkArgument(inputDataMatrix.columnSize() > 0);
+        this.inputDataMatrix = inputDataMatrix;
         this.numberOfObjects = this.inputDataMatrix.rowSize();
         this.distinguishTable = new Set[numberOfObjects][numberOfObjects];
+        this.listOfAttributes = new ArrayList<>();
+      //  this.coveredObject = new ArrayList<>();
     }
 
     /*
@@ -46,6 +50,7 @@ public class DistinguishMatrixGenerator {
                     while (count >= 0) {
                         if (firstObject.get(count) != secondObject.get(count)) {
                             put.add(count);
+                            this.listOfAttributes.add(count);
                         }
                         count--;
                     }
@@ -60,10 +65,43 @@ public class DistinguishMatrixGenerator {
     }
 
     public ArrayList<Set> getColumn(int numberOfColumn) {
-        ArrayList<Set> expectedColumn  = new ArrayList<>();
+        ArrayList<Set> expectedColumn = new ArrayList<>();
         for (int i = 0; i < this.numberOfObjects; i++) {
-                expectedColumn.add(this.distinguishTable[i][numberOfColumn]);
+            expectedColumn.add(this.distinguishTable[i][numberOfColumn]);
         }
         return expectedColumn;
     }
+
+
+    public Map<Integer, Integer> getListOfAttributeFrequency() {
+        Map<Integer, Integer> frequencyOfAttributes = new HashMap<>();
+        for (Integer attribute : this.listOfAttributes) {
+            frequencyOfAttributes.put(attribute, Collections.frequency(listOfAttributes, attribute));
+        }
+
+        return MapUtil.sortByValue(frequencyOfAttributes);
+    }
+
+    /*
+    Notice that this method is copied from StackOverflow - maybe we should rewrite this method?
+     */
+    private static class MapUtil {
+        public static <K, V extends Comparable<? super V>> Map<K, V>
+        sortByValue(Map<K, V> map) {
+            List<Map.Entry<K, V>> list =
+                    new LinkedList<>(map.entrySet());
+            Collections.sort(list, new Comparator<Map.Entry<K, V>>() {
+                public int compare(Map.Entry<K, V> o1, Map.Entry<K, V> o2) {
+                    return (o1.getValue()).compareTo(o2.getValue());
+                }
+            });
+
+            Map<K, V> result = new LinkedHashMap<>();
+            for (Map.Entry<K, V> entry : list) {
+                result.put(entry.getKey(), entry.getValue());
+            }
+            return result;
+        }
+    }
+
 }

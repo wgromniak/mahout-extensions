@@ -108,4 +108,63 @@ public class DistinguishMatrixGeneratorTest {
         assertEquals(expectedOutput, firstColumn);
     }
 
+    @SuppressWarnings("unchecked")
+    @Test
+    public void twoObjectsGetDifferentTable(){
+        Matrix inputData = new DenseMatrix(new double[][]{{0,1,3,5,7,2,1,4},
+                                                          {3,6,0,8,7,5,1,3}});
+        DistinguishMatrixGenerator distinguishMatrix = new DistinguishMatrixGenerator(inputData);
+        /*
+        Set[][] a = distinguishMatrix.computeDistinguishMatrix();
+        for (Set[] element : a) {
+            for (Set element2 : element)
+                System.out.print(element2);
+            System.out.println();
+        }
+        */
+        Set[][] expectedOutput = new Set[inputData.rowSize()][inputData.rowSize()];
+        for (int i = 0; i < inputData.rowSize(); i++) {
+            for (int j = 0; j < inputData.rowSize() ; j++) {
+                expectedOutput[i][j] = new HashSet<>();
+            }
+        }
+        expectedOutput[0][1].addAll(Arrays.asList(0,1,2,3,5));
+        expectedOutput[1][0].addAll(Arrays.asList(0, 1, 2, 3, 5));
+
+        assertArrayEquals(distinguishMatrix.computeDistinguishMatrix(), expectedOutput);
+    }
+
+
+    @Test
+    public void attributeFrequencyFourObject(){
+        Matrix inputData = new DenseMatrix(new double[][]{{0,1,2,1},{0,2,2,0},{1,1,1,1},{0,0,2,0}});
+        DistinguishMatrixGenerator distinguishMatrix = new DistinguishMatrixGenerator(inputData);
+        distinguishMatrix.computeDistinguishMatrix();
+        Map<Integer, Integer> frequency  = distinguishMatrix.getListOfAttributeFrequency();
+        Map<Integer, Integer> expectedOutput = new HashMap<>();
+
+        expectedOutput.put(0,4);
+        expectedOutput.put(1,8);
+        expectedOutput.put(2,4);
+
+        assertEquals(expectedOutput, frequency);
+    }
+
+    @Test
+    public void attributeFrequencyThreeObject(){
+        Matrix inputData = new DenseMatrix(new double[][]{{0,1,0,1,0,1,0}, {1,0,0,1,1,0,1}, {0,1,1,0,1,1,1}});
+        DistinguishMatrixGenerator distinguishMatrix = new DistinguishMatrixGenerator(inputData);
+        distinguishMatrix.computeDistinguishMatrix();
+        Map<Integer, Integer> frequency  = distinguishMatrix.getListOfAttributeFrequency();
+        Map<Integer, Integer> expectedOutput = new HashMap<>();
+
+        expectedOutput.put(0,2);
+        expectedOutput.put(1,2);
+        expectedOutput.put(2,2);
+        expectedOutput.put(3,2);
+        expectedOutput.put(4,4);
+        expectedOutput.put(5,2);
+
+        assertEquals(expectedOutput, frequency);
+    }
 }
